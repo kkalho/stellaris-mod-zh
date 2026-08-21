@@ -22,10 +22,9 @@ if not defined PYTHON (
 )
 
 echo [1/3] 正在启动数据服务...
-echo [2/3] 打开浏览器: http://localhost:8080
+echo [2/3] 服务启动后自动打开浏览器: http://localhost:8080
 echo [3/3] 关闭本窗口即停止服务
 echo.
-start "" http://localhost:8080
 %PYTHON% scripts\web_server.py 8080
 
 pause

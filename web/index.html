@@ -25,7 +25,7 @@ header h1 {
 }
 header h1 span { color: #6fa8ff; }
 header p { color: #8a93a8; margin-top: 6px; font-size: 13px; }
-.search-box { position: relative; z-index: 1; max-width: 640px; margin: 20px auto; padding: 0 20px; }
+.search-box { position: relative; z-index: 1; max-width: 680px; margin: 20px auto; padding: 0 20px; }
 .search-row { display: flex; gap: 10px; }
 .search-row input {
   flex: 1; padding: 13px 18px; font-size: 15px;
@@ -43,15 +43,33 @@ header p { color: #8a93a8; margin-top: 6px; font-size: 13px; }
 }
 .search-row button:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(60,110,220,.35); }
 .hint { text-align: center; color: #5a6478; font-size: 12px; margin-top: 10px; }
-main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 10px 20px 60px; }
-.stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 10px 0 24px; }
+main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 10px 20px 60px; }
+.stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 10px 0 20px; }
 .stat {
   background: rgba(20,28,50,.7); border: 1px solid rgba(100,140,255,.15);
   border-radius: 12px; padding: 12px 22px; text-align: center; min-width: 120px;
 }
 .stat .num { font-size: 20px; color: #6fa8ff; font-weight: 600; }
 .stat .label { font-size: 12px; color: #8a93a8; margin-top: 4px; }
-.list-title { color: #9aa4bc; font-size: 14px; margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; }
+
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.toolbar select {
+  padding: 9px 14px; font-size: 13px; color: #d8dde8;
+  background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25);
+  border-radius: 8px; outline: none; cursor: pointer;
+}
+.toolbar select option { background: #141c32; }
+.tag-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.tag-chip {
+  padding: 5px 13px; font-size: 12px; cursor: pointer;
+  background: rgba(20,28,50,.7); color: #9aa4bc;
+  border: 1px solid rgba(100,140,255,.15); border-radius: 20px;
+  transition: all .2s; user-select: none;
+}
+.tag-chip:hover { color: #e8edf8; border-color: rgba(100,140,255,.4); }
+.tag-chip.active { background: rgba(60,110,220,.3); color: #9fc0ff; border-color: rgba(100,140,255,.6); }
+
+.list-title { color: #9aa4bc; font-size: 14px; margin: 10px 0 12px; display: flex; align-items: center; gap: 8px; }
 .list-title::after { content: ""; flex: 1; height: 1px; background: rgba(100,140,255,.15); }
 .mod-card {
   background: rgba(20,28,50,.75); border: 1px solid rgba(100,140,255,.12);
@@ -91,6 +109,14 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 .back-btn:hover { color: #e8edf8; border-color: rgba(100,140,255,.5); }
 .loading { text-align: center; color: #5a6478; padding: 40px 0; font-size: 14px; }
 footer { position: relative; z-index: 1; text-align: center; color: #4a5468; font-size: 12px; padding: 20px; }
+.pager { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+.pager button {
+  padding: 8px 20px; font-size: 13px; cursor: pointer;
+  background: rgba(20,28,50,.8); color: #9aa4bc;
+  border: 1px solid rgba(100,140,255,.2); border-radius: 8px;
+}
+.pager button:hover:not(:disabled) { color: #e8edf8; border-color: rgba(100,140,255,.5); }
+.pager button:disabled { opacity: .35; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -110,14 +136,43 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 
 <main>
   <div class="stats" id="stats"></div>
+  <div id="toolbar" style="display:none">
+    <div class="tag-bar" id="tagbar"></div>
+    <div class="toolbar">
+      <span style="font-size:13px;color:#8a93a8">排序：</span>
+      <select id="sortsel" onchange="applyFilters()">
+        <option value="subs">订阅量 ↓</option>
+        <option value="subs_asc">订阅量 ↑</option>
+        <option value="updated">最近更新</option>
+        <option value="name">名称 A-Z</option>
+      </select>
+      <span style="font-size:13px;color:#8a93a8">显示：</span>
+      <select id="limitsel" onchange="applyFilters()">
+        <option value="30">30 条</option>
+        <option value="60" selected>60 条</option>
+        <option value="120">120 条</option>
+        <option value="0">全部</option>
+      </select>
+      <button class="back-btn" style="margin-bottom:0;margin-left:auto" onclick="clearFilters()">清除筛选</button>
+    </div>
+  </div>
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
+  <div class="pager" id="pager" style="display:none">
+    <button id="prevBtn" onclick="page(-1)">← 上一页</button>
+    <span id="pageInfo" style="color:#5a6478;font-size:13px;align-self:center"></span>
+    <button id="nextBtn" onclick="page(1)">下一页 →</button>
+  </div>
 </main>
 
 <footer>数据来源：Steam 创意工坊公开数据 · 由 AI 翻译整理 · 仅供学习交流</footer>
 
 <script>
 const $ = id => document.getElementById(id);
-let allTop = [];
+let allResults = [];
+let curPage = 1;
+const PER_PAGE = 15;
+let activeTag = null;
+let currentTitle = '🔥 订阅量 Top';
 
 async function api(path) {
   const r = await fetch(path);
@@ -136,13 +191,64 @@ function fmt(n) {
 }
 
 async function loadStats() {
-  const r = await api('/api/top?n=90');
-  const total = r.results.length;
-  const sumSubs = r.results.reduce((a, b) => a + (b.subs || 0), 0);
+  const s = await api('/api/stats');
   $('stats').innerHTML = `
-    <div class="stat"><div class="num">${total}</div><div class="label">已收录 Mod</div></div>
-    <div class="stat"><div class="num">${fmt(sumSubs)}</div><div class="label">累计订阅</div></div>
-    <div class="stat"><div class="num">100%</div><div class="label">中文覆盖</div></div>`;
+    <div class="stat"><div class="num">${s.total}</div><div class="label">已收录 Mod</div></div>
+    <div class="stat"><div class="num">${fmt(s.subs)}</div><div class="label">累计订阅</div></div>
+    <div class="stat"><div class="num">${s.translated}</div><div class="label">已翻译</div></div>`;
+}
+
+async function loadTags() {
+  const r = await api('/api/categories');
+  // 按数量取前 14 个分类，Gameplay 固定保留
+  const cats = r.categories.filter(c => c.tag && c.tag.trim());
+  const top = cats.slice(0, 14);
+  $('tagbar').innerHTML = top.map(c =>
+    `<span class="tag-chip" data-tag="${esc(c.tag)}" onclick="toggleTag('${esc(c.tag)}')">${esc(c.tag)} (${c.count})</span>`
+  ).join('');
+}
+
+function toggleTag(tag) {
+  if (activeTag === tag) { activeTag = null; }
+  else { activeTag = tag; }
+  document.querySelectorAll('.tag-chip').forEach(el =>
+    el.classList.toggle('active', el.dataset.tag === activeTag));
+  applyFilters();
+}
+
+async function applyFilters() {
+  const sort = $('sortsel').value;
+  const limit = parseInt($('limitsel').value) || 0;
+  const kw = $('kw').value.trim();
+  const tag = activeTag || '';
+  const path = '/api/search?q=' + encodeURIComponent(kw) +
+               '&sort=' + sort +
+               (limit ? '&n=' + limit : '') +
+               (tag ? '&tag=' + encodeURIComponent(tag) : '');
+  $('content').innerHTML = '<div class="loading">正在加载...</div>';
+  const r = await api(path);
+  allResults = r.results;
+  curPage = 1;
+  currentTitle = kw ? `“${kw}” 的搜索结果` : (tag ? `分类：${tag}` : '全部 Mod');
+  renderPaged();
+}
+
+function renderPaged() {
+  const totalPages = Math.max(1, Math.ceil(allResults.length / PER_PAGE));
+  curPage = Math.min(curPage, totalPages);
+  const start = (curPage - 1) * PER_PAGE;
+  const slice = allResults.slice(start, start + PER_PAGE);
+  renderList(slice, `${currentTitle}（共 ${allResults.length} 条，第 ${curPage}/${totalPages} 页）`);
+  $('pager').style.display = allResults.length > PER_PAGE ? 'flex' : 'none';
+  $('pageInfo').textContent = `${curPage} / ${totalPages}`;
+  $('prevBtn').disabled = curPage <= 1;
+  $('nextBtn').disabled = curPage >= totalPages;
+}
+
+function page(dir) {
+  curPage += dir;
+  renderPaged();
+  window.scrollTo({ top: 300, behavior: 'smooth' });
 }
 
 function renderList(rows, title) {
@@ -150,7 +256,7 @@ function renderList(rows, title) {
     $('content').innerHTML = '<div class="loading">未找到匹配的 Mod，换个关键词试试</div>';
     return;
   }
-  let html = `<div class="list-title">${esc(title)}（${rows.length} 条）</div>`;
+  let html = `<div class="list-title">${esc(title)}</div>`;
   rows.forEach(m => {
     html += `
     <div class="mod-card" onclick="showDetail('${m.id}')">
@@ -159,26 +265,35 @@ function renderList(rows, title) {
         <div class="subs">🛰 ${fmt(m.subs)} 订阅</div>
       </div>
       ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
-      <div class="id">Steam ID: ${m.id}</div>
+      <div class="id">Steam ID: ${m.id}${m.tags ? ' · ' + esc(m.tags) : ''}</div>
     </div>`;
   });
   $('content').innerHTML = html;
 }
 
 async function doSearch() {
-  const kw = $('kw').value.trim();
-  if (!kw) return;
-  $('content').innerHTML = '<div class="loading">正在搜索...</div>';
-  const r = await api('/api/search?q=' + encodeURIComponent(kw));
-  renderList(r.results, `“${kw}” 的搜索结果`);
+  activeTag = null;
+  document.querySelectorAll('.tag-chip').forEach(el => el.classList.remove('active'));
+  $('toolbar').style.display = 'block';
+  await applyFilters();
+}
+
+function clearFilters() {
+  $('kw').value = '';
+  activeTag = null;
+  document.querySelectorAll('.tag-chip').forEach(el => el.classList.remove('active'));
+  $('sortsel').value = 'subs';
+  $('limitsel').value = '60';
+  applyFilters();
 }
 
 async function showDetail(id) {
   $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
+  $('pager').style.display = 'none';
   const d = await api('/api/mod?id=' + id);
   if (d.error) { $('content').innerHTML = '<div class="loading">未找到该 Mod</div>'; return; }
   let html = `
-    <button class="back-btn" onclick="loadTop()">← 返回列表</button>
+    <button class="back-btn" onclick="backToList()">← 返回列表</button>
     <div class="detail">
       <h2>${esc(d.title)}</h2>
       <div class="meta">
@@ -198,10 +313,19 @@ async function showDetail(id) {
   $('content').innerHTML = html;
 }
 
+function backToList() {
+  $('toolbar').style.display = 'block';
+  renderPaged();
+}
+
 async function loadTop() {
   $('content').innerHTML = '<div class="loading">正在加载热门 Mod 列表...</div>';
-  const r = await api('/api/top?n=30');
-  renderList(r.results, '🔥 订阅量 Top 30');
+  $('toolbar').style.display = 'block';
+  const r = await api('/api/top?n=60');
+  allResults = r.results;
+  curPage = 1;
+  currentTitle = '🔥 订阅量 Top';
+  renderPaged();
 }
 
 function makeStars() {
@@ -216,6 +340,7 @@ function makeStars() {
 
 makeStars();
 loadStats();
+loadTags();
 loadTop();
 </script>
 </body>

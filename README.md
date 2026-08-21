@@ -2,7 +2,7 @@
 
 > 为《群星》(Stellaris) 创意工坊热门 Mod 建立的**中文知识库与查询工具**。输入 Mod 名称（中英文均可），秒出该 Mod 的中文介绍、特色和详细内容。
 
-![GitHub stars](https://img.shields.io/badge/收录-90%2B%20Mod-blue)
+![GitHub stars](https://img.shields.io/badge/收录-120%2B%20Mod-blue)
 ![中文覆盖](https://img.shields.io/badge/中文覆盖-100%25-brightgreen)
 ![数据来源](https://img.shields.io/badge/数据来源-Steam%20Workshop-orange)
 
@@ -12,11 +12,13 @@
 
 ## 功能特性
 
-- 🔍 **中英文混合搜索**：输入「巨构」「giga」「星球多样性」都能搜到
-- 📚 **预翻译知识库**：90+ 热门 Mod 已翻译，中文覆盖率 100%
+- 🔍 **中英文混合搜索**：输入「巨构」「giga」「星球多样性」都能搜到（中英文标题并存）
+- 📚 **预翻译知识库**：120+ 热门 Mod 已收录，中文覆盖率 100%
 - 🖥️ **命令行 + 网页双界面**
+- 🔀 **排序筛选**：按订阅量/更新时间/名称排序，按标签分类浏览
 - ⚡ **本地离线查询**：毫秒级响应，无需联网
 - 🆓 **无需 API Key**：数据来自 Steam 官方公开 API
+- 🔄 **断点续抓**：自动抓取脚本支持中断后继续
 
 ## 快速开始
 
@@ -55,18 +57,18 @@ $ python scripts/modlookup.py 巨构
 ```
 stellaris-mod-zh/
 ├── scripts/
-│   ├── fetch_details.py      # 抓取创意工坊 Mod 详情（官方 API）
+│   ├── auto_fetch.py         # 自动抓取 Mod 详情（断点续抓、限速防封）
 │   ├── build_db.py           # 构建 SQLite 知识库
 │   ├── import_translations.py# 导入翻译 JSON
 │   ├── modlookup.py          # 命令行查询工具
 │   └── web_server.py         # 本地网页服务（零依赖）
 ├── web/
-│   └── index.html            # 网页查询界面
+│   └── index.html            # 网页查询界面（星空主题）
 ├── translations/
 │   ├── hot_top6_zh.json      # Top6 完整翻译
 │   └── hot_rest_zh.json      # 其余 Mod 标题+摘要翻译
 ├── data/
-│   ├── hot_mods.json         # 热门 Mod 清单
+│   ├── hot_mods.json         # 热门 Mod 清单（Top 210）
 │   ├── details.jsonl         # 原始详情数据
 │   └── stellaris_mods.db     # SQLite 知识库
 └── 启动-群星Mod手册.bat        # Windows 一键启动
@@ -77,16 +79,16 @@ stellaris-mod-zh/
 知识库数据来自 Steam 创意工坊**订阅量排行**（截至 2026-08）。如需更新数据：
 
 ```bash
-# 1. 重新抓取热门清单（需手动获取各页 Mod ID 后更新 data/hot_mods.json）
-# 2. 抓取详情
-python scripts/fetch_details.py
+# 1. 更新热门清单（data/hot_mods.json，可通过创意工坊浏览页分页获取）
+# 2. 自动抓取详情（支持断点续抓，限速防封）
+python scripts/auto_fetch.py --sleep 15 --batch 5
 # 3. 重建数据库
 python scripts/build_db.py
 # 4. 补充翻译后导入
 python scripts/import_translations.py translations/你的翻译.json
 ```
 
-> 说明：抓取热门清单依赖 Steam 社区页面，批量自动化可能触发反爬；详情数据使用官方公开 API `GetPublishedFileDetails`，无需 Key。
+> 说明：Steam 对匿名 API 请求限流较严，抓取脚本默认每批 5 个、间隔 15 秒。中断后重新运行会自动跳过已抓取的 Mod。
 
 ## 翻译贡献
 
@@ -104,13 +106,14 @@ python scripts/import_translations.py translations/你的翻译.json
 
 ## 路线图
 
-- [x] 90+ 热门 Mod 中文知识库
+- [x] 120+ 热门 Mod 中文知识库（目标 210，随抓取续补）
 - [x] 命令行 + 网页双查询界面
 - [x] Windows 一键启动
-- [ ] 扩展到 Top 200 / 500 Mod
-- [ ] 订阅量/更新时间排序筛选
+- [x] 订阅量/更新时间排序、标签分类浏览
+- [x] 自动抓取脚本（断点续抓 + 限速防封）
+- [ ] 扩展到 Top 500 / 1000 Mod
 - [ ] 更多 Mod 的完整描述翻译
-- [ ] 自动抓取热门清单（反爬方案优化）
+- [ ] 游戏内 Mod 列表导入（本地 MOD 检测）
 
 ## 许可
 

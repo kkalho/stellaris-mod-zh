@@ -23,9 +23,7 @@ def import_file(conn, path):
             print(f"  跳过（库中无此 Mod）: {sid}")
             continue
         mod_id = row[0]
-        # 更新中文标题
-        c.execute("UPDATE mods SET title=? WHERE id=?",
-                  (f"{t.get('title_zh','')} ({t.get('steam_id','')})", mod_id))
+        # 保留英文原名 title_en（搜索用），中文标题写入 translations 表
         # 写入翻译
         for field, key in [("title", "title_zh"), ("summary", "summary_zh"),
                            ("description", "description_zh")]:

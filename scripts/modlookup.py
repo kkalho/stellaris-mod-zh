@@ -22,13 +22,16 @@ def search(keyword, limit=10):
     conn = get_db()
     kw = f"%{keyword}%"
     rows = conn.execute("""
-        SELECT m.steam_id, m.title, m.subscriptions, m.url,
-               COALESCE(t.zh_text, '') as summary
+        SELECT m.steam_id, m.title_en, m.subscriptions, m.url,
+               COALESCE(tsum.zh_text, '') as summary,
+               COALESCE(ttitle.zh_text, m.title_en) as display_title
         FROM mods m
-        LEFT JOIN translations t ON t.mod_id = m.id AND t.field = 'summary'
-        WHERE m.title LIKE ? OR m.steam_id LIKE ?
+        LEFT JOIN translations tsum ON tsum.mod_id = m.id AND tsum.field = 'summary'
+        LEFT JOIN translations ttitle ON ttitle.mod_id = m.id AND ttitle.field = 'title'
+        WHERE m.title_en LIKE ? OR m.title LIKE ? OR m.steam_id LIKE ?
+              OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ?
         ORDER BY m.subscriptions DESC LIMIT ?
-    """, (kw, kw, limit)).fetchall()
+    """, (kw, kw, kw, kw, kw, limit)).fetchall()
     conn.close()
     return rows
 
@@ -36,7 +39,7 @@ def search(keyword, limit=10):
 def get_by_id(steam_id):
     conn = get_db()
     row = conn.execute("""
-        SELECT m.steam_id, m.title, m.author, m.subscriptions, m.favorites,
+        SELECT m.steam_id, m.title_en, m.author, m.subscriptions, m.favorites,
                m.tags, m.url, m.time_updated
         FROM mods m WHERE m.steam_id = ?
     """, (str(steam_id),)).fetchone()
@@ -47,7 +50,10 @@ def get_by_id(steam_id):
         "SELECT field, zh_text FROM translations WHERE mod_id = (SELECT id FROM mods WHERE steam_id=?)",
         (str(steam_id),)).fetchall()}
     conn.close()
-    return {"meta": row, "trans": trans}
+    # 显示标题：优先中文翻译标题，否则英文原名
+    row = list(row)
+    row[1] = trans.get("title", row[1])
+    return {"meta": tuple(row), "trans": trans}
 
 
 def fmt_time(ts):
@@ -64,10 +70,8 @@ def show_list(rows):
         return
     print(f"{'订阅数':>10} | Mod 名称")
     print("-" * 70)
-    for sid, title, subs, url, summary in rows:
-        # 去掉 (ID) 后缀
-        clean = title.split(" (")[0]
-        print(f"{subs:>10,} | {clean}")
+    for sid, title_en, subs, url, summary, display_title in rows:
+        print(f"{subs:>10,} | {display_title}")
         if summary:
             print(f"{'':>12} | 摘要: {summary[:80]}")
     print()
@@ -82,7 +86,7 @@ def show_detail(sid, full=False):
     sid, title, author, subs, fav, tags, url, updated = d["meta"]
     t = d["trans"]
     print("=" * 70)
-    print(f"📦 {title.split(' (')[0]}")
+    print(f"📦 {title}")
     print(f"ID: {sid}")
     print(f"作者: {author}")
     print(f"订阅: {subs:,}  |  点赞: {fav:,}  |  更新: {fmt_time(updated)}")

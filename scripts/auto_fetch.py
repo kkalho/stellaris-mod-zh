@@ -1,54 +1,51 @@
-"""抓取群星创意工坊热门 Mod 的完整详情（Steam 官方公开 API，无需 Key）
-用法: python fetch_details.py [--limit N]
-输出: data/details.jsonl （每行一个 Mod 的详情 JSON）
+"""自动抓取群星创意工坊热门 Mod 详情（官方 API，无需 Key，支持断点续抓）
+用法: python auto_fetch.py [--limit N] [--sleep 15] [--batch 5]
 """
-import sys, io, json, time, argparse, os
+import sys, io, json, time, argparse, os, re
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 API_URL = "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/"
-BATCH = 100  # 官方 API 单次最多 100 个
 
 
-def fetch_batch(ids):
+def fetch_batch(ids, session):
     payload = {"itemcount": len(ids)}
     for i, fid in enumerate(ids):
         payload[f"publishedfileids[{i}]"] = str(fid)
-    r = requests.post(API_URL, data=payload, timeout=30)
+    r = session.post(API_URL, data=payload, timeout=30)
     r.raise_for_status()
     return r.json()["response"]["publishedfiledetails"]
 
 
 def clean_bbcode(text):
-    """清理 Steam 创意工坊描述的 BBCode 标记"""
     if not text:
         return ""
-    import re
     text = re.sub(r"\[/?[a-zA-Z0-9=#\"' ]*\]", "", text)
     return text.strip()
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--limit", type=int, default=0, help="只处理前 N 个（0=全部）")
-    ap.add_argument("--start", type=int, default=0, help="从第几个开始（断点续抓）")
+    ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--sleep", type=float, default=15, help="批次间等待秒数（Steam 匿名 API 限流严，建议 >=12）")
+    ap.add_argument("--batch", type=int, default=5, help="每批数量（建议 5，避免触发限流）")
     args = ap.parse_args()
+    BATCH = args.batch
 
     import requests
-    global requests
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    })
 
     base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     with open(os.path.join(base, "data", "hot_mods.json"), encoding="utf-8") as f:
         mods = json.load(f)["mods"]
-
     ids = [m["id"] for m in mods]
     if args.limit:
         ids = ids[: args.limit]
-    if args.start:
-        ids = ids[args.start:]
 
     out_path = os.path.join(base, "data", "details.jsonl")
-    # 断点续抓：跳过已存在的
     done = set()
     if os.path.exists(out_path):
         with open(out_path, encoding="utf-8") as f:
@@ -61,21 +58,27 @@ def main():
     pending = [i for i in ids if i not in done]
     print(f"总数 {len(ids)}，已完成 {len(done)}，待抓 {len(pending)}")
 
+    fail_count = 0
     with open(out_path, "a", encoding="utf-8") as out:
         for b in range(0, len(pending), BATCH):
             batch = pending[b : b + BATCH]
             try:
-                items = fetch_batch(batch)
+                items = fetch_batch(batch, session)
                 for it in items:
                     if it.get("result") == 1:
                         it["description_clean"] = clean_bbcode(it.get("description", ""))
                         out.write(json.dumps(it, ensure_ascii=False) + "\n")
                 out.flush()
-                print(f"批次完成 {b + len(batch)}/{len(pending)}")
+                print(f"批次完成 {min(b + len(batch), len(pending))}/{len(pending)}", flush=True)
+                fail_count = 0
             except Exception as e:
-                print(f"批次失败({b}): {e}，稍后重试")
-                time.sleep(3)
-            time.sleep(1)  # 限速
+                fail_count += 1
+                print(f"批次失败({b}): {type(e).__name__} {e}，累计失败 {fail_count} 次", flush=True)
+                if fail_count >= 5:
+                    print("连续失败 5 次，停止（稍后重新运行即可续抓）")
+                    break
+                time.sleep(args.sleep * 5)
+            time.sleep(args.sleep)
 
     print("抓取结束")
 

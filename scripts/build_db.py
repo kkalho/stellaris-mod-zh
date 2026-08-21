@@ -20,6 +20,7 @@ def init_db(conn):
         id            INTEGER PRIMARY KEY,
         steam_id      TEXT UNIQUE NOT NULL,
         title         TEXT NOT NULL,
+        title_en      TEXT,          -- 英文原名（搜索用）
         author        TEXT,
         author_name   TEXT,
         subscriptions INTEGER DEFAULT 0,
@@ -43,6 +44,7 @@ def init_db(conn):
         UNIQUE(mod_id, field)
     );
     CREATE INDEX IF NOT EXISTS idx_mods_title ON mods(title);
+    CREATE INDEX IF NOT EXISTS idx_mods_title_en ON mods(title_en);
     CREATE INDEX IF NOT EXISTS idx_mods_subs ON mods(subscriptions DESC);
     """)
     conn.commit()
@@ -53,6 +55,11 @@ def main():
         rows = [json.loads(l) for l in f if l.strip()]
 
     conn = sqlite3.connect(DB_PATH)
+    # 强制重建（避免旧表结构不匹配）
+    c0 = conn.cursor()
+    c0.execute("DROP TABLE IF EXISTS mods")
+    c0.execute("DROP TABLE IF EXISTS translations")
+    conn.commit()
     init_db(conn)
     c = conn.cursor()
     now = time.strftime("%Y-%m-%d")
@@ -64,13 +71,14 @@ def main():
         steam_id = str(r.get("publishedfileid", ""))
         tags = ",".join(t.get("tag", "") for t in r.get("tags", []))
         url = f"https://steamcommunity.com/sharedfiles/filedetails/?id={steam_id}"
+        title_en = r.get("title", "")
         c.execute("""
             INSERT OR REPLACE INTO mods
-            (steam_id, title, author, subscriptions, favorites,
+            (steam_id, title, title_en, author, subscriptions, favorites,
              time_created, time_updated, tags, url, description, description_clean, fetched_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
         """, (
-            steam_id, r.get("title", ""), r.get("creator", ""),
+            steam_id, title_en, title_en, r.get("creator", ""),
             r.get("subscriptions", 0), r.get("favorited", 0),
             r.get("time_created", 0), r.get("time_updated", 0),
             tags, url, r.get("description", ""), r.get("description_clean", ""), now,
