@@ -70,6 +70,26 @@ def get_db():
     return sqlite3.connect(DB_PATH)
 
 
+def calc_score(subs, fav):
+    """综合评分 0-10：好评率(点赞/订阅)映射 + 订阅量修正
+    公式：4.0 + 好评率(封顶15%)/15%*5.5，10万+订阅加0.5、5万+加0.3
+    """
+    try:
+        subs = int(subs or 0)
+        fav = int(fav or 0)
+    except (ValueError, TypeError):
+        return 0.0
+    if subs <= 0:
+        return 0.0
+    ratio = fav / subs
+    s = 4.0 + (min(ratio, 0.15) / 0.15) * 5.5
+    if subs >= 100000:
+        s += 0.5
+    elif subs >= 50000:
+        s += 0.3
+    return round(min(s, 10.0), 1)
+
+
 def tags_to_zh(tags_str):
     """把 'Graphics,Gameplay' 转成 'Graphics（画面美化）, Gameplay（玩法内容）'"""
     if not tags_str:
@@ -100,7 +120,8 @@ def search(keyword, limit=60, sort="subs", tag=None):
     sql = """
         SELECT m.steam_id, m.title, m.title_en, m.subscriptions, m.url, m.author,
                COALESCE(tsum.zh_text, '') as summary, m.tags,
-               COALESCE(ttitle.zh_text, m.title_en) as display_title, m.preview_url, m.status
+               COALESCE(ttitle.zh_text, m.title_en) as display_title, m.preview_url, m.status,
+               m.favorites
         FROM mods m
         LEFT JOIN translations tsum ON tsum.mod_id = m.id AND tsum.field = 'summary'
         LEFT JOIN translations ttitle ON ttitle.mod_id = m.id AND ttitle.field = 'title'
@@ -127,7 +148,8 @@ def search(keyword, limit=60, sort="subs", tag=None):
     return [{"id": r[0], "title": r[8], "title_en": r[2], "subs": r[3],
              "url": r[4], "author": r[5], "summary": r[6],
              "tags": r[7], "tags_zh": tags_to_zh(r[7]), "preview": r[9],
-             "status": r[10] if len(r) > 10 else None} for r in rows]
+             "status": r[10] if len(r) > 10 else None,
+             "score": calc_score(r[3], r[11]) if len(r) > 11 else 0.0} for r in rows]
 
 
 def get_categories():
@@ -208,6 +230,8 @@ def get_detail(steam_id):
         "reviews": trans.get("reviews", ""),
         "compat": parse_compat(row[10]) if len(row) > 10 else None,
         "status": row[11] if len(row) > 11 else None,
+        "score": calc_score(row[4], row[5]),
+        "like_ratio": round(row[5] / row[4] * 100, 1) if row[4] else 0,
     }
 
 

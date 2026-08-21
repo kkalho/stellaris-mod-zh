@@ -131,6 +131,13 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
   border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
   font-size: 13px; color: #f09595; line-height: 1.6;
 }
+.score-pill {
+  display: inline-block; font-size: 12px; padding: 1px 9px; border-radius: 12px;
+  background: rgba(100,140,255,.15); color: #9fc0ff; border: 1px solid rgba(100,140,255,.3);
+  margin-left: 8px;
+}
+.score-pill.high { background: rgba(151,196,89,.15); color: #c0dd97; border-color: rgba(151,196,89,.35); }
+.score-pill.mid { background: rgba(239,159,39,.15); color: #f5c775; border-color: rgba(239,159,39,.35); }
 .detail .summary-text { font-size: 14px; line-height: 1.8; color: #c8cfdd; }
 .detail .desc-text { font-size: 14px; line-height: 1.9; color: #b8c0d0; white-space: pre-wrap; }
 .features { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -243,6 +250,11 @@ function statusWarn(s) {
   if (!s || !STATUS_LABEL[s]) return '';
   return `<div class="status-warn">⚠ 注意：此 Mod 已被标记为「${esc(STATUS_LABEL[s])}」，可能不再适配最新版本的游戏，安装前请确认。</div>`;
 }
+function scorePill(sc) {
+  if (!sc) return '';
+  const cls = sc >= 8 ? 'high' : (sc >= 7 ? 'mid' : '');
+  return `<span class="score-pill ${cls}">⭐ ${sc.toFixed(1)}</span>`;
+}
 
 async function loadStats() {
   const s = await api('/api/stats');
@@ -322,7 +334,7 @@ function renderList(rows, title) {
       <div class="body">
         <div class="top">
           <div class="name">${esc(m.title)}${statusBadge(m.status)}</div>
-          <div class="subs">🛰 ${fmt(m.subs)} 订阅</div>
+          <div class="subs">🛰 ${fmt(m.subs)} 订阅${scorePill(m.score)}</div>
         </div>
         ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
         <div class="id">Steam ID: ${m.id}${m.tags_zh ? ' · ' + esc(m.tags_zh) : (m.tags ? ' · ' + esc(m.tags) : '')}</div>
@@ -361,6 +373,8 @@ async function showDetail(id) {
       <h2>${esc(d.title)}${statusBadge(d.status)}</h2>
       ${d.title_en && d.title_en !== d.title ? `<div style="color:#8a93a8;font-size:13px;margin-top:-6px;margin-bottom:14px">英文名：${esc(d.title_en)}</div>` : ''}
       <div class="meta">
+        <div class="meta-item"><div class="k">综合评分</div><div class="v">⭐ ${d.score ? d.score.toFixed(1) : '-'} / 10</div></div>
+        <div class="meta-item"><div class="k">好评率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
         <div class="meta-item"><div class="k">作者</div><div class="v">${esc(d.author)}</div></div>
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">点赞数</div><div class="v">${fmt(d.fav)}</div></div>
