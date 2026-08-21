@@ -20,18 +20,29 @@ def get_db():
 
 def search(keyword, limit=10):
     conn = get_db()
-    kw = f"%{keyword}%"
-    rows = conn.execute("""
+    # 按空格拆词，每个词都必须匹配
+    words = [w for w in keyword.split() if w.strip()]
+    conditions, params = [], []
+    for w in words:
+        kw = f"%{w}%"
+        conditions.append(
+            "(m.title_en LIKE ? OR m.title LIKE ? OR m.steam_id LIKE ? "
+            "OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ?)")
+        params.extend([kw, kw, kw, kw, kw])
+    if not conditions:
+        conditions.append("(m.title_en != '' OR m.title != '')")
+    sql = """
         SELECT m.steam_id, m.title_en, m.subscriptions, m.url,
                COALESCE(tsum.zh_text, '') as summary,
                COALESCE(ttitle.zh_text, m.title_en) as display_title
         FROM mods m
         LEFT JOIN translations tsum ON tsum.mod_id = m.id AND tsum.field = 'summary'
         LEFT JOIN translations ttitle ON ttitle.mod_id = m.id AND ttitle.field = 'title'
-        WHERE m.title_en LIKE ? OR m.title LIKE ? OR m.steam_id LIKE ?
-              OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ?
+        WHERE """ + " AND ".join(conditions) + """
         ORDER BY m.subscriptions DESC LIMIT ?
-    """, (kw, kw, kw, kw, kw, limit)).fetchall()
+    """
+    params.append(limit)
+    rows = conn.execute(sql, params).fetchall()
     conn.close()
     return rows
 

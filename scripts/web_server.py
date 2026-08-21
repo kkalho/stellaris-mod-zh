@@ -20,9 +20,8 @@ def get_db():
 
 
 def search(keyword, limit=60, sort="subs", tag=None):
-    """搜索 + 排序 + 标签过滤（同时匹配英文原名与中文字段）"""
+    """搜索 + 排序 + 标签过滤（同时匹配英文原名与中文字段，支持多词拆词搜索）"""
     conn = get_db()
-    kw = f"%{keyword}%"
     order_map = {
         "subs": "m.subscriptions DESC",
         "subs_asc": "m.subscriptions ASC",
@@ -30,6 +29,9 @@ def search(keyword, limit=60, sort="subs", tag=None):
         "name": "m.title_en ASC",
     }
     order = order_map.get(sort, order_map["subs"])
+
+    # 按空格拆词，每个词都必须匹配（AND 逻辑）
+    words = [w for w in keyword.split() if w.strip()]
     sql = """
         SELECT m.steam_id, m.title, m.title_en, m.subscriptions, m.url, m.author,
                COALESCE(tsum.zh_text, '') as summary, m.tags,
@@ -37,11 +39,17 @@ def search(keyword, limit=60, sort="subs", tag=None):
         FROM mods m
         LEFT JOIN translations tsum ON tsum.mod_id = m.id AND tsum.field = 'summary'
         LEFT JOIN translations ttitle ON ttitle.mod_id = m.id AND ttitle.field = 'title'
-        WHERE (m.title_en LIKE ? OR m.title LIKE ?
-               OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ?
-               OR m.steam_id LIKE ?)
     """
-    params = [kw, kw, kw, kw, kw]
+    conditions, params = [], []
+    for w in words:
+        kw = f"%{w}%"
+        conditions.append(
+            "(m.title_en LIKE ? OR m.title LIKE ? OR m.steam_id LIKE ? "
+            "OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ?)")
+        params.extend([kw, kw, kw, kw, kw])
+    if not conditions:
+        conditions.append("(m.title_en != '' OR m.title != '')")
+    sql += " WHERE " + " AND ".join(conditions)
     if tag:
         sql += " AND m.tags LIKE ?"
         params.append(f"%{tag}%")
