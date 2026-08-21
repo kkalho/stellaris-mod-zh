@@ -156,11 +156,21 @@ def get_stats():
     return {"total": total, "subs": subs, "translated": translated}
 
 
+def parse_compat(json_str):
+    """解析 compat_json 字段为结构化数据"""
+    if not json_str:
+        return None
+    try:
+        return json.loads(json_str)
+    except Exception:
+        return None
+
+
 def get_detail(steam_id):
     conn = get_db()
     row = conn.execute("""
         SELECT m.steam_id, m.title, m.title_en, m.author, m.subscriptions, m.favorites,
-               m.tags, m.url, m.time_updated, m.preview_url
+               m.tags, m.url, m.time_updated, m.preview_url, m.compat_json
         FROM mods m WHERE m.steam_id = ?
     """, (str(steam_id),)).fetchone()
     if not row:
@@ -195,6 +205,7 @@ def get_detail(steam_id):
         "features": features,
         "gameplay": trans.get("gameplay", ""),
         "reviews": trans.get("reviews", ""),
+        "compat": parse_compat(row[10]) if len(row) > 10 else None,
     }
 
 

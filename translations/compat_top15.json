@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "game": "Stellaris",
+    "note": "兼容性数据来源：Steam 创意工坊作者描述、Paradox 官方 Wiki（stellaris.paradoxwikis.com）、社区兼容补丁整理（smods.ru/steam）、Paradox 论坛。标注 '官方补丁' 的表示有作者发布的专门兼容补丁。",
+    "updated": "2026-08-22"
+  },
+  "compat": [
+    {
+      "steam_id": "1623423360",
+      "requires": [],
+      "conflicts": [
+        {"name": "其他大型 UI 重做模组", "note": "同一界面文件冲突，只保留一个 UI 模组"}
+      ],
+      "best_with": [
+        {"id": "2411818376", "name": "深蓝 UI 重制", "note": "UOD 的配套皮肤，官方推荐组合"},
+        {"id": "819148835", "name": "星球多样性", "note": "有官方兼容补丁（UOD+PD）"},
+        {"id": "1121692237", "name": "巨构工程", "note": "有官方兼容补丁（UOD+Giga）"}
+      ],
+      "notes": "加载顺序：放模组列表最底部。Planet Viewer 类模组（Bigger Planet View / PD Planet View）只能选一个，互斥。4K 用户 UI 缩放建议 1.0-1.5。",
+      "has_patches": ["UOD+PD 补丁", "UOD+Giga 补丁", "UOD+DarkUI+PD 补丁"]
+    },
+    {
+      "steam_id": "1121692237",
+      "requires": [
+        {"name": "!!!Universal Resource Patch", "note": "社区推荐搭配，解决战略资源显示"}
+      ],
+      "conflicts": [
+        {"id": "2660548454", "name": "奇迹时代（Age of Wonder）", "note": "同类巨型建筑模组，作者明确建议二选一"},
+        {"name": "改 habitable_structure 触发器的模组", "note": "Giga 覆盖此脚本触发器，可能有冲突"}
+      ],
+      "best_with": [
+        {"id": "1623423360", "name": "UI Overhaul Dynamic", "note": "有官方兼容补丁"},
+        {"id": "937289339", "name": "Real Space", "note": "有社区兼容补丁（解决巨型恒星穿模）"},
+        {"id": "1419304439", "name": "ACOT", "note": "搭配体验佳，但后期强度爆炸需谨慎"}
+      ],
+      "notes": "与 Real Space 搭配时需装 Real Space-Giga 兼容补丁，并放在两者下方。巨构环绕巨型恒星会穿模（Dyson 环等）。",
+      "has_patches": ["Real Space-Giga Patch", "UOD-Giga Patch", "Hyperconstructs Patch"]
+    },
+    {
+      "steam_id": "819148835",
+      "requires": [],
+      "conflicts": [
+        {"name": "其他星球立绘/行星系统重做模组", "note": "同类型模组可能冲突"}
+      ],
+      "best_with": [
+        {"id": "1623423360", "name": "UI Overhaul Dynamic", "note": "有官方兼容补丁"},
+        {"name": "PD 系列子模组", "note": "Unique Worlds / Gaia Worlds / Exotic Worlds 等官方系列搭配"},
+        {"name": "Stellaris+", "note": "有社区兼容补丁"}
+      ],
+      "notes": "PD 系列（Unique/Exotic/Gaia/Arcologies/Ascension Worlds）多数独立运行，可自由组合。与 UOD 搭配需要兼容补丁。",
+      "has_patches": ["UOD+PD 补丁", "PD+Stellaris+ 补丁"]
+    },
+    {
+      "steam_id": "937289339",
+      "requires": [],
+      "conflicts": [
+        {"name": "改恒星类型/星系生成的模组", "note": "作者建议把 RS 系列放模组列表最底部"}
+      ],
+      "best_with": [
+        {"id": "1121692237", "name": "巨构工程", "note": "有兼容补丁，需正确排序"},
+        {"name": "Real Space 系列子模组", "note": "System Scale / Star Cluster / Solar Storm 等官方系列"},
+        {"id": "1887282318", "name": "Real Space - System Scale", "note": "官方子模组，需放主模组下方"}
+      ],
+      "notes": "加载顺序：所有 RS 模组放模组列表最底部，RS 主模组在子模组上方。与 ASB（Amazing Space Battles）作者都锁定 3.8.x 稳定支持。",
+      "has_patches": ["Real Space-Giga Patch"]
+    },
+    {
+      "steam_id": "683230077",
+      "requires": [],
+      "conflicts": [
+        {"name": "ISB（Improved Space Battles）", "note": "同类舰船扩展，功能重叠可能冲突"},
+        {"name": "其他舰船部件大改模组", "note": "建议只用一套舰船扩展"}
+      ],
+      "best_with": [
+        {"id": "1623423360", "name": "UI Overhaul Dynamic", "note": "UOD 的舰船设计器支持 NSC 新船级"},
+        {"id": "751394361", "name": "Sins of the Prophets", "note": "有官方 NSC 兼容补丁"},
+        {"id": "1321344591", "name": "NSC3 中文翻译", "note": "汉化包，放在 NSC3 之后加载"}
+      ],
+      "notes": "NSC3 持续维护，适配 4.4。生物舰系统独立，与机械舰船不冲突。NSC 高级舰船行为已移除，推荐 Spacefleet Tactica 替代。",
+      "has_patches": ["SotP-NSC Patch", "NSC 汉化包"]
+    },
+    {
+      "steam_id": "727000451",
+      "requires": [],
+      "conflicts": [],
+      "best_with": [
+        {"id": "1641807098", "name": "扩展事件", "note": "作者推荐搭配，事件量翻倍"}
+      ],
+      "notes": "与扩展事件、动态政治事件搭配效果最佳，事件类型互补不冲突。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "1595876588",
+      "requires": [],
+      "conflicts": [],
+      "best_with": [
+        {"id": "1121692237", "name": "巨构工程", "note": "解决 Giga 等大型模组的资源显示"},
+        {"id": "1419304439", "name": "ACOT", "note": "ACOT 系列搭配需求"}
+      ],
+      "notes": "兼容补丁型模组，本身无玩法。遇到加载问题时把它移到列表底部、禁用再启用。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "1199002146",
+      "requires": [],
+      "conflicts": [
+        {"id": "1067631798", "name": "扩展群星飞升", "note": "同类飞升扩展，功能重叠"}
+      ],
+      "best_with": [
+        {"id": "2438313459", "name": "工整传统", "note": "作者推荐搭配，界面更整洁"}
+      ],
+      "notes": "飞升槽上限提升至 24，配合飞升槽扩展 UI 模组效果更好。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "2466607238",
+      "requires": [],
+      "conflicts": [],
+      "best_with": [
+        {"name": "Kasako 系列模组", "note": "深蓝 UI / 沉浸式系列等的前置框架"}
+      ],
+      "notes": "框架型模组，Kasako 系列（深蓝 UI、沉浸式天空盒等）的前置依赖。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "684509615",
+      "requires": [],
+      "conflicts": [
+        {"id": "1623423360", "name": "UI Overhaul Dynamic", "note": "同系列新旧版本，只能装一个"}
+      ],
+      "best_with": [],
+      "notes": "已弃用（Depricated），作者推荐迁移到 UI Overhaul Dynamic。仅旧版本可用。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "697938908",
+      "requires": [],
+      "conflicts": [
+        {"name": "新增恒星类型的模组", "note": "作者说明与新增恒星分类的模组可能有兼容问题"}
+      ],
+      "best_with": [],
+      "notes": "纯视觉天空盒模组。与 Real Space 等改星系的模组可能有冲突。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "865040033",
+      "requires": [],
+      "conflicts": [],
+      "best_with": [
+        {"id": "1793768254", "name": "Guilli 科技", "note": "作者同系列，搭配推荐"},
+        {"name": "Guilli 探索与扩张", "note": "作者同系列模组"}
+      ],
+      "notes": "Guilli 系列核心模组，与作者其他模组联动性强。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "2131014154",
+      "requires": [],
+      "conflicts": [
+        {"name": "其他大型汉化模组", "note": "同时装多个汉化可能文本冲突，建议只用一个主汉化"}
+      ],
+      "best_with": [
+        {"id": "1121692237", "name": "巨构工程（独立汉化包）", "note": "鸽组有独立汉化包含配置菜单"}
+      ],
+      "notes": "中文玩家的主汉化。下属独立汉化模组覆盖巨构工程等知名模组。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "2475302050",
+      "requires": [
+        {"id": "2466607238", "name": "Kasako 核心框架", "note": "Kasako 系列前置"}
+      ],
+      "conflicts": [
+        {"name": "其他改人口机制的模组", "note": "人口增长控制可能冲突"}
+      ],
+      "best_with": [
+        {"name": "Kasako 系列模组", "note": "同系列搭配"}
+      ],
+      "notes": "后期性能优化模组，流畅度最高提升 75%。部分功能默认关闭需手动开启。",
+      "has_patches": []
+    },
+    {
+      "steam_id": "2411818376",
+      "requires": [
+        {"id": "1623423360", "name": "UI Overhaul Dynamic", "note": "强制前置，排序在 DBUI 上方"}
+      ],
+      "conflicts": [],
+      "best_with": [
+        {"id": "1623423360", "name": "UI Overhaul Dynamic", "note": "官方指定搭配"},
+        {"id": "1121692237", "name": "巨构工程（需通用补丁）", "note": "有 Universal Patch 兼容"}
+      ],
+      "notes": "深蓝 UI 系列皮肤，赛博朋克蓝色风格。需要 UOD 才能运行。",
+      "has_patches": ["DBUI Universal Patch"]
+    },
+    {
+      "steam_id": "1878473679",
+      "requires": [],
+      "conflicts": [
+        {"name": "其他武器特效模组", "note": "特效可能叠加冲突"}
+      ],
+      "best_with": [
+        {"id": "1468105710", "name": "ASB 更多粒子", "note": "官方附加包"},
+        {"name": "Epic Explosions", "note": "爆炸特效叠加，视觉更震撼"}
+      ],
+      "notes": "太空战画面大型图形模组。作者与 Real Space 都锁定 3.8.x 稳定支持（3.10+ 可能有问题）。",
+      "has_patches": []
+    }
+  ]
+}

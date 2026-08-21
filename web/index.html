@@ -107,6 +107,17 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 .detail .meta-item .k { font-size: 11px; color: #5a6478; }
 .detail .meta-item .v { font-size: 14px; color: #d8dde8; margin-top: 2px; }
 .detail h3 { color: #6fa8ff; font-size: 15px; margin: 18px 0 8px; }
+.compat-block { background: rgba(10,16,30,.55); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+.compat-block .cb-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.compat-block.conflict .cb-title { color: #f09595; }
+.compat-block.require .cb-title { color: #fac775; }
+.compat-block.best .cb-title { color: #97c459; }
+.compat-item { font-size: 13px; line-height: 1.7; color: #b8c0d0; }
+.compat-item .ci-name { color: #d8dde8; }
+.compat-item .ci-note { color: #8a93a8; }
+.compat-note { font-size: 12.5px; color: #8a93a8; line-height: 1.7; margin-top: 10px; padding: 10px 12px; background: rgba(60,110,220,.08); border-radius: 8px; border-left: 3px solid rgba(100,140,255,.4); }
+.compat-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.compat-tag { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: rgba(60,110,220,.15); color: #9fc0ff; border: 1px solid rgba(100,140,255,.25); }
 .detail .summary-text { font-size: 14px; line-height: 1.8; color: #c8cfdd; }
 .detail .desc-text { font-size: 14px; line-height: 1.9; color: #b8c0d0; white-space: pre-wrap; }
 .features { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -333,6 +344,25 @@ async function showDetail(id) {
     html += `<h3>✨ 特色</h3><div class="features">${d.features.map(f => `<span class="feature">${esc(f)}</span>`).join('')}</div>`;
   }
   if (d.gameplay) html += `<h3>🎮 具体玩法</h3><div class="desc-text">${esc(d.gameplay)}</div>`;
+  if (d.compat) {
+    html += `<h3>🔗 兼容性</h3>`;
+    if (d.compat.conflicts && d.compat.conflicts.length) {
+      html += `<div class="compat-block conflict"><div class="cb-title">⚠️ 冲突 / 注意</div>${d.compat.conflicts.map(c =>
+        `<div class="compat-item"><span class="ci-name">${esc(c.name || c.id || '')}</span>${c.note ? ` — <span class="ci-note">${esc(c.note)}</span>` : ''}</div>`).join('')}</div>`;
+    }
+    if (d.compat.requires && d.compat.requires.length) {
+      html += `<div class="compat-block require"><div class="cb-title">🔒 依赖前置</div>${d.compat.requires.map(c =>
+        `<div class="compat-item"><span class="ci-name">${esc(c.name || '')}</span>${c.note ? ` — <span class="ci-note">${esc(c.note)}</span>` : ''}</div>`).join('')}</div>`;
+    }
+    if (d.compat.best_with && d.compat.best_with.length) {
+      html += `<div class="compat-block best"><div class="cb-title">✅ 最佳搭配</div>${d.compat.best_with.map(c =>
+        `<div class="compat-item"><span class="ci-name">${esc(c.name || '')}</span>${c.note ? ` — <span class="ci-note">${esc(c.note)}</span>` : ''}</div>`).join('')}</div>`;
+    }
+    if (d.compat.notes) html += `<div class="compat-note">📌 ${esc(d.compat.notes)}</div>`;
+    if (d.compat.has_patches && d.compat.has_patches.length) {
+      html += `<div class="compat-tags">${d.compat.has_patches.map(p => `<span class="compat-tag">🧩 ${esc(p)}</span>`).join('')}</div>`;
+    }
+  }
   if (d.description) html += `<h3>📄 详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
   if (d.reviews) html += `<h3>💬 玩家评价</h3><div class="desc-text">${esc(d.reviews)}</div>`;
   html += `<a class="link" href="${d.url}" target="_blank">在 Steam 创意工坊查看原文 ↗</a></div>`;
