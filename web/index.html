@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群星 Mod 中文手册</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: #0a0e1a;
+  color: #d8dde8;
+  min-height: 100vh;
+}
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+header {
+  position: relative; z-index: 1;
+  padding: 28px 20px 20px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(20,30,60,.6), transparent);
+}
+header h1 {
+  font-size: 26px; color: #e8edf8; letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(80,120,255,.4);
+}
+header h1 span { color: #6fa8ff; }
+header p { color: #8a93a8; margin-top: 6px; font-size: 13px; }
+.search-box { position: relative; z-index: 1; max-width: 640px; margin: 20px auto; padding: 0 20px; }
+.search-row { display: flex; gap: 10px; }
+.search-row input {
+  flex: 1; padding: 13px 18px; font-size: 15px;
+  background: rgba(20,28,50,.85); color: #e8edf8;
+  border: 1px solid rgba(100,140,255,.25); border-radius: 10px;
+  outline: none; transition: border-color .2s;
+}
+.search-row input:focus { border-color: rgba(100,140,255,.6); }
+.search-row input::placeholder { color: #5a6478; }
+.search-row button {
+  padding: 13px 26px; font-size: 15px; cursor: pointer;
+  background: linear-gradient(135deg, #3a6bd8, #2a4fae);
+  color: #fff; border: none; border-radius: 10px;
+  transition: transform .15s, box-shadow .15s;
+}
+.search-row button:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(60,110,220,.35); }
+.hint { text-align: center; color: #5a6478; font-size: 12px; margin-top: 10px; }
+main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 10px 20px 60px; }
+.stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 10px 0 24px; }
+.stat {
+  background: rgba(20,28,50,.7); border: 1px solid rgba(100,140,255,.15);
+  border-radius: 12px; padding: 12px 22px; text-align: center; min-width: 120px;
+}
+.stat .num { font-size: 20px; color: #6fa8ff; font-weight: 600; }
+.stat .label { font-size: 12px; color: #8a93a8; margin-top: 4px; }
+.list-title { color: #9aa4bc; font-size: 14px; margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; }
+.list-title::after { content: ""; flex: 1; height: 1px; background: rgba(100,140,255,.15); }
+.mod-card {
+  background: rgba(20,28,50,.75); border: 1px solid rgba(100,140,255,.12);
+  border-radius: 12px; padding: 16px 18px; margin-bottom: 10px;
+  cursor: pointer; transition: background .2s, border-color .2s, transform .15s;
+}
+.mod-card:hover { background: rgba(28,40,70,.85); border-color: rgba(100,140,255,.4); transform: translateY(-1px); }
+.mod-card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.mod-card .name { font-size: 15px; color: #e8edf8; font-weight: 500; }
+.mod-card .subs { font-size: 13px; color: #6fa8ff; white-space: nowrap; }
+.mod-card .summary { font-size: 13px; color: #9aa4bc; margin-top: 6px; line-height: 1.6; }
+.mod-card .id { font-size: 11px; color: #5a6478; margin-top: 6px; }
+.detail {
+  background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25);
+  border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
+}
+.detail h2 { color: #e8edf8; font-size: 20px; margin-bottom: 12px; }
+.detail .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.detail .meta-item { background: rgba(10,16,30,.6); border-radius: 8px; padding: 8px 12px; }
+.detail .meta-item .k { font-size: 11px; color: #5a6478; }
+.detail .meta-item .v { font-size: 14px; color: #d8dde8; margin-top: 2px; }
+.detail h3 { color: #6fa8ff; font-size: 15px; margin: 18px 0 8px; }
+.detail .summary-text { font-size: 14px; line-height: 1.8; color: #c8cfdd; }
+.detail .desc-text { font-size: 14px; line-height: 1.9; color: #b8c0d0; white-space: pre-wrap; }
+.features { display: flex; flex-wrap: wrap; gap: 8px; }
+.feature {
+  background: rgba(60,110,220,.15); border: 1px solid rgba(100,140,255,.3);
+  color: #9fc0ff; border-radius: 20px; padding: 4px 14px; font-size: 13px;
+}
+.detail .link { display: inline-block; margin-top: 16px; color: #6fa8ff; text-decoration: none; font-size: 13px; }
+.detail .link:hover { text-decoration: underline; }
+.back-btn {
+  margin-bottom: 14px; padding: 8px 16px; font-size: 13px; cursor: pointer;
+  background: transparent; color: #8a93a8; border: 1px solid rgba(100,140,255,.25);
+  border-radius: 8px; transition: color .2s, border-color .2s;
+}
+.back-btn:hover { color: #e8edf8; border-color: rgba(100,140,255,.5); }
+.loading { text-align: center; color: #5a6478; padding: 40px 0; font-size: 14px; }
+footer { position: relative; z-index: 1; text-align: center; color: #4a5468; font-size: 12px; padding: 20px; }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<header>
+  <h1>⭐ <span>群星 Mod</span> 中文手册</h1>
+  <p>Stellaris Workshop 热门 Mod 中文知识库 · 输入关键词即可查询（中英文均可）</p>
+</header>
+
+<div class="search-box">
+  <div class="search-row">
+    <input id="kw" type="text" placeholder="输入 Mod 名称或关键词，如：巨构 / giga / 星球多样性 / UI" onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">查询</button>
+  </div>
+  <div class="hint">支持中英文混合搜索 · 点击结果卡片查看完整中文介绍</div>
+</div>
+
+<main>
+  <div class="stats" id="stats"></div>
+  <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
+</main>
+
+<footer>数据来源：Steam 创意工坊公开数据 · 由 AI 翻译整理 · 仅供学习交流</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+let allTop = [];
+
+async function api(path) {
+  const r = await fetch(path);
+  return r.json();
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : s;
+  return d.innerHTML;
+}
+
+function fmt(n) {
+  if (n >= 10000) return (n / 10000).toFixed(1) + ' 万';
+  return n.toLocaleString();
+}
+
+async function loadStats() {
+  const r = await api('/api/top?n=90');
+  const total = r.results.length;
+  const sumSubs = r.results.reduce((a, b) => a + (b.subs || 0), 0);
+  $('stats').innerHTML = `
+    <div class="stat"><div class="num">${total}</div><div class="label">已收录 Mod</div></div>
+    <div class="stat"><div class="num">${fmt(sumSubs)}</div><div class="label">累计订阅</div></div>
+    <div class="stat"><div class="num">100%</div><div class="label">中文覆盖</div></div>`;
+}
+
+function renderList(rows, title) {
+  if (!rows || rows.length === 0) {
+    $('content').innerHTML = '<div class="loading">未找到匹配的 Mod，换个关键词试试</div>';
+    return;
+  }
+  let html = `<div class="list-title">${esc(title)}（${rows.length} 条）</div>`;
+  rows.forEach(m => {
+    html += `
+    <div class="mod-card" onclick="showDetail('${m.id}')">
+      <div class="top">
+        <div class="name">${esc(m.title)}</div>
+        <div class="subs">🛰 ${fmt(m.subs)} 订阅</div>
+      </div>
+      ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
+      <div class="id">Steam ID: ${m.id}</div>
+    </div>`;
+  });
+  $('content').innerHTML = html;
+}
+
+async function doSearch() {
+  const kw = $('kw').value.trim();
+  if (!kw) return;
+  $('content').innerHTML = '<div class="loading">正在搜索...</div>';
+  const r = await api('/api/search?q=' + encodeURIComponent(kw));
+  renderList(r.results, `“${kw}” 的搜索结果`);
+}
+
+async function showDetail(id) {
+  $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
+  const d = await api('/api/mod?id=' + id);
+  if (d.error) { $('content').innerHTML = '<div class="loading">未找到该 Mod</div>'; return; }
+  let html = `
+    <button class="back-btn" onclick="loadTop()">← 返回列表</button>
+    <div class="detail">
+      <h2>${esc(d.title)}</h2>
+      <div class="meta">
+        <div class="meta-item"><div class="k">作者</div><div class="v">${esc(d.author)}</div></div>
+        <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
+        <div class="meta-item"><div class="k">点赞数</div><div class="v">${fmt(d.fav)}</div></div>
+        <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
+        <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags || '-')}</div></div>
+        <div class="meta-item"><div class="k">Steam ID</div><div class="v">${d.id}</div></div>
+      </div>`;
+  if (d.summary) html += `<h3>简介</h3><div class="summary-text">${esc(d.summary)}</div>`;
+  if (d.features && d.features.length) {
+    html += `<h3>特色</h3><div class="features">${d.features.map(f => `<span class="feature">${esc(f)}</span>`).join('')}</div>`;
+  }
+  if (d.description) html += `<h3>详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
+  html += `<a class="link" href="${d.url}" target="_blank">在 Steam 创意工坊查看原文 ↗</a></div>`;
+  $('content').innerHTML = html;
+}
+
+async function loadTop() {
+  $('content').innerHTML = '<div class="loading">正在加载热门 Mod 列表...</div>';
+  const r = await api('/api/top?n=30');
+  renderList(r.results, '🔥 订阅量 Top 30');
+}
+
+function makeStars() {
+  let html = '';
+  for (let i = 0; i < 120; i++) {
+    const x = Math.random() * 100, y = Math.random() * 100, s = Math.random() * 1.5 + 0.5;
+    const o = Math.random() * 0.6 + 0.2;
+    html += `<div style="position:absolute;left:${x}%;top:${y}%;width:${s}px;height:${s}px;background:#fff;border-radius:50%;opacity:${o}"></div>`;
+  }
+  $('stars').innerHTML = html;
+}
+
+makeStars();
+loadStats();
+loadTop();
+</script>
+</body>
+</html>
