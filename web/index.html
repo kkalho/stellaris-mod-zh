@@ -73,15 +73,30 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 .list-title::after { content: ""; flex: 1; height: 1px; background: rgba(100,140,255,.15); }
 .mod-card {
   background: rgba(20,28,50,.75); border: 1px solid rgba(100,140,255,.12);
-  border-radius: 12px; padding: 16px 18px; margin-bottom: 10px;
+  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
   cursor: pointer; transition: background .2s, border-color .2s, transform .15s;
+  display: flex; gap: 14px; align-items: flex-start;
 }
 .mod-card:hover { background: rgba(28,40,70,.85); border-color: rgba(100,140,255,.4); transform: translateY(-1px); }
+.mod-card .thumb {
+  width: 130px; height: 74px; flex-shrink: 0; border-radius: 8px;
+  background: rgba(10,16,30,.6); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.mod-card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mod-card .thumb .noimg { font-size: 11px; color: #5a6478; }
+.mod-card .body { flex: 1; min-width: 0; }
 .mod-card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .mod-card .name { font-size: 15px; color: #e8edf8; font-weight: 500; }
 .mod-card .subs { font-size: 13px; color: #6fa8ff; white-space: nowrap; }
 .mod-card .summary { font-size: 13px; color: #9aa4bc; margin-top: 6px; line-height: 1.6; }
 .mod-card .id { font-size: 11px; color: #5a6478; margin-top: 6px; }
+.detail-preview {
+  border-radius: 10px; overflow: hidden; margin-bottom: 16px;
+  background: rgba(10,16,30,.6); max-height: 320px;
+  display: flex; align-items: center; justify-content: center;
+}
+.detail-preview img { width: 100%; max-height: 320px; object-fit: cover; display: block; }
 .detail {
   background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25);
   border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
@@ -259,14 +274,20 @@ function renderList(rows, title) {
   }
   let html = `<div class="list-title">${esc(title)}</div>`;
   rows.forEach(m => {
+    const thumb = m.preview
+      ? `<div class="thumb"><img src="${esc(m.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>`
+      : `<div class="thumb"><span class="noimg">无预览图</span></div>`;
     html += `
     <div class="mod-card" onclick="showDetail('${m.id}')">
-      <div class="top">
-        <div class="name">${esc(m.title)}</div>
-        <div class="subs">🛰 ${fmt(m.subs)} 订阅</div>
+      ${thumb}
+      <div class="body">
+        <div class="top">
+          <div class="name">${esc(m.title)}</div>
+          <div class="subs">🛰 ${fmt(m.subs)} 订阅</div>
+        </div>
+        ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
+        <div class="id">Steam ID: ${m.id}${m.tags_zh ? ' · ' + esc(m.tags_zh) : (m.tags ? ' · ' + esc(m.tags) : '')}</div>
       </div>
-      ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
-      <div class="id">Steam ID: ${m.id}${m.tags_zh ? ' · ' + esc(m.tags_zh) : (m.tags ? ' · ' + esc(m.tags) : '')}</div>
     </div>`;
   });
   $('content').innerHTML = html;
@@ -296,6 +317,7 @@ async function showDetail(id) {
   let html = `
     <button class="back-btn" onclick="backToList()">← 返回列表</button>
     <div class="detail">
+      ${d.preview ? `<div class="detail-preview"><img src="${esc(d.preview)}" alt="" onerror="this.parentNode.style.display='none'"></div>` : ''}
       <h2>${esc(d.title)}</h2>
       ${d.title_en && d.title_en !== d.title ? `<div style="color:#8a93a8;font-size:13px;margin-top:-6px;margin-bottom:14px">英文名：${esc(d.title_en)}</div>` : ''}
       <div class="meta">
