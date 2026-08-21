@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "game": "Stellaris",
+    "language": "zh-CN",
+    "type": "gameplay_verified_deep",
+    "note": "基于 Steam 创意工坊作者原文深度提炼，标注核实日期",
+    "updated": "2026-08-22"
+  },
+  "translations": [
+    {
+      "steam_id": "1419304439",
+      "gameplay_zh": "【具体玩法】（按 Steam 原文深度核实）\n远古科技宝库（Ancient Cache of Technologies，简称 ACOT）探索远古先驱者的故事——包括馆长（Curators）、堕落帝国，以及更早的文明。\n\n作者原文核心内容：\n• 剧情设定：堕落帝国自认为掌握了「谜之能量」（Enigmatic Power），暗物质与能量武器天下无敌。但如果有一个帝国崛起并学会他们的秘密，超越已知知识，开创被认为不可能的未来？\n• 大量基于谜之能量的全新科技：从舰船武器、建筑、军队到行星决议\n• 科技分层级（Tiers）：随着探索推进逐步解锁更强大科技\n• 有官方 Wiki（stellarisacot.wiki.gg）\n• 系列扩展：Secrets Beyond The Gates（门后之秘）、Override（覆写）、Extra Defines and Changes 等\n\n【信息来源】Steam 创意工坊作者原文（2026-08 核实）；官方 Wiki：stellarisacot.wiki.gg"
+    },
+    {
+      "steam_id": "727000451",
+      "gameplay_zh": "【具体玩法】（按 Steam 原文深度核实）\n更多事件（More Events Mod）为中期到后期游戏添加更多有趣事件。\n\n作者原文核心内容：\n• 解决中后期「事件匮乏」：作者认为原版中后期缺乏有趣的多样性事件\n• 大量新事件：在你日常征服/奴役/扩张的间隙随机出现\n• 兼容 4.4.*（提供 4.3 版本链接）\n• 独立肖像模组：作者还发布了 Standalone Portrait Mod 配套\n\n【信息来源】Steam 创意工坊作者原文（2026-08 核实）"
+    },
+    {
+      "steam_id": "688086068",
+      "gameplay_zh": "【具体玩法】（按 Steam 原文深度核实）\n星际迷航：新地平线（Star Trek: New Horizons，STNH）是星际迷航主题的全面转换模组（Total Conversion）。\n\n作者原文核心内容：\n• 10 年历史：2016 年 5 月 20 日发布首个版本（群星发售几天后），至今仍在持续更新（10 周年纪念）\n• 星际迷航世界观完整还原：船舰分类、势力、剧情\n• 4.4.6 兼容\n• 当前标注 WIP（开发中）：仍在不断扩充\n• 有 Discord 社区（discord.gg/d2RtTCk）\n\n【信息来源】Steam 创意工坊作者原文（2026-08 核实）"
+    },
+    {
+      "steam_id": "1595876588",
+      "gameplay_zh": "【具体玩法】（按 Steam 原文核实）\n通用资源补丁（Universal Resource Patch）解决不同模组新增战略资源的显示问题。\n\n作者原文核心内容：\n• 修复模组间战略资源显示冲突\n• 向后兼容 3.* 和大部分 2.* 版本\n• 加载建议：若遇到问题，把本模组移到列表底部、禁用再重新启用\n• 支持资源列表见 GitHub（OldEnt 维护）\n\n【信息来源】Steam 创意工坊作者原文（2026-08 核实）"
+    },
+    {
+      "steam_id": "1199002146",
+      "gameplay_zh": "【具体玩法】（按 Steam 原文核实）\n重制版高级飞升（Reworked Advanced Ascension）为原版基础飞升添加二段进阶。\n\n作者原文核心内容：\n• 30 个新增进阶飞升：每个原版基础飞升都有二段进阶\n• 飞升槽上限提升至 24\n• 适配群星 4.4\n• 中文支持\n\n【信息来源】Steam 创意工坊作者原文（2026-08 核实）"
+    },
+    {
+      "steam_id": "2466607238",
+      "gameplay_zh": "【具体玩法】（按 Steam 原文核实）\nKasako 核心框架（Core Framework of Kasako）是 Kasako 系列模组的基础框架。\n\n作者原文核心内容：\n• 模组设置面板：统一管理 Kasako 系列配置\n• 无限系统子功能的基础框架\n• 独立功能：部分子功能可独立使用\n• 适配 4.4\n\n【信息来源】Steam 创意工坊作者原文（2026-08 核实）"
+    }
+  ]
+}
