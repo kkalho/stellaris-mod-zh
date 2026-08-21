@@ -408,8 +408,22 @@ async function showDetail(id) {
   }
   if (d.description) html += `<h3>📄 详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
   if (d.reviews) html += `<h3>💬 玩家评价</h3><div class="desc-text">${esc(d.reviews)}</div>`;
-  html += `<a class="link" href="${d.url}" target="_blank">在 Steam 创意工坊查看原文 ↗</a></div>`;
+  html += `<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+    <a class="link" style="margin-top:0" href="${d.url}" target="_blank">🔗 在 Steam 查看原文 ↗</a>
+    <a class="link" style="margin-top:0" href="steam://url/CommunityFilePage/${d.id}" target="_blank">📥 打开 Steam 订阅页</a>
+    <a class="link" style="margin-top:0;cursor:pointer" onclick="copyId('${d.id}')">📋 复制 Mod ID</a>
+  </div></div>`;
   $('content').innerHTML = html;
+}
+
+function copyId(id) {
+  navigator.clipboard.writeText(id).then(() => {
+    const t = document.createElement('div');
+    t.textContent = '✓ 已复制 ID: ' + id;
+    t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(60,110,220,.9);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:99';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 1800);
+  });
 }
 
 function backToList() {
