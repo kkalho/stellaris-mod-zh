@@ -118,8 +118,10 @@ def search(keyword, limit=60, sort="subs", tag=None):
     if tag:
         sql += " AND m.tags LIKE ?"
         params.append(f"%{tag}%")
-    sql += f" ORDER BY {order} LIMIT ?"
-    params.append(limit)
+    sql += f" ORDER BY {order}"
+    if limit and limit > 0:
+        sql += " LIMIT ?"
+        params.append(limit)
     rows = conn.execute(sql, params).fetchall()
     conn.close()
     return [{"id": r[0], "title": r[8], "title_en": r[2], "subs": r[3],

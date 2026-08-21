@@ -148,10 +148,10 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
       </select>
       <span style="font-size:13px;color:#8a93a8">显示：</span>
       <select id="limitsel" onchange="applyFilters()">
+        <option value="0" selected>全部</option>
         <option value="30">30 条</option>
-        <option value="60" selected>60 条</option>
+        <option value="60">60 条</option>
         <option value="120">120 条</option>
-        <option value="0">全部</option>
       </select>
       <button class="back-btn" style="margin-bottom:0;margin-left:auto" onclick="clearFilters()">清除筛选</button>
     </div>
@@ -224,7 +224,7 @@ async function applyFilters() {
   const tag = activeTag || '';
   const path = '/api/search?q=' + encodeURIComponent(kw) +
                '&sort=' + sort +
-               (limit ? '&n=' + limit : '') +
+               '&n=' + limit +   // 始终传 n，0 表示全部（后端已支持）
                (tag ? '&tag=' + encodeURIComponent(tag) : '');
   $('content').innerHTML = '<div class="loading">正在加载...</div>';
   const r = await api(path);
@@ -284,7 +284,7 @@ function clearFilters() {
   activeTag = null;
   document.querySelectorAll('.tag-chip').forEach(el => el.classList.remove('active'));
   $('sortsel').value = 'subs';
-  $('limitsel').value = '60';
+  $('limitsel').value = '0';
   applyFilters();
 }
 
@@ -323,12 +323,13 @@ function backToList() {
 }
 
 async function loadTop() {
-  $('content').innerHTML = '<div class="loading">正在加载热门 Mod 列表...</div>';
+  $('content').innerHTML = '<div class="loading">正在加载全部 Mod 列表...</div>';
   $('toolbar').style.display = 'block';
-  const r = await api('/api/top?n=60');
+  // n=0 表示返回全部（后端已支持），让用户可以翻完所有 Mod
+  const r = await api('/api/top?n=0');
   allResults = r.results;
   curPage = 1;
-  currentTitle = '🔥 订阅量 Top';
+  currentTitle = '🔥 全部 Mod（按订阅量排序）';
   renderPaged();
 }
 
