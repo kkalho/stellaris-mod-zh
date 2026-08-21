@@ -1,4 +1,4 @@
-"""群星 Mod 中文手册 - 本地网页服务
+"""群星 Mod 查询工具 - 本地网页服务
 用法: python web_server.py [端口]
 默认端口 8080，浏览器打开 http://localhost:8080
 """
@@ -14,9 +14,74 @@ WEB_DIR = os.path.join(base, "web")
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
 
+# Steam 创意工坊标签英文 → 中文映射
+TAG_ZH = {
+    "Graphics": "画面美化",
+    "Gameplay": "玩法内容",
+    "Spaceships": "舰船模型",
+    "Overhaul": "全面改造",
+    "Events": "事件剧情",
+    "Technologies": "科技研究",
+    "Fixes": "Bug 修复",
+    "Balance": "平衡性",
+    "Galaxy Generation": "星系生成",
+    "Species": "种族特质",
+    "Military": "军事战斗",
+    "Buildings": "建筑设施",
+    "UI": "界面美化",
+    "Translation": "翻译汉化",
+    "Story": "故事剧情",
+    "Flags": "旗帜徽章",
+    "Sound": "音效音乐",
+    "Utilities": "实用工具",
+    "Performance": "性能优化",
+    "Origins": "起源",
+    "Traditions": "传统",
+    "Ethics": "伦理国策",
+    "Civics": "国策",
+    "Ascension": "飞升",
+    "Traits": "特质",
+    "Portraits": "肖像立绘",
+    "Shipsets": "舰船模型",
+    "Map": "地图",
+    "Skybox": "天空盒",
+    "Name Lists": "命名表",
+    "Music": "音乐",
+    "Achievements": "成就",
+    "Modding": "模组工具",
+    "Diplomacy": "外交",
+    "Economy": "经济",
+    "War": "战争",
+    "Crisis": "天灾危机",
+    "Empire": "帝国",
+    "Leader": "领袖",
+    "Planet": "星球",
+    "System": "星系",
+    "Resource": "资源",
+    "Federation": "联邦",
+    "Edicts": "法令",
+    "Policies": "政策",
+    "Combat": "战斗",
+    "Fleet": "舰队",
+}
+
 
 def get_db():
     return sqlite3.connect(DB_PATH)
+
+
+def tags_to_zh(tags_str):
+    """把 'Graphics,Gameplay' 转成 'Graphics（画面美化）, Gameplay（玩法内容）'"""
+    if not tags_str:
+        return ""
+    out = []
+    for t in tags_str.split(","):
+        t = t.strip()
+        if not t:
+            continue
+        zh = TAG_ZH.get(t)
+        out.append(f"{t}（{zh}）" if zh else t)
+    return ", ".join(out)
 
 
 def search(keyword, limit=60, sort="subs", tag=None):
@@ -58,7 +123,8 @@ def search(keyword, limit=60, sort="subs", tag=None):
     rows = conn.execute(sql, params).fetchall()
     conn.close()
     return [{"id": r[0], "title": r[8], "title_en": r[2], "subs": r[3],
-             "url": r[4], "author": r[5], "summary": r[6], "tags": r[7]} for r in rows]
+             "url": r[4], "author": r[5], "summary": r[6],
+             "tags": r[7], "tags_zh": tags_to_zh(r[7])} for r in rows]
 
 
 def get_categories():
@@ -74,8 +140,9 @@ def get_categories():
             t = t.strip()
             if t:
                 counter[t] = counter.get(t, 0) + 1
-    # 按数量排序
-    return [{"tag": k, "count": v} for k, v in sorted(counter.items(), key=lambda x: -x[1])]
+    # 按数量排序，每个标签附带中文名
+    return [{"tag": k, "tag_zh": TAG_ZH.get(k, ""), "count": v}
+            for k, v in sorted(counter.items(), key=lambda x: -x[1])]
 
 
 def get_stats():
@@ -117,11 +184,14 @@ def get_detail(steam_id):
         "subs": row[4],
         "fav": row[5],
         "tags": row[6],
+        "tags_zh": tags_to_zh(row[6]),
         "url": row[7],
         "updated": updated,
         "summary": trans.get("summary", ""),
         "description": trans.get("description", ""),
         "features": features,
+        "gameplay": trans.get("gameplay", ""),
+        "reviews": trans.get("reviews", ""),
     }
 
 
@@ -192,7 +262,7 @@ if __name__ == "__main__":
         no_browser = True
     else:
         no_browser = False
-    print(f"群星 Mod 中文手册已启动: http://localhost:{port}")
+    print(f"群星 Mod 查询工具已启动: http://localhost:{port}")
     print("按 Ctrl+C 停止服务")
     if not no_browser:
         import threading, webbrowser

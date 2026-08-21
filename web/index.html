@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>群星 Mod 中文手册</title>
+<title>群星 Mod 查询工具</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -122,8 +122,8 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 <body>
 <div class="stars" id="stars"></div>
 <header>
-  <h1>⭐ <span>群星 Mod</span> 中文手册</h1>
-  <p>Stellaris Workshop 热门 Mod 中文知识库 · 输入关键词即可查询（中英文均可）</p>
+  <h1>⭐ <span>群星 Mod</span> 查询工具</h1>
+  <p>Stellaris Workshop 热门 Mod 中文查询 · 输入关键词即可查询（中英文均可）</p>
 </header>
 
 <div class="search-box">
@@ -200,12 +200,13 @@ async function loadStats() {
 
 async function loadTags() {
   const r = await api('/api/categories');
-  // 按数量取前 14 个分类，Gameplay 固定保留
+  // 按数量取前 14 个分类，显示「英文（中文）数量」格式
   const cats = r.categories.filter(c => c.tag && c.tag.trim());
   const top = cats.slice(0, 14);
-  $('tagbar').innerHTML = top.map(c =>
-    `<span class="tag-chip" data-tag="${esc(c.tag)}" onclick="toggleTag('${esc(c.tag)}')">${esc(c.tag)} (${c.count})</span>`
-  ).join('');
+  $('tagbar').innerHTML = top.map(c => {
+    const label = c.tag_zh ? `${esc(c.tag)}（${esc(c.tag_zh)})` : esc(c.tag);
+    return `<span class="tag-chip" data-tag="${esc(c.tag)}" onclick="toggleTag('${esc(c.tag)}')">${label} (${c.count})</span>`;
+  }).join('');
 }
 
 function toggleTag(tag) {
@@ -265,7 +266,7 @@ function renderList(rows, title) {
         <div class="subs">🛰 ${fmt(m.subs)} 订阅</div>
       </div>
       ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
-      <div class="id">Steam ID: ${m.id}${m.tags ? ' · ' + esc(m.tags) : ''}</div>
+      <div class="id">Steam ID: ${m.id}${m.tags_zh ? ' · ' + esc(m.tags_zh) : (m.tags ? ' · ' + esc(m.tags) : '')}</div>
     </div>`;
   });
   $('content').innerHTML = html;
@@ -296,19 +297,22 @@ async function showDetail(id) {
     <button class="back-btn" onclick="backToList()">← 返回列表</button>
     <div class="detail">
       <h2>${esc(d.title)}</h2>
+      ${d.title_en && d.title_en !== d.title ? `<div style="color:#8a93a8;font-size:13px;margin-top:-6px;margin-bottom:14px">英文名：${esc(d.title_en)}</div>` : ''}
       <div class="meta">
         <div class="meta-item"><div class="k">作者</div><div class="v">${esc(d.author)}</div></div>
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">点赞数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
-        <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags || '-')}</div></div>
+        <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags_zh || d.tags || '-')}</div></div>
         <div class="meta-item"><div class="k">Steam ID</div><div class="v">${d.id}</div></div>
       </div>`;
-  if (d.summary) html += `<h3>简介</h3><div class="summary-text">${esc(d.summary)}</div>`;
+  if (d.summary) html += `<h3>📝 简介</h3><div class="summary-text">${esc(d.summary)}</div>`;
   if (d.features && d.features.length) {
-    html += `<h3>特色</h3><div class="features">${d.features.map(f => `<span class="feature">${esc(f)}</span>`).join('')}</div>`;
+    html += `<h3>✨ 特色</h3><div class="features">${d.features.map(f => `<span class="feature">${esc(f)}</span>`).join('')}</div>`;
   }
-  if (d.description) html += `<h3>详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
+  if (d.gameplay) html += `<h3>🎮 具体玩法</h3><div class="desc-text">${esc(d.gameplay)}</div>`;
+  if (d.description) html += `<h3>📄 详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
+  if (d.reviews) html += `<h3>💬 玩家评价</h3><div class="desc-text">${esc(d.reviews)}</div>`;
   html += `<a class="link" href="${d.url}" target="_blank">在 Steam 创意工坊查看原文 ↗</a></div>`;
   $('content').innerHTML = html;
 }

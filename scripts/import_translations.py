@@ -24,9 +24,10 @@ def import_file(conn, path):
             continue
         mod_id = row[0]
         # 保留英文原名 title_en（搜索用），中文标题写入 translations 表
-        # 写入翻译
+        # 写入翻译：标题、摘要、详细描述、玩法、玩家评价
         for field, key in [("title", "title_zh"), ("summary", "summary_zh"),
-                           ("description", "description_zh")]:
+                           ("description", "description_zh"),
+                           ("gameplay", "gameplay_zh"), ("reviews", "reviews_zh")]:
             if key in t and t[key]:
                 c.execute("""
                     INSERT INTO translations (mod_id, field, zh_text, quality, updated_at)

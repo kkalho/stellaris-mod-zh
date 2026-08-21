@@ -1,4 +1,4 @@
-"""群星 Mod 中文手册 - 命令行查询工具
+"""群星 Mod 查询工具 - 命令行查询
 用法:
   python modlookup.py 巨构          # 按关键词搜索（中英文均可）
   python modlookup.py giga          # 英文关键词也行
@@ -120,7 +120,7 @@ def show_detail(sid, full=False):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="群星 Mod 中文手册查询工具")
+    ap = argparse.ArgumentParser(description="群星 Mod 查询工具")
     ap.add_argument("keyword", nargs="?", help="搜索关键词（中英文均可）")
     ap.add_argument("--top", type=int, help="显示订阅量前 N 名")
     ap.add_argument("--id", help="按 Steam ID 查询详情")
