@@ -1,0 +1,41 @@
+{
+ "updated_at": "2026-08-22 00:56",
+ "db_total": 227,
+ "db_translated": 227,
+ "workshop_top_total": 1020,
+ "translated_rank_range": [
+  1,
+  227
+ ],
+ "translated_rank_count": 227,
+ "next_batch_start_rank": 228,
+ "next_batch_size": 50,
+ "remaining": 793,
+ "next_batch_preview": [
+  {
+   "rank": 228,
+   "id": "1834433554",
+   "title": "Touhou Stellar Chronicles ~ Symphony of Phantasm"
+  },
+  {
+   "rank": 229,
+   "id": "3142294658",
+   "title": "Planetary Diversity - City Sets"
+  },
+  {
+   "rank": 230,
+   "id": "2691024387",
+   "title": "! IBS patch BORDER repair"
+  },
+  {
+   "rank": 231,
+   "id": "1588853224",
+   "title": "Extended Vanilla Palette / Colors"
+  },
+  {
+   "rank": 232,
+   "id": "1590362799",
+   "title": "Dynamic Difficulty - Ultimate Customization"
+  }
+ ]
+}

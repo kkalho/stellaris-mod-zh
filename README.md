@@ -2,7 +2,7 @@
 
 > 为《群星》(Stellaris) 创意工坊热门 Mod 建立的**中文知识库与查询工具**。输入 Mod 名称（中英文均可），秒出该 Mod 的中文介绍、特色和详细内容。
 
-![GitHub stars](https://img.shields.io/badge/收录-120%2B%20Mod-blue)
+![GitHub stars](https://img.shields.io/badge/收录-227%2F1000%20Mod-blue)
 ![中文覆盖](https://img.shields.io/badge/中文覆盖-100%25-brightgreen)
 ![数据来源](https://img.shields.io/badge/数据来源-Steam%20Workshop-orange)
 
@@ -80,7 +80,9 @@ stellaris-mod-zh/
 
 ## 数据更新
 
-知识库数据来自 Steam 创意工坊**订阅量排行**（截至 2026-08）。如需更新数据：
+知识库数据来自 Steam 创意工坊**订阅量排行**（官方页面内嵌数据，截至 2026-08-22 已收录前 227 名，自动化任务每日扩充 50 个，目标前 1000 名）。
+
+数据管道：`scripts/fetch_workshop_top.py`（抓官方榜单）→ `scripts/build_db.py`（建库）→ `scripts/import_translations.py`（导翻译）。如需更新数据：
 
 ```bash
 # 1. 更新热门清单（data/hot_mods.json，可通过创意工坊浏览页分页获取）
