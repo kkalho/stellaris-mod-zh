@@ -100,7 +100,7 @@ def search(keyword, limit=60, sort="subs", tag=None):
     sql = """
         SELECT m.steam_id, m.title, m.title_en, m.subscriptions, m.url, m.author,
                COALESCE(tsum.zh_text, '') as summary, m.tags,
-               COALESCE(ttitle.zh_text, m.title_en) as display_title, m.preview_url
+               COALESCE(ttitle.zh_text, m.title_en) as display_title, m.preview_url, m.status
         FROM mods m
         LEFT JOIN translations tsum ON tsum.mod_id = m.id AND tsum.field = 'summary'
         LEFT JOIN translations ttitle ON ttitle.mod_id = m.id AND ttitle.field = 'title'
@@ -126,7 +126,8 @@ def search(keyword, limit=60, sort="subs", tag=None):
     conn.close()
     return [{"id": r[0], "title": r[8], "title_en": r[2], "subs": r[3],
              "url": r[4], "author": r[5], "summary": r[6],
-             "tags": r[7], "tags_zh": tags_to_zh(r[7]), "preview": r[9]} for r in rows]
+             "tags": r[7], "tags_zh": tags_to_zh(r[7]), "preview": r[9],
+             "status": r[10] if len(r) > 10 else None} for r in rows]
 
 
 def get_categories():
@@ -170,7 +171,7 @@ def get_detail(steam_id):
     conn = get_db()
     row = conn.execute("""
         SELECT m.steam_id, m.title, m.title_en, m.author, m.subscriptions, m.favorites,
-               m.tags, m.url, m.time_updated, m.preview_url, m.compat_json
+               m.tags, m.url, m.time_updated, m.preview_url, m.compat_json, m.status
         FROM mods m WHERE m.steam_id = ?
     """, (str(steam_id),)).fetchone()
     if not row:
@@ -206,6 +207,7 @@ def get_detail(steam_id):
         "gameplay": trans.get("gameplay", ""),
         "reviews": trans.get("reviews", ""),
         "compat": parse_compat(row[10]) if len(row) > 10 else None,
+        "status": row[11] if len(row) > 11 else None,
     }
 
 

@@ -118,6 +118,19 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 .compat-note { font-size: 12.5px; color: #8a93a8; line-height: 1.7; margin-top: 10px; padding: 10px 12px; background: rgba(60,110,220,.08); border-radius: 8px; border-left: 3px solid rgba(100,140,255,.4); }
 .compat-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .compat-tag { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: rgba(60,110,220,.15); color: #9fc0ff; border: 1px solid rgba(100,140,255,.25); }
+.status-badge {
+  display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 10px;
+  margin-left: 8px; vertical-align: middle; font-weight: 500;
+}
+.status-badge.deprecated { background: rgba(226,75,74,.2); color: #f09595; border: 1px solid rgba(226,75,74,.4); }
+.status-badge.outdated { background: rgba(226,75,74,.15); color: #f0a9a8; border: 1px solid rgba(226,75,74,.35); }
+.status-badge.abandoned { background: rgba(186,117,23,.2); color: #efc56a; border: 1px solid rgba(186,117,23,.45); }
+.status-badge.no_update { background: rgba(186,117,23,.15); color: #e5b65e; border: 1px solid rgba(186,117,23,.4); }
+.status-warn {
+  background: rgba(226,75,74,.1); border: 1px solid rgba(226,75,74,.35);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
+  font-size: 13px; color: #f09595; line-height: 1.6;
+}
 .detail .summary-text { font-size: 14px; line-height: 1.8; color: #c8cfdd; }
 .detail .desc-text { font-size: 14px; line-height: 1.9; color: #b8c0d0; white-space: pre-wrap; }
 .features { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -216,6 +229,21 @@ function fmt(n) {
   return n.toLocaleString();
 }
 
+const STATUS_LABEL = {
+  deprecated: '已弃用',
+  outdated: '已过时',
+  abandoned: '已废弃',
+  no_update: '停止更新',
+};
+function statusBadge(s) {
+  if (!s || !STATUS_LABEL[s]) return '';
+  return `<span class="status-badge ${esc(s)}">⚠ ${esc(STATUS_LABEL[s])}</span>`;
+}
+function statusWarn(s) {
+  if (!s || !STATUS_LABEL[s]) return '';
+  return `<div class="status-warn">⚠ 注意：此 Mod 已被标记为「${esc(STATUS_LABEL[s])}」，可能不再适配最新版本的游戏，安装前请确认。</div>`;
+}
+
 async function loadStats() {
   const s = await api('/api/stats');
   $('stats').innerHTML = `
@@ -293,7 +321,7 @@ function renderList(rows, title) {
       ${thumb}
       <div class="body">
         <div class="top">
-          <div class="name">${esc(m.title)}</div>
+          <div class="name">${esc(m.title)}${statusBadge(m.status)}</div>
           <div class="subs">🛰 ${fmt(m.subs)} 订阅</div>
         </div>
         ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
@@ -329,7 +357,8 @@ async function showDetail(id) {
     <button class="back-btn" onclick="backToList()">← 返回列表</button>
     <div class="detail">
       ${d.preview ? `<div class="detail-preview"><img src="${esc(d.preview)}" alt="" onerror="this.parentNode.style.display='none'"></div>` : ''}
-      <h2>${esc(d.title)}</h2>
+      ${statusWarn(d.status)}
+      <h2>${esc(d.title)}${statusBadge(d.status)}</h2>
       ${d.title_en && d.title_en !== d.title ? `<div style="color:#8a93a8;font-size:13px;margin-top:-6px;margin-bottom:14px">英文名：${esc(d.title_en)}</div>` : ''}
       <div class="meta">
         <div class="meta-item"><div class="k">作者</div><div class="v">${esc(d.author)}</div></div>
