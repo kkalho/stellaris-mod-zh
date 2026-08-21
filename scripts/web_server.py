@@ -104,8 +104,37 @@ def tags_to_zh(tags_str):
     return ", ".join(out)
 
 
+# 同义词映射：把玩家常用说法映射到 Mod 关键词
+SYNONYMS = {
+    "巨构": ["巨构", "巨型建筑", "巨构工程", "giga"],
+    "巨型建筑": ["巨构", "巨型建筑", "giga"],
+    "星球多样性": ["星球多样性", "pd"],
+    "舰船": ["舰船", "船模", "shipset", "ship"],
+    "汉化": ["汉化", "中文", "翻译", "localisation", "localization"],
+    "优化": ["优化", "性能", "performance"],
+    "画面": ["画面", "图形", "美化", "graphics", "beautiful"],
+    "剧情": ["剧情", "事件", "story", "events"],
+    "UI": ["ui", "界面", "outliner"],
+    "天灾": ["天灾", "危机", "crisis"],
+}
+
+# 拼音搜索：英文关键词含非 ASCII 时尝试转拼音匹配
+try:
+    from pypinyin import lazy_pinyin, Style as PyStyle
+
+    def _to_pinyin(text):
+        if not text:
+            return ""
+        full = ''.join(lazy_pinyin(text))
+        first = ''.join(lazy_pinyin(text, style=PyStyle.FIRST_LETTER))
+        return f"{full} {first}".lower()
+except ImportError:
+    def _to_pinyin(text):
+        return ""
+
+
 def search(keyword, limit=60, sort="subs", tag=None):
-    """搜索 + 排序 + 标签过滤（同时匹配英文原名与中文字段，支持多词拆词搜索）"""
+    """搜索 + 排序 + 标签过滤（英文/中文/拼音/同义词，支持多词拆词）"""
     conn = get_db()
     order_map = {
         "subs": "m.subscriptions DESC",
@@ -115,8 +144,24 @@ def search(keyword, limit=60, sort="subs", tag=None):
     }
     order = order_map.get(sort, order_map["subs"])
 
-    # 按空格拆词，每个词都必须匹配（AND 逻辑）
-    words = [w for w in keyword.split() if w.strip()]
+    # 同义词扩展：关键词命中某同义词组任一项时，把整组加入搜索
+    expanded = [keyword]
+    for k, v in SYNONYMS.items():
+        if any(keyword.lower() == x.lower() or x.lower() in keyword.lower()
+               for x in [k] + v):
+            expanded.extend([x for x in v if x.lower() != keyword.lower()])
+    # 去重
+    seen = set()
+    expanded_dedup = []
+    for w in expanded:
+        key = w.lower()
+        if key not in seen:
+            seen.add(key)
+            expanded_dedup.append(w)
+    expanded = expanded_dedup
+    # 拼音扩展：如果关键词是拼音（全小写无中文），也加入拼音索引匹配
+    pinyin_kw = _to_pinyin(keyword)
+
     sql = """
         SELECT m.steam_id, m.title, m.title_en, m.subscriptions, m.url, m.author,
                COALESCE(tsum.zh_text, '') as summary, m.tags,
@@ -126,16 +171,40 @@ def search(keyword, limit=60, sort="subs", tag=None):
         LEFT JOIN translations tsum ON tsum.mod_id = m.id AND tsum.field = 'summary'
         LEFT JOIN translations ttitle ON ttitle.mod_id = m.id AND ttitle.field = 'title'
     """
-    conditions, params = [], []
-    for w in words:
+    # 原始关键词拆词：多词 AND（每个词都要出现）
+    word_conds, word_params = [], []
+    for w in keyword.split():
         kw = f"%{w}%"
-        conditions.append(
+        word_conds.append(
             "(m.title_en LIKE ? OR m.title LIKE ? OR m.steam_id LIKE ? "
-            "OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ?)")
-        params.extend([kw, kw, kw, kw, kw])
-    if not conditions:
-        conditions.append("(m.title_en != '' OR m.title != '')")
-    sql += " WHERE " + " AND ".join(conditions)
+            "OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ? OR m.pinyin_idx LIKE ?)")
+        word_params.extend([kw, kw, kw, kw, kw, kw])
+
+    # 同义词/拼音条件：任一命中即可（OR）
+    alt_conds, alt_params = [], []
+    for w in expanded[1:]:
+        kw = f"%{w}%"
+        alt_conds.append(
+            "(m.title_en LIKE ? OR ttitle.zh_text LIKE ? OR m.pinyin_idx LIKE ?)")
+        alt_params.extend([kw, kw, kw])
+    if pinyin_kw and not any(c >= '\u4e00' and c <= '\u9fff' for c in keyword):
+        kw = f"%{pinyin_kw}%"
+        alt_conds.append("(m.pinyin_idx LIKE ?)")
+        alt_params.append(kw)
+
+    # 组装：主条件 AND（同义词组用 OR 连接）
+    if word_conds and alt_conds:
+        sql += " WHERE (" + " AND ".join(word_conds) + ") OR (" + " OR ".join(alt_conds) + ")"
+        params = word_params + alt_params
+    elif word_conds:
+        sql += " WHERE " + " AND ".join(word_conds)
+        params = word_params
+    elif alt_conds:
+        sql += " WHERE " + " OR ".join(alt_conds)
+        params = alt_params
+    else:
+        sql += " WHERE (m.title_en != '' OR m.title != '')"
+        params = []
     if tag:
         sql += " AND m.tags LIKE ?"
         params.append(f"%{tag}%")
