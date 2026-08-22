@@ -1,41 +1,41 @@
 {
- "updated_at": "2026-08-22 00:56",
- "db_total": 227,
- "db_translated": 227,
+ "updated_at": "2026-08-22 21:20",
+ "db_total": 277,
+ "db_translated": 277,
  "workshop_top_total": 1020,
  "translated_rank_range": [
   1,
-  227
+  277
  ],
- "translated_rank_count": 227,
- "next_batch_start_rank": 228,
+ "translated_rank_count": 277,
+ "next_batch_start_rank": 278,
  "next_batch_size": 50,
- "remaining": 793,
+ "remaining": 743,
  "next_batch_preview": [
   {
-   "rank": 228,
-   "id": "1834433554",
-   "title": "Touhou Stellar Chronicles ~ Symphony of Phantasm"
+   "rank": 278,
+   "id": "1726290528",
+   "title": "24 Building Slots"
   },
   {
-   "rank": 229,
-   "id": "3142294658",
-   "title": "Planetary Diversity - City Sets"
+   "rank": 279,
+   "id": "3032768344",
+   "title": "Real Terraforming"
   },
   {
-   "rank": 230,
-   "id": "2691024387",
-   "title": "! IBS patch BORDER repair"
+   "rank": 280,
+   "id": "1777266185",
+   "title": "Kurogane Expanded"
   },
   {
-   "rank": 231,
-   "id": "1588853224",
-   "title": "Extended Vanilla Palette / Colors"
+   "rank": 281,
+   "id": "2608299476",
+   "title": "UI Overhaul Dynamic - More Tradition Categories (64)"
   },
   {
-   "rank": 232,
-   "id": "1590362799",
-   "title": "Dynamic Difficulty - Ultimate Customization"
+   "rank": 282,
+   "id": "2104538771",
+   "title": "UTD: Flags: Emblems & Backgrounds"
   }
  ]
 }
