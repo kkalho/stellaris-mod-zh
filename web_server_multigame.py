@@ -230,6 +230,55 @@ def get_local(game_id):
     return mods
 
 
+def get_dlc_missing(game_id, owned_app_ids, db=None):
+    """根据用户已拥有的 DLC，检测哪些 MOD 缺 DLC。
+
+    Args:
+        game_id: 游戏标识
+        owned_app_ids: 用户拥有的 DLC app_id 列表（str）
+        db: 可选数据库连接
+
+    Returns:
+        {"warnings": [...], "total_mods": n, "missing_mods": n}
+        warning: {"mod": {id,title,title_en,subs}, "missing": [{app_id,name,name_zh}]}
+    """
+    if db is None:
+        db = get_db(game_id)
+    conn = db.conn
+    cfg = get_cfg(game_id)
+    dlc_map = {d.app_id: d for d in cfg.load_dlcs()}
+    owned = set(str(x) for x in (owned_app_ids or []))
+
+    rows = conn.execute(
+        "SELECT id, steam_id, title_en, subscriptions, optional_dlcs, required_dlcs "
+        "FROM mods WHERE game_id=? AND (optional_dlcs != '[]' OR required_dlcs != '[]')",
+        (game_id,)).fetchall()
+
+    warnings = []
+    for r in rows:
+        m = dict(zip(["id", "steam_id", "title_en", "subscriptions", "optional_dlcs", "required_dlcs"], r))
+        missing = []
+        for app_id in json.loads(m["optional_dlcs"] or "[]") + json.loads(m["required_dlcs"] or "[]"):
+            if str(app_id) not in owned:
+                dlc = dlc_map.get(str(app_id))
+                missing.append({
+                    "app_id": str(app_id),
+                    "name": dlc.name if dlc else str(app_id),
+                    "name_zh": dlc.name_zh if dlc else str(app_id),
+                })
+        if missing:
+            warnings.append({
+                "mod": {
+                    "id": m["steam_id"],
+                    "title": m["title_en"],
+                    "subs": m["subscriptions"] or 0,
+                },
+                "missing": missing,
+            })
+    warnings.sort(key=lambda w: -w["mod"]["subs"])
+    return {"warnings": warnings, "total_mods": len(rows), "missing_mods": len(warnings)}
+
+
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.0"  # 禁用 keep-alive，避免连接复用挂起
 
@@ -304,6 +353,9 @@ class Handler(BaseHTTPRequestHandler):
                     dlcs = [{"app_id": d.app_id, "name": d.name, "name_zh": d.name_zh}
                             for d in cfg.load_dlcs()]
                     self._send_json({"dlcs": dlcs})
+                elif api_name == "dlc-missing":
+                    owned = q.get("owned", [""])[0].split(",") if q.get("owned") else []
+                    self._send_json(get_dlc_missing(game_id, owned, db=db))
                 else:
                     self._send_json({"error": f"unknown api: {api_name}"}, 404)
             except Exception as e:

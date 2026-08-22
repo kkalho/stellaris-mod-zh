@@ -68,6 +68,26 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 }
 .tag-chip:hover { color: #e8edf8; border-color: rgba(100,140,255,.4); }
 .tag-chip.active { background: rgba(60,110,220,.3); color: #9fc0ff; border-color: rgba(100,140,255,.6); }
+.dlc-btn {
+  padding: 8px 16px; font-size: 13px; cursor: pointer;
+  background: rgba(60,110,220,.25); color: #9fc0ff;
+  border: 1px solid rgba(100,140,255,.4); border-radius: 8px;
+  transition: all .2s; user-select: none;
+}
+.dlc-btn:hover { background: rgba(60,110,220,.4); color: #e8edf8; }
+.dlc-panel {
+  background: rgba(20,28,50,.92); border: 1px solid rgba(100,140,255,.35);
+  border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;
+}
+.dlc-panel h3 { color: #e8edf8; font-size: 15px; margin-bottom: 10px; }
+.dlc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; max-height: 260px; overflow-y: auto; margin-bottom: 12px; }
+.dlc-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #b8c0d0; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+.dlc-item:hover { background: rgba(60,110,220,.15); }
+.dlc-item input { accent-color: #6fa8ff; }
+.dlc-warn { background: rgba(226,75,74,.1); border: 1px solid rgba(226,75,74,.3); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; color: #f0a9a8; }
+.dlc-warn .dw-title { color: #d8dde8; font-weight: 500; }
+.dlc-warn .dw-missing { color: #f09595; margin-top: 3px; }
+.dlc-ok { background: rgba(151,196,89,.1); border: 1px solid rgba(151,196,89,.3); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #c0dd97; }
 
 .list-title { color: #9aa4bc; font-size: 14px; margin: 10px 0 12px; display: flex; align-items: center; gap: 8px; }
 .list-title::after { content: ""; flex: 1; height: 1px; background: rgba(100,140,255,.15); }
@@ -211,8 +231,10 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
         <option value="60">60 条</option>
         <option value="120">120 条</option>
       </select>
-      <button class="back-btn" style="margin-bottom:0;margin-left:auto" onclick="clearFilters()">清除筛选</button>
+      <button class="dlc-btn" style="margin-left:auto" onclick="openDlcPanel()">🧩 DLC 检测</button>
+      <button class="back-btn" style="margin-bottom:0" onclick="clearFilters()">清除筛选</button>
     </div>
+    <div id="dlcPanel" class="dlc-panel" style="display:none"></div>
   </div>
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
   <div class="pager" id="pager" style="display:none">
@@ -370,6 +392,59 @@ function clearFilters() {
   $('sortsel').value = 'subs';
   $('limitsel').value = '0';
   applyFilters();
+}
+
+let dlcCache = null;
+async function openDlcPanel() {
+  const panel = $('dlcPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  panel.innerHTML = '<div class="loading">正在加载 DLC 清单...</div>';
+  try {
+    if (!dlcCache) {
+      const d = await api('/api/' + GAME + '/dlcs');
+      dlcCache = d.dlcs || [];
+    }
+    const saved = JSON.parse(localStorage.getItem('ownedDlcs') || '[]');
+    const dlcList = dlcCache.map(x =>
+      `<label class="dlc-item"><input type="checkbox" value="${esc(x.app_id)}" ${saved.includes(x.app_id) ? 'checked' : ''}> ${esc(x.name_zh)} (${esc(x.name)})</label>`
+    ).join('');
+    panel.innerHTML = `
+      <h3>🧩 DLC 缺失检测</h3>
+      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">勾选你已拥有的 DLC，检测哪些 Mod 缺少依赖：</div>
+      <div class="dlc-list">${dlcList}</div>
+      <button class="dlc-btn" onclick="runDlcCheck()">开始检测</button>
+      <button class="back-btn" style="margin-bottom:0" onclick="document.getElementById('dlcPanel').style.display='none'">关闭</button>
+      <div id="dlcResult" style="margin-top:12px"></div>`;
+  } catch (e) {
+    panel.innerHTML = `<div class="status-warn">加载 DLC 清单失败：${esc(String(e))}</div>`;
+  }
+}
+
+async function runDlcCheck() {
+  const result = $('dlcResult');
+  result.innerHTML = '<div class="loading">正在检测...</div>';
+  const owned = [...document.querySelectorAll('#dlcPanel .dlc-list input:checked')].map(x => x.value);
+  localStorage.setItem('ownedDlcs', JSON.stringify(owned));
+  try {
+    const r = await api('/api/' + GAME + '/dlc-missing?owned=' + encodeURIComponent(owned.join(',')));
+    if (!r.warnings || r.warnings.length === 0) {
+      result.innerHTML = `<div class="dlc-ok">✅ 检测完成：${r.total_mods || 0} 个标注 DLC 依赖的 Mod 中，没有发现缺失（${owned.length} 个 DLC 已覆盖）</div>`;
+      return;
+    }
+    let html = `<div style="color:#f09595;font-size:13px;margin-bottom:8px">⚠ 发现 ${r.missing_mods} 个 Mod 缺少 DLC 依赖（共检测 ${r.total_mods} 个）：</div>`;
+    r.warnings.slice(0, 30).forEach(w => {
+      const names = w.missing.map(m => m.name_zh).join('、');
+      html += `<div class="dlc-warn">
+        <div class="dw-title">📦 ${esc(w.mod.title)} <span style="color:#5a6478;font-size:11px">(${fmt(w.mod.subs)} 订阅)</span></div>
+        <div class="dw-missing">缺少：${esc(names)}</div>
+      </div>`;
+    });
+    if (r.warnings.length > 30) html += `<div style="color:#8a93a8;font-size:12px;margin-top:6px">… 还有 ${r.warnings.length - 30} 个未显示</div>`;
+    result.innerHTML = html;
+  } catch (e) {
+    result.innerHTML = `<div class="status-warn">检测失败：${esc(String(e))}</div>`;
+  }
 }
 
 async function showDetail(id) {
