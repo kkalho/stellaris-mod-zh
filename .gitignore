@@ -5,3 +5,8 @@ venv/
 .DS_Store
 Thumbs.db
 *.log
+
+# 运行时生成的数据库与状态文件（由迁移/抓取/更新脚本生成）
+data/**/mods.db
+data/**/local.db
+data/**/update_state.json

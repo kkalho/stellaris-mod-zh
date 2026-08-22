@@ -1,0 +1,34 @@
+{
+  "localizations": [
+    {
+      "mod_steam_id": "2131014154",
+      "loc_id": "gezhuhanhua",
+      "name": "鸽组汉化（主汉化）",
+      "author": "鸽组",
+      "target_version": "4.*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2131014154",
+      "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "1121692237",
+      "loc_id": "giga_zh",
+      "name": "巨构工程独立汉化包",
+      "author": "鸽组",
+      "target_version": "4.4.*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=3772088387",
+      "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "683230077",
+      "loc_id": "nsc3_zh",
+      "name": "NSC3 中文翻译",
+      "author": "社区",
+      "target_version": "4.*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=1321344591",
+      "status": "not_downloaded"
+    }
+  ]
+}

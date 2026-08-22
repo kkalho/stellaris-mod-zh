@@ -1,0 +1,36 @@
+{
+  "community": [
+    {
+      "steam_id": "1121692237",
+      "platform": "bilibili",
+      "score": 9.2,
+      "comment_summary": "B站大量教学视频推荐，被誉为「后期玩法救星」。评论区主流观点：巨构设计有想象力，4个天灾危机剧情扎实；注意后期性能压力和与原版平衡脱节。",
+      "recommend": "强烈推荐",
+      "source_url": "https://search.bilibili.com/all?keyword=%E5%B7%A8%E6%9E%84%E5%B7%A5%E7%A8%8B"
+    },
+    {
+      "steam_id": "1121692237",
+      "platform": "tieba",
+      "score": 8.8,
+      "comment_summary": "群星吧高讨论度模组。玩家普遍认可内容量，但指出：布洛卡特天灾强度过高，新手建议从「标准」难度开始；配 Real Space 需装兼容补丁。",
+      "recommend": "推荐",
+      "source_url": "https://tieba.baidu.com/f?kw=stellaris"
+    },
+    {
+      "steam_id": "1623423360",
+      "platform": "bilibili",
+      "score": 9.5,
+      "comment_summary": "几乎所有群星 MOD 教程视频的前置必装项，被戏称「群星第一神 mod」。评论区一致好评：界面信息密度提升明显；4K 用户注意 UI 缩放上限 1.5。",
+      "recommend": "强烈推荐",
+      "source_url": "https://search.bilibili.com/all?keyword=UI%20Overhaul%20Dynamic"
+    },
+    {
+      "steam_id": "819148835",
+      "platform": "nga",
+      "score": 8.5,
+      "comment_summary": "NGA 玩家评价：立绘党的福音，让星球系统不再单调；系列子模组丰富可按需选择。注意与 UOD 需装兼容补丁。",
+      "recommend": "推荐",
+      "source_url": "https://nga.178.com/thread.php?fid=-320014"
+    }
+  ]
+}
