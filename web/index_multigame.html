@@ -418,6 +418,27 @@ async function showDetail(id) {
       html += `<div class="compat-tags">${d.compat.has_patches.map(p => `<span class="compat-tag">🧩 ${esc(p)}</span>`).join('')}</div>`;
     }
   }
+  if ((d.required_dlcs && d.required_dlcs.length) || (d.optional_dlcs && d.optional_dlcs.length)) {
+    html += `<h3>🧩 DLC 依赖</h3>`;
+    if (d.required_dlcs && d.required_dlcs.length) {
+      html += `<div class="compat-block require"><div class="cb-title">🔒 必需 DLC</div>${d.required_dlcs.map(x =>
+        `<div class="compat-item"><span class="ci-name">${esc(x.name)}</span> <span class="ci-note">(AppID: ${esc(x.app_id)})</span></div>`).join('')}</div>`;
+    }
+    if (d.optional_dlcs && d.optional_dlcs.length) {
+      html += `<div class="compat-block"><div class="cb-title">📎 可选 DLC（提及相关功能）</div>${d.optional_dlcs.map(x =>
+        `<div class="compat-item"><span class="ci-name">${esc(x.name)}</span> <span class="ci-note">(AppID: ${esc(x.app_id)})</span></div>`).join('')}</div>`;
+    }
+  }
+  if (d.community) {
+    const cm = d.community;
+    const platZh = {tieba: '贴吧', bilibili: 'B站', nga: 'NGA', zhihu: '知乎', steam_zh: 'Steam中文社区'};
+    html += `<h3>🏙️ 中文社区口碑</h3>
+      <div class="compat-block best"><div class="cb-title">⭐ 社区评分：${cm.score ? cm.score.toFixed(1) : '-'} / 10（${esc(platZh[cm.platform] || cm.platform || '社区')}）</div>
+      ${cm.comment_summary ? `<div class="compat-item" style="line-height:1.8">${esc(cm.comment_summary)}</div>` : ''}
+      ${cm.recommend ? `<div class="compat-item" style="margin-top:6px"><span class="ci-name">推荐指数：${esc(cm.recommend)}</span></div>` : ''}
+      ${cm.source_url ? `<div class="compat-item" style="margin-top:4px"><a class="ci-note" style="color:#6fa8ff" href="${esc(cm.source_url)}" target="_blank">查看来源 ↗</a></div>` : ''}
+      </div>`;
+  }
   if (d.description) html += `<h3>📄 详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
   if (d.reviews) html += `<h3>💬 玩家评价</h3><div class="desc-text">${esc(d.reviews)}</div>`;
   html += `<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
