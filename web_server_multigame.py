@@ -23,7 +23,7 @@ import json
 import os
 import sys
 import urllib.parse
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
@@ -48,8 +48,8 @@ def get_db(game_id: str) -> ModDB:
     """获取游戏数据库连接（每个请求新建，避免共享连接锁死）。"""
     cfg = get_cfg(game_id)
     db = ModDB(cfg)
+    # 只设置 busy_timeout（连接级），WAL 由首次连接持久化
     db.conn.execute("PRAGMA busy_timeout = 8000")
-    db.conn.execute("PRAGMA journal_mode = WAL")
     return db
 
 
@@ -231,6 +231,8 @@ def get_local(game_id):
 
 
 class Handler(BaseHTTPRequestHandler):
+    protocol_version = "HTTP/1.0"  # 禁用 keep-alive，避免连接复用挂起
+
     def log_message(self, fmt, *args):
         pass
 
@@ -327,9 +329,10 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 8080
     auto_open = "--no-browser" not in sys.argv
-    print(f"Paradox MOD 管理工具已启动: http://localhost:{port}")
+    print(f"Paradox MOD 管理工具已启动: http://127.0.0.1:{port}")
     print(f"支持游戏: {list_games()}")
-    server = HTTPServer(("127.0.0.1", port), Handler)
+    # 绑定 127.0.0.1（仅本机，安全）；访问统一用 127.0.0.1 避免 localhost 的 IPv6 解析延迟
+    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     if auto_open:
         import threading
         import webbrowser
@@ -338,12 +341,12 @@ def main():
             import time
             time.sleep(1.2)
             try:
-                webbrowser.open(f"http://localhost:{port}")
+                webbrowser.open(f"http://127.0.0.1:{port}")
             except Exception:
                 pass
 
         threading.Thread(target=_open, daemon=True).start()
-        print("已尝试打开浏览器（如未自动打开，请手动访问上述地址）")
+        print("已尝试打开浏览器（如未自动打开，请手动访问 http://127.0.0.1:{port}）")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

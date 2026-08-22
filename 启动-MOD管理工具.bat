@@ -34,7 +34,7 @@ if errorlevel 1 (
 )
 
 echo [1/3] 正在启动多游戏数据服务...
-echo [2/3] 服务就绪后自动打开浏览器: http://localhost:8080
+echo [2/3] 服务就绪后自动打开浏览器: http://127.0.0.1:8080
 echo [3/3] 关闭本窗口即停止服务
 echo.
 %PYTHON% web_server_multigame.py 8080
