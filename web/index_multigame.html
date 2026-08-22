@@ -300,7 +300,7 @@ async function applyFilters() {
   const limit = parseInt($('limitsel').value) || 0;
   const kw = $('kw').value.trim();
   const tag = activeTag || '';
-  const path = '/api/search?q=' + encodeURIComponent(kw) +
+  const path = '/api/' + GAME + '/search?q=' + encodeURIComponent(kw) +
                '&sort=' + sort +
                '&n=' + limit +   // 始终传 n，0 表示全部（后端已支持）
                (tag ? '&tag=' + encodeURIComponent(tag) : '');

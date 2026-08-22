@@ -34,19 +34,23 @@ import games.hoi4.config.game  # noqa: F401
 from core.game_config import get_game, list_games
 from core.mod_db import ModDB
 
-# 各游戏缓存（避免每次请求重建连接）
-_DB_CACHE = {}
-
-
-def get_db(game_id: str) -> ModDB:
-    if game_id not in _DB_CACHE:
-        cfg = get_game(game_id, BASE)
-        _DB_CACHE[game_id] = ModDB(cfg)
-    return _DB_CACHE[game_id]
+# 游戏配置缓存（轻量，无连接）
+_CFG_CACHE = {}
 
 
 def get_cfg(game_id: str):
-    return get_game(game_id, BASE)
+    if game_id not in _CFG_CACHE:
+        _CFG_CACHE[game_id] = get_game(game_id, BASE)
+    return _CFG_CACHE[game_id]
+
+
+def get_db(game_id: str) -> ModDB:
+    """获取游戏数据库连接（每个请求新建，避免共享连接锁死）。"""
+    cfg = get_cfg(game_id)
+    db = ModDB(cfg)
+    db.conn.execute("PRAGMA busy_timeout = 8000")
+    db.conn.execute("PRAGMA journal_mode = WAL")
+    return db
 
 
 def calc_score(subs, fav):
@@ -66,8 +70,9 @@ def calc_score(subs, fav):
         return 0.0
 
 
-def search(game_id, keyword, limit=60, sort="subs", tag=None):
-    db = get_db(game_id)
+def search(game_id, keyword, limit=60, sort="subs", tag=None, db=None):
+    if db is None:
+        db = get_db(game_id)
     conn = db.conn
     order_map = {
         "subs": "m.subscriptions DESC",
@@ -121,8 +126,9 @@ def search(game_id, keyword, limit=60, sort="subs", tag=None):
     return results
 
 
-def get_detail(game_id, steam_id):
-    db = get_db(game_id)
+def get_detail(game_id, steam_id, db=None):
+    if db is None:
+        db = get_db(game_id)
     conn = db.conn
     row = conn.execute(
         "SELECT * FROM mods WHERE game_id=? AND steam_id=?",
@@ -184,8 +190,9 @@ def get_detail(game_id, steam_id):
     }
 
 
-def get_categories(game_id):
-    db = get_db(game_id)
+def get_categories(game_id, db=None):
+    if db is None:
+        db = get_db(game_id)
     cfg = get_cfg(game_id)
     rows = db.conn.execute(
         "SELECT tags FROM mods WHERE game_id=? AND tags != ''", (game_id,)).fetchall()
@@ -199,8 +206,9 @@ def get_categories(game_id):
             for k, v in sorted(counter.items(), key=lambda x: -x[1])]
 
 
-def get_stats(game_id):
-    db = get_db(game_id)
+def get_stats(game_id, db=None):
+    if db is None:
+        db = get_db(game_id)
     conn = db.conn
     total = conn.execute("SELECT COUNT(*) FROM mods WHERE game_id=?", (game_id,)).fetchone()[0]
     subs = conn.execute(
@@ -264,27 +272,29 @@ class Handler(BaseHTTPRequestHandler):
         if len(parts) >= 3 and parts[0] == "api" and parts[1] in list_games():
             game_id = parts[1]
             api_name = parts[2]
+            db = None
             try:
+                db = get_db(game_id)
                 if api_name == "stats":
-                    self._send_json(get_stats(game_id))
+                    self._send_json(get_stats(game_id, db))
                 elif api_name == "top":
                     n = int(q.get("n", ["0"])[0])
-                    self._send_json({"results": search(game_id, "", limit=n)})
+                    self._send_json({"results": search(game_id, "", limit=n, db=db)})
                 elif api_name == "search":
                     kw = q.get("q", [""])[0]
                     sort = q.get("sort", ["subs"])[0]
                     n = int(q.get("n", ["0"])[0])
                     tag = q.get("tag", [""])[0]
-                    self._send_json({"results": search(game_id, kw, n, sort, tag)})
+                    self._send_json({"results": search(game_id, kw, n, sort, tag, db=db)})
                 elif api_name == "mod":
                     sid = q.get("id", [""])[0]
-                    d = get_detail(game_id, sid)
+                    d = get_detail(game_id, sid, db)
                     if d:
                         self._send_json(d)
                     else:
                         self._send_json({"error": "not found"}, 404)
                 elif api_name == "categories":
-                    self._send_json({"categories": get_categories(game_id)})
+                    self._send_json({"categories": get_categories(game_id, db)})
                 elif api_name == "local":
                     self._send_json({"local": get_local(game_id)})
                 elif api_name == "dlcs":
@@ -296,6 +306,9 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json({"error": f"unknown api: {api_name}"}, 404)
             except Exception as e:
                 self._send_json({"error": str(e)}, 500)
+            finally:
+                if db:
+                    db.close()
             return
 
         self._send_json({"error": "not found"}, 404)
