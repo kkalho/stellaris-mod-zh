@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群星 Mod 查询工具</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: #0a0e1a;
+  color: #d8dde8;
+  min-height: 100vh;
+}
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+header {
+  position: relative; z-index: 1;
+  padding: 28px 20px 20px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(20,30,60,.6), transparent);
+}
+header h1 {
+  font-size: 26px; color: #e8edf8; letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(80,120,255,.4);
+}
+header h1 span { color: #6fa8ff; }
+header p { color: #8a93a8; margin-top: 6px; font-size: 13px; }
+.search-box { position: relative; z-index: 1; max-width: 680px; margin: 20px auto; padding: 0 20px; }
+.search-row { display: flex; gap: 10px; }
+.search-row input {
+  flex: 1; padding: 13px 18px; font-size: 15px;
+  background: rgba(20,28,50,.85); color: #e8edf8;
+  border: 1px solid rgba(100,140,255,.25); border-radius: 10px;
+  outline: none; transition: border-color .2s;
+}
+.search-row input:focus { border-color: rgba(100,140,255,.6); }
+.search-row input::placeholder { color: #5a6478; }
+.search-row button {
+  padding: 13px 26px; font-size: 15px; cursor: pointer;
+  background: linear-gradient(135deg, #3a6bd8, #2a4fae);
+  color: #fff; border: none; border-radius: 10px;
+  transition: transform .15s, box-shadow .15s;
+}
+.search-row button:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(60,110,220,.35); }
+.hint { text-align: center; color: #5a6478; font-size: 12px; margin-top: 10px; }
+main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 10px 20px 60px; }
+.stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 10px 0 20px; }
+.stat {
+  background: rgba(20,28,50,.7); border: 1px solid rgba(100,140,255,.15);
+  border-radius: 12px; padding: 12px 22px; text-align: center; min-width: 120px;
+}
+.stat .num { font-size: 20px; color: #6fa8ff; font-weight: 600; }
+.stat .label { font-size: 12px; color: #8a93a8; margin-top: 4px; }
+
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.toolbar select {
+  padding: 9px 14px; font-size: 13px; color: #d8dde8;
+  background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25);
+  border-radius: 8px; outline: none; cursor: pointer;
+}
+.toolbar select option { background: #141c32; }
+.tag-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.tag-chip {
+  padding: 5px 13px; font-size: 12px; cursor: pointer;
+  background: rgba(20,28,50,.7); color: #9aa4bc;
+  border: 1px solid rgba(100,140,255,.15); border-radius: 20px;
+  transition: all .2s; user-select: none;
+}
+.tag-chip:hover { color: #e8edf8; border-color: rgba(100,140,255,.4); }
+.tag-chip.active { background: rgba(60,110,220,.3); color: #9fc0ff; border-color: rgba(100,140,255,.6); }
+
+.list-title { color: #9aa4bc; font-size: 14px; margin: 10px 0 12px; display: flex; align-items: center; gap: 8px; }
+.list-title::after { content: ""; flex: 1; height: 1px; background: rgba(100,140,255,.15); }
+.mod-card {
+  background: rgba(20,28,50,.75); border: 1px solid rgba(100,140,255,.12);
+  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
+  cursor: pointer; transition: background .2s, border-color .2s, transform .15s;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.mod-card:hover { background: rgba(28,40,70,.85); border-color: rgba(100,140,255,.4); transform: translateY(-1px); }
+.mod-card .thumb {
+  width: 130px; height: 74px; flex-shrink: 0; border-radius: 8px;
+  background: rgba(10,16,30,.6); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.mod-card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mod-card .thumb .noimg { font-size: 11px; color: #5a6478; }
+.mod-card .body { flex: 1; min-width: 0; }
+.mod-card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.mod-card .name { font-size: 15px; color: #e8edf8; font-weight: 500; }
+.mod-card .subs { font-size: 13px; color: #6fa8ff; white-space: nowrap; }
+.mod-card .summary { font-size: 13px; color: #9aa4bc; margin-top: 6px; line-height: 1.6; }
+.mod-card .id { font-size: 11px; color: #5a6478; margin-top: 6px; }
+.detail-preview {
+  border-radius: 10px; overflow: hidden; margin-bottom: 16px;
+  background: rgba(10,16,30,.6); max-height: 320px;
+  display: flex; align-items: center; justify-content: center;
+}
+.detail-preview img { width: 100%; max-height: 320px; object-fit: cover; display: block; }
+.detail {
+  background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25);
+  border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
+}
+.detail h2 { color: #e8edf8; font-size: 20px; margin-bottom: 12px; }
+.detail .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.detail .meta-item { background: rgba(10,16,30,.6); border-radius: 8px; padding: 8px 12px; }
+.detail .meta-item .k { font-size: 11px; color: #5a6478; }
+.detail .meta-item .v { font-size: 14px; color: #d8dde8; margin-top: 2px; }
+.detail h3 { color: #6fa8ff; font-size: 15px; margin: 18px 0 8px; }
+.compat-block { background: rgba(10,16,30,.55); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+.compat-block .cb-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.compat-block.conflict .cb-title { color: #f09595; }
+.compat-block.require .cb-title { color: #fac775; }
+.compat-block.best .cb-title { color: #97c459; }
+.compat-item { font-size: 13px; line-height: 1.7; color: #b8c0d0; }
+.compat-item .ci-name { color: #d8dde8; }
+.compat-item .ci-note { color: #8a93a8; }
+.compat-note { font-size: 12.5px; color: #8a93a8; line-height: 1.7; margin-top: 10px; padding: 10px 12px; background: rgba(60,110,220,.08); border-radius: 8px; border-left: 3px solid rgba(100,140,255,.4); }
+.compat-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.compat-tag { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: rgba(60,110,220,.15); color: #9fc0ff; border: 1px solid rgba(100,140,255,.25); }
+.status-badge {
+  display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 10px;
+  margin-left: 8px; vertical-align: middle; font-weight: 500;
+}
+.status-badge.deprecated { background: rgba(226,75,74,.2); color: #f09595; border: 1px solid rgba(226,75,74,.4); }
+.status-badge.outdated { background: rgba(226,75,74,.15); color: #f0a9a8; border: 1px solid rgba(226,75,74,.35); }
+.status-badge.abandoned { background: rgba(186,117,23,.2); color: #efc56a; border: 1px solid rgba(186,117,23,.45); }
+.status-badge.no_update { background: rgba(186,117,23,.15); color: #e5b65e; border: 1px solid rgba(186,117,23,.4); }
+.status-warn {
+  background: rgba(226,75,74,.1); border: 1px solid rgba(226,75,74,.35);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
+  font-size: 13px; color: #f09595; line-height: 1.6;
+}
+.score-pill {
+  display: inline-block; font-size: 12px; padding: 1px 9px; border-radius: 12px;
+  background: rgba(100,140,255,.15); color: #9fc0ff; border: 1px solid rgba(100,140,255,.3);
+  margin-left: 8px;
+}
+.score-pill.high { background: rgba(151,196,89,.15); color: #c0dd97; border-color: rgba(151,196,89,.35); }
+.score-pill.mid { background: rgba(239,159,39,.15); color: #f5c775; border-color: rgba(239,159,39,.35); }
+.detail .summary-text { font-size: 14px; line-height: 1.8; color: #c8cfdd; }
+.detail .desc-text { font-size: 14px; line-height: 1.9; color: #b8c0d0; white-space: pre-wrap; }
+.features { display: flex; flex-wrap: wrap; gap: 8px; }
+.feature {
+  background: rgba(60,110,220,.15); border: 1px solid rgba(100,140,255,.3);
+  color: #9fc0ff; border-radius: 20px; padding: 4px 14px; font-size: 13px;
+}
+.detail .link { display: inline-block; margin-top: 16px; color: #6fa8ff; text-decoration: none; font-size: 13px; }
+.detail .link:hover { text-decoration: underline; }
+.back-btn {
+  margin-bottom: 14px; padding: 8px 16px; font-size: 13px; cursor: pointer;
+  background: transparent; color: #8a93a8; border: 1px solid rgba(100,140,255,.25);
+  border-radius: 8px; transition: color .2s, border-color .2s;
+}
+.back-btn:hover { color: #e8edf8; border-color: rgba(100,140,255,.5); }
+.loading { text-align: center; color: #5a6478; padding: 40px 0; font-size: 14px; }
+footer { position: relative; z-index: 1; text-align: center; color: #4a5468; font-size: 12px; padding: 20px; }
+.pager { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+.pager button {
+  padding: 8px 20px; font-size: 13px; cursor: pointer;
+  background: rgba(20,28,50,.8); color: #9aa4bc;
+  border: 1px solid rgba(100,140,255,.2); border-radius: 8px;
+}
+.pager button:hover:not(:disabled) { color: #e8edf8; border-color: rgba(100,140,255,.5); }
+.pager button:disabled { opacity: .35; cursor: not-allowed; }
+
+.game-bar { position: relative; z-index: 1; max-width: 680px; margin: 0 auto 10px; padding: 0 20px; display: flex; align-items: center; gap: 8px; }
+.game-bar select { padding: 7px 12px; font-size: 13px; color: #d8dde8; background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25); border-radius: 8px; outline: none; cursor: pointer; }
+.game-bar select option { background: #141c32; }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<header>
+  <h1>⭐ <span>群星 Mod</span> 查询工具</h1>
+  <p>Stellaris Workshop 热门 Mod 中文查询 · 输入关键词即可查询（中英文均可）</p>
+
+<div class=game-bar>
+  <span style="color:#8a93a8;font-size:13px">游戏：</span>
+  <select id="gamesel" onchange="switchGame()">
+    <option value="stellaris" selected>群星 (Stellaris)</option>
+    <option value="ck3">十字军之王 3 (CK3)</option>
+    <option value="hoi4">钢铁雄心 4 (HOI4)</option>
+  </select>
+</div></header>
+
+<div class="search-box">
+  <div class="search-row">
+    <input id="kw" type="text" placeholder="输入 Mod 名称或关键词，如：巨构 / giga / 星球多样性 / UI" onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">查询</button>
+  </div>
+  <div class="hint">支持中英文混合搜索 · 点击结果卡片查看完整中文介绍</div>
+</div>
+
+<main>
+  <div class="stats" id="stats"></div>
+  <div id="toolbar" style="display:none">
+    <div class="tag-bar" id="tagbar"></div>
+    <div class="toolbar">
+      <span style="font-size:13px;color:#8a93a8">排序：</span>
+      <select id="sortsel" onchange="applyFilters()">
+        <option value="subs">订阅量 ↓</option>
+        <option value="subs_asc">订阅量 ↑</option>
+        <option value="updated">最近更新</option>
+        <option value="name">名称 A-Z</option>
+      </select>
+      <span style="font-size:13px;color:#8a93a8">显示：</span>
+      <select id="limitsel" onchange="applyFilters()">
+        <option value="0" selected>全部</option>
+        <option value="30">30 条</option>
+        <option value="60">60 条</option>
+        <option value="120">120 条</option>
+      </select>
+      <button class="back-btn" style="margin-bottom:0;margin-left:auto" onclick="clearFilters()">清除筛选</button>
+    </div>
+  </div>
+  <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
+  <div class="pager" id="pager" style="display:none">
+    <button id="prevBtn" onclick="page(-1)">← 上一页</button>
+    <span id="pageInfo" style="color:#5a6478;font-size:13px;align-self:center"></span>
+    <button id="nextBtn" onclick="page(1)">下一页 →</button>
+  </div>
+</main>
+
+<footer>数据来源：Steam 创意工坊公开数据 · 由 AI 翻译整理 · 仅供学习交流</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+let allResults = [];
+let curPage = 1;
+const PER_PAGE = 15;
+let activeTag = null;
+let currentTitle = '🔥 订阅量 Top';
+
+async function api(path) {
+  const r = await fetch(path);
+  return r.json();
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : s;
+  return d.innerHTML;
+}
+
+function fmt(n) {
+  if (n >= 10000) return (n / 10000).toFixed(1) + ' 万';
+  return n.toLocaleString();
+}
+
+const STATUS_LABEL = {
+  deprecated: '已弃用',
+  outdated: '已过时',
+  abandoned: '已废弃',
+  no_update: '停止更新',
+};
+function statusBadge(s) {
+  if (!s || !STATUS_LABEL[s]) return '';
+  return `<span class="status-badge ${esc(s)}">⚠ ${esc(STATUS_LABEL[s])}</span>`;
+}
+function statusWarn(s) {
+  if (!s || !STATUS_LABEL[s]) return '';
+  return `<div class="status-warn">⚠ 注意：此 Mod 已被标记为「${esc(STATUS_LABEL[s])}」，可能不再适配最新版本的游戏，安装前请确认。</div>`;
+}
+function scorePill(sc) {
+  if (!sc) return '';
+  const cls = sc >= 8 ? 'high' : (sc >= 7 ? 'mid' : '');
+  return `<span class="score-pill ${cls}">⭐ ${sc.toFixed(1)}</span>`;
+}
+
+async function loadStats() {
+  const s = await api('/api/' + GAME + '/stats');
+  $('stats').innerHTML = `
+    <div class="stat"><div class="num">${s.total}</div><div class="label">已收录 Mod</div></div>
+    <div class="stat"><div class="num">${fmt(s.subs)}</div><div class="label">累计订阅</div></div>
+    <div class="stat"><div class="num">${s.translated}</div><div class="label">已翻译</div></div>`;
+}
+
+async function loadTags() {
+  const r = await api('/api/' + GAME + '/categories');
+  // 按数量取前 14 个分类，显示「英文（中文）数量」格式
+  const cats = r.categories.filter(c => c.tag && c.tag.trim());
+  const top = cats.slice(0, 14);
+  $('tagbar').innerHTML = top.map(c => {
+    const label = c.tag_zh ? `${esc(c.tag)}（${esc(c.tag_zh)})` : esc(c.tag);
+    return `<span class="tag-chip" data-tag="${esc(c.tag)}" onclick="toggleTag('${esc(c.tag)}')">${label} (${c.count})</span>`;
+  }).join('');
+}
+
+function toggleTag(tag) {
+  if (activeTag === tag) { activeTag = null; }
+  else { activeTag = tag; }
+  document.querySelectorAll('.tag-chip').forEach(el =>
+    el.classList.toggle('active', el.dataset.tag === activeTag));
+  applyFilters();
+}
+
+async function applyFilters() {
+  const sort = $('sortsel').value;
+  const limit = parseInt($('limitsel').value) || 0;
+  const kw = $('kw').value.trim();
+  const tag = activeTag || '';
+  const path = '/api/search?q=' + encodeURIComponent(kw) +
+               '&sort=' + sort +
+               '&n=' + limit +   // 始终传 n，0 表示全部（后端已支持）
+               (tag ? '&tag=' + encodeURIComponent(tag) : '');
+  $('content').innerHTML = '<div class="loading">正在加载...</div>';
+  const r = await api(path);
+  allResults = r.results;
+  curPage = 1;
+  currentTitle = kw ? `“${kw}” 的搜索结果` : (tag ? `分类：${tag}` : '全部 Mod');
+  renderPaged();
+}
+
+function renderPaged() {
+  const totalPages = Math.max(1, Math.ceil(allResults.length / PER_PAGE));
+  curPage = Math.min(curPage, totalPages);
+  const start = (curPage - 1) * PER_PAGE;
+  const slice = allResults.slice(start, start + PER_PAGE);
+  renderList(slice, `${currentTitle}（共 ${allResults.length} 条，第 ${curPage}/${totalPages} 页）`);
+  $('pager').style.display = allResults.length > PER_PAGE ? 'flex' : 'none';
+  $('pageInfo').textContent = `${curPage} / ${totalPages}`;
+  $('prevBtn').disabled = curPage <= 1;
+  $('nextBtn').disabled = curPage >= totalPages;
+}
+
+function page(dir) {
+  curPage += dir;
+  renderPaged();
+  window.scrollTo({ top: 300, behavior: 'smooth' });
+}
+
+function renderList(rows, title) {
+  if (!rows || rows.length === 0) {
+    $('content').innerHTML = '<div class="loading">未找到匹配的 Mod，换个关键词试试</div>';
+    return;
+  }
+  let html = `<div class="list-title">${esc(title)}</div>`;
+  rows.forEach(m => {
+    const thumb = m.preview
+      ? `<div class="thumb"><img src="${esc(m.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>`
+      : `<div class="thumb"><span class="noimg">无预览图</span></div>`;
+    html += `
+    <div class="mod-card" onclick="showDetail('${m.id}')">
+      ${thumb}
+      <div class="body">
+        <div class="top">
+          <div class="name">${esc(m.title)}${statusBadge(m.status)}</div>
+          <div class="subs">🛰 ${fmt(m.subs)} 订阅${scorePill(m.score)}</div>
+        </div>
+        ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
+        <div class="id">Steam ID: ${m.id}${m.tags_zh ? ' · ' + esc(m.tags_zh) : (m.tags ? ' · ' + esc(m.tags) : '')}</div>
+      </div>
+    </div>`;
+  });
+  $('content').innerHTML = html;
+}
+
+async function doSearch() {
+  activeTag = null;
+  document.querySelectorAll('.tag-chip').forEach(el => el.classList.remove('active'));
+  $('toolbar').style.display = 'block';
+  await applyFilters();
+}
+
+function clearFilters() {
+  $('kw').value = '';
+  activeTag = null;
+  document.querySelectorAll('.tag-chip').forEach(el => el.classList.remove('active'));
+  $('sortsel').value = 'subs';
+  $('limitsel').value = '0';
+  applyFilters();
+}
+
+async function showDetail(id) {
+  $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
+  $('pager').style.display = 'none';
+  const d = await api('/api/' + GAME + '/mod?id=' + id);
+  if (d.error) { $('content').innerHTML = '<div class="loading">未找到该 Mod</div>'; return; }
+  let html = `
+    <button class="back-btn" onclick="backToList()">← 返回列表</button>
+    <div class="detail">
+      ${d.preview ? `<div class="detail-preview"><img src="${esc(d.preview)}" alt="" onerror="this.parentNode.style.display='none'"></div>` : ''}
+      ${statusWarn(d.status)}
+      <h2>${esc(d.title)}${statusBadge(d.status)}</h2>
+      ${d.title_en && d.title_en !== d.title ? `<div style="color:#8a93a8;font-size:13px;margin-top:-6px;margin-bottom:14px">英文名：${esc(d.title_en)}</div>` : ''}
+      <div class="meta">
+        <div class="meta-item"><div class="k">综合评分</div><div class="v">⭐ ${d.score ? d.score.toFixed(1) : '-'} / 10</div></div>
+        <div class="meta-item"><div class="k">好评率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
+        <div class="meta-item"><div class="k">作者</div><div class="v">${esc(d.author)}</div></div>
+        <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
+        <div class="meta-item"><div class="k">点赞数</div><div class="v">${fmt(d.fav)}</div></div>
+        <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
+        <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags_zh || d.tags || '-')}</div></div>
+        <div class="meta-item"><div class="k">Steam ID</div><div class="v">${d.id}</div></div>
+      </div>`;
+  if (d.summary) html += `<h3>📝 简介</h3><div class="summary-text">${esc(d.summary)}</div>`;
+  if (d.features && d.features.length) {
+    html += `<h3>✨ 特色</h3><div class="features">${d.features.map(f => `<span class="feature">${esc(f)}</span>`).join('')}</div>`;
+  }
+  if (d.gameplay) html += `<h3>🎮 具体玩法</h3><div class="desc-text">${esc(d.gameplay)}</div>`;
+  if (d.compat) {
+    html += `<h3>🔗 兼容性</h3>`;
+    if (d.compat.conflicts && d.compat.conflicts.length) {
+      html += `<div class="compat-block conflict"><div class="cb-title">⚠️ 冲突 / 注意</div>${d.compat.conflicts.map(c =>
+        `<div class="compat-item"><span class="ci-name">${esc(c.name || c.id || '')}</span>${c.note ? ` — <span class="ci-note">${esc(c.note)}</span>` : ''}</div>`).join('')}</div>`;
+    }
+    if (d.compat.requires && d.compat.requires.length) {
+      html += `<div class="compat-block require"><div class="cb-title">🔒 依赖前置</div>${d.compat.requires.map(c =>
+        `<div class="compat-item"><span class="ci-name">${esc(c.name || '')}</span>${c.note ? ` — <span class="ci-note">${esc(c.note)}</span>` : ''}</div>`).join('')}</div>`;
+    }
+    if (d.compat.best_with && d.compat.best_with.length) {
+      html += `<div class="compat-block best"><div class="cb-title">✅ 最佳搭配</div>${d.compat.best_with.map(c =>
+        `<div class="compat-item"><span class="ci-name">${esc(c.name || '')}</span>${c.note ? ` — <span class="ci-note">${esc(c.note)}</span>` : ''}</div>`).join('')}</div>`;
+    }
+    if (d.compat.notes) html += `<div class="compat-note">📌 ${esc(d.compat.notes)}</div>`;
+    if (d.compat.has_patches && d.compat.has_patches.length) {
+      html += `<div class="compat-tags">${d.compat.has_patches.map(p => `<span class="compat-tag">🧩 ${esc(p)}</span>`).join('')}</div>`;
+    }
+  }
+  if (d.description) html += `<h3>📄 详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
+  if (d.reviews) html += `<h3>💬 玩家评价</h3><div class="desc-text">${esc(d.reviews)}</div>`;
+  html += `<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+    <a class="link" style="margin-top:0" href="${d.url}" target="_blank">🔗 在 Steam 查看原文 ↗</a>
+    <a class="link" style="margin-top:0" href="steam://url/CommunityFilePage/${d.id}" target="_blank">📥 打开 Steam 订阅页</a>
+    <a class="link" style="margin-top:0;cursor:pointer" onclick="copyId('${d.id}')">📋 复制 Mod ID</a>
+  </div></div>`;
+  $('content').innerHTML = html;
+}
+
+function copyId(id) {
+  navigator.clipboard.writeText(id).then(() => {
+    const t = document.createElement('div');
+    t.textContent = '✓ 已复制 ID: ' + id;
+    t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(60,110,220,.9);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:99';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 1800);
+  });
+}
+
+function backToList() {
+  $('toolbar').style.display = 'block';
+  renderPaged();
+}
+
+async function loadTop() {
+  $('content').innerHTML = '<div class="loading">正在加载全部 Mod 列表...</div>';
+  $('toolbar').style.display = 'block';
+  // n=0 表示返回全部（后端已支持），让用户可以翻完所有 Mod
+  const r = await api('/api/' + GAME + '/top?n=0');
+  allResults = r.results;
+  curPage = 1;
+  currentTitle = '🔥 全部 Mod（按订阅量排序）';
+  renderPaged();
+}
+
+
+let GAME = 'stellaris';
+function switchGame() {
+  GAME = document.getElementById('gamesel').value;
+  loadTop();
+}
+function makeStars() {
+  let html = '';
+  for (let i = 0; i < 120; i++) {
+    const x = Math.random() * 100, y = Math.random() * 100, s = Math.random() * 1.5 + 0.5;
+    const o = Math.random() * 0.6 + 0.2;
+    html += `<div style="position:absolute;left:${x}%;top:${y}%;width:${s}px;height:${s}px;background:#fff;border-radius:50%;opacity:${o}"></div>`;
+  }
+  $('stars').innerHTML = html;
+}
+
+makeStars();
+loadStats();
+loadTags();
+loadTop();
+</script>
+</body>
+</html>
