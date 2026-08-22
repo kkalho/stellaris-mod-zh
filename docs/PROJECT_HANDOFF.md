@@ -1,7 +1,7 @@
 # 项目说明书：Paradox 中文 MOD 管理工具
 
 > 本文档是**自包含交接文档**——新会话（新任务）仅凭本文即可完整接手项目。
-> 最后更新：2026-08-22 17:25（与 git `8f954ad` 一致）
+> 最后更新：2026-08-22 18:20（与 git 待提交 一致）
 
 ---
 
@@ -11,20 +11,21 @@
 
 - **仓库**：`D:/Projects/walong/stellaris-mod-zh/`（本地）
 - **GitHub**：`https://github.com/kkalho/stellaris-mod-zh`（用户 kkalho，master 分支）
-- **最新提交**：`8f954ad`
+- **最新提交**：`8f954ad`（本次 CK3 数据提交后更新）
 
 ## 2. 当前状态（已实现）
 
-### 2.1 数据现状（群星）
-| 数据 | 数量 | 说明 |
-|---|---|---|
-| MOD 总数 | 227 | 创意工坊订阅量 Top，含 50 个历史残留 |
-| 中文翻译 | 1020 条 | title/summary/description/gameplay/reviews |
-| 玩法溯源 | 100% | 每条玩法标注「信息来源：Steam 原文核实」 |
-| 兼容性矩阵 | 16 个热门 | conflicts/requires/best_with/补丁/加载顺序 |
-| DLC 依赖 | 18 个 MOD | 均为「可选」（描述提及），无虚假必需 |
-| 社区口碑 | 3 个热门 | 贴吧/B站/NGA 评分+摘要+来源 |
-| 封面图 | 100% | Steam 官方图床 preview_url |
+### 2.1 数据现状（群星 / CK3）
+| 数据 | 群星 | CK3 | 说明 |
+|---|---|---|---|
+| MOD 总数 | 227 | **300** | 创意工坊订阅量 Top（CK3 为新抓取） |
+| 中文翻译 | 1020 条 | **100 条** | title/summary/description/gameplay/reviews（CK3 为 Top 100） |
+| 玩法溯源 | 100% | 部分 | 每条玩法标注「信息来源：Steam 原文核实」 |
+| 兼容性矩阵 | 16 个热门 | - | CK3 待做 |
+| DLC 依赖 | 18 个 MOD | 启发式 | 均为「可选」（描述提及），无虚假必需 |
+| 社区口碑 | 3 个热门 | - | 贴吧/B站/NGA，CK3 待做 |
+| 封面图 | 100% | **100%** | Steam 官方图床 preview_url |
+| 总分 | 227 | 300 | 订阅量合计 2064 万（CK3） |
 
 ### 2.2 已实现功能（16 项改进中完成 12 项）
 ✅ 截图预览 ✅ 兼容性矩阵 ✅ 玩法溯源(177/177) ✅ 废弃警告 ✅ 综合评分
@@ -33,7 +34,9 @@
 ✅ 网页版 DLC 缺失检测面板
 
 ### 2.3 待办（未完成）
-- [ ] **抓取 CK3 / HOI4 热门 MOD 数据**（框架就绪，库为空）← 最有价值
+- [x] **抓取 CK3 热门 MOD 数据**（300 条已入库，Top 100 已翻译）← 2026-08-22 完成
+- [ ] 抓取 HOI4 热门 MOD 数据（框架就绪，库为空）
+- [ ] CK3 剩余 200 条翻译（101-300，下批从 rank 101 开始）
 - [ ] 网页版汉化包展示版块（数据有，前端未渲染）
 - [ ] 网页版本地 MOD 检测版块（API 有 /local，前端未渲染）
 - [ ] updater 接入真实 Steam API fetch 函数（当前是占位）
@@ -77,6 +80,7 @@ python -m core.cli update --force --game stellaris
 
 ### 3.4 数据流
 - **抓取**：Steam 榜单 → `scripts/auto_fetch.py`（详情）→ `build_db.py`（建库）→ `import_translations.py`（翻译）
+- **CK3 版抓取链**：`scripts/fetch_ck3_workshop_top.py`（榜单→data/ck3/workshop_top.json）→ `scripts/fetch_ck3_details.py`（详情→data/ck3/details.jsonl）→ `scripts/build_ck3_db.py`（直接写新架构 ModDB）→ `scripts/patch_ck3_missing.py`（榜单有/详情缺的兜底补录）→ `scripts/import_ck3_translations.py`（翻译导入）
 - **迁移**：`scripts/migrate_to_multigame.py`（旧单游戏库 → 新多游戏架构）
 - **查询**：前端 → `/api/<game>/search|mod|dlcs|dlc-missing|local` → ModDB
 
@@ -87,8 +91,10 @@ python -m core.cli update --force --game stellaris
 3. **访问用 127.0.0.1 而非 localhost**：Windows 下 localhost 优先解析 IPv6 (::1)，服务只监听 IPv4 会白等 2 秒。
 4. **前端 API 路径必须带游戏前缀**：`api('/api/' + GAME + '/...')`。`applyFilters` 曾漏加导致分类 404（`7ea1538` 修复）。
 5. **Steam 限流**：`steamcommunity.com` 直连（requests/curl）会被重置连接；但 `api.steampowered.com` 的 `GetPublishedFileDetails` 无需 Key 可批量查详情；WebSearch/WebFetch 独立通道稳定。
-6. **数据真实原则**：DLC 依赖启发式检测有误报，**无明确 require 依据不标「必需」**，一律标「可选」。
-7. **迁移脚本**：`ModDB.upsert_mod` 必须含 steam_id 字段；`LocalModInfo` 需含 size_mb 字段（曾漏）。
+6. **本机 venv SSL 证书缺失**：`requests` 访问 https 会 `CERTIFICATE_VERIFY_FAILED`（本机 Python venv 缺根证书）。**所有抓取脚本必须 `verify=False` + `urllib3.disable_warnings()`**（榜单与详情脚本均已处理）。
+7. **数据真实原则**：DLC 依赖启发式检测有误报，**无明确 require 依据不标「必需」**，一律标「可选」。
+8. **迁移脚本**：`ModDB.upsert_mod` 必须含 steam_id 字段；`LocalModInfo` 需含 size_mb 字段（曾漏）。
+9. **旧库 schema 兼容**：`data/ck3/mods.db` 等旧建库缺少 `pinyin_idx` 列，写库前需 `PRAGMA table_info` 检查并 `ALTER TABLE ADD COLUMN`（见 build_ck3_db.py）。
 
 ## 5. 常用命令速查
 
@@ -100,6 +106,13 @@ curl "http://127.0.0.1:8080/api/stellaris/search?q=巨构&n=5"
 curl "http://127.0.0.1:8080/api/stellaris/dlc-missing?owned=281992"
 # 数据库
 python -c "import sqlite3; c=sqlite3.connect('data/stellaris/mods.db'); ..."
+python -c "import sqlite3; c=sqlite3.connect('data/ck3/mods.db'); ..."
+# CK3 抓取链（按序执行）
+python scripts/fetch_ck3_workshop_top.py --pages 10   # 榜单 300 条
+python scripts/fetch_ck3_details.py --sleep 12        # 详情（断点续抓）
+python scripts/build_ck3_db.py                        # 建库
+python scripts/patch_ck3_missing.py                   # 兜底补录
+python scripts/import_ck3_translations.py             # 翻译导入
 # 提交推送（GitHub 偶发网络波动需重试）
 git add -A && git commit -m "..." && git push origin master
 ```
@@ -115,13 +128,14 @@ git add -A && git commit -m "..." && git push origin master
 
 ## 7. 项目质量现状
 
-- **诚实说明**：CK3/HOI4 只是框架（配置写好，库空）；社区口碑仅 3 个样例；DLC 依赖是可选级启发式；updater 的 Steam fetch 是占位
+- **诚实说明**：CK3 数据已抓取入库（300 条），翻译完成 Top 100；HOI4 仍是空框架；社区口碑仅群星 3 个样例；DLC 依赖是可选级启发式；updater 的 Steam fetch 是占位
 - **性能**：服务并发已优化，6 并发 0.13s；SQLite 毫秒级
 - **测试**：无自动化测试脚本，靠 curl/CLI 手工验证
 
 ## 8. 下一步建议（按优先级）
 
-1. **抓 CK3/HOI4 数据**：复用 `scripts/auto_fetch.py` 思路，改 app_id 抓两个游戏的热门 Mod → build_db 入库 → 中文翻译（量大，分批）
-2. **网页版汉化包 + 本地 MOD 版块**：后端数据/API 已就绪，只需前端渲染
-3. **updater 接真实 Steam API**：实现增量同步订阅量
-4. **数据自动化**：定时任务每日更新
+1. **CK3 剩余翻译**：101-300 条中文标题/简介翻译（脚本已就绪，续写 translations/ck3_batchN_zh.json 即可）
+2. **抓 HOI4 数据**：复用 CK3 脚本链，改 app_id（HOI4=394360）抓热门 Mod
+3. **网页版汉化包 + 本地 MOD 版块**：后端数据/API 已就绪，只需前端渲染
+4. **updater 接真实 Steam API**：实现增量同步订阅量
+5. **数据自动化**：定时任务每日更新
