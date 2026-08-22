@@ -326,9 +326,24 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 8080
+    auto_open = "--no-browser" not in sys.argv
     print(f"Paradox MOD 管理工具已启动: http://localhost:{port}")
     print(f"支持游戏: {list_games()}")
     server = HTTPServer(("127.0.0.1", port), Handler)
+    if auto_open:
+        import threading
+        import webbrowser
+
+        def _open():
+            import time
+            time.sleep(1.2)
+            try:
+                webbrowser.open(f"http://localhost:{port}")
+            except Exception:
+                pass
+
+        threading.Thread(target=_open, daemon=True).start()
+        print("已尝试打开浏览器（如未自动打开，请手动访问上述地址）")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
