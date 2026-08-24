@@ -29,6 +29,66 @@
       "source": "steam",
       "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=1321344591",
       "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "2812860898",
+      "loc_id": "gezhu_guanzhong",
+      "name": "鸽组官中修正（Vanilla Chinese Improving）",
+      "author": "鸽组",
+      "target_version": "4.*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2812860898",
+      "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "2459685305",
+      "loc_id": "gezhu_du_li_heji",
+      "name": "鸽组独立汉化合集（合集订阅）",
+      "author": "鸽组",
+      "target_version": "4.*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2459685305",
+      "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "2829207309",
+      "loc_id": "qita_hanhuazhe_heji",
+      "name": "其他汉化者作品合集",
+      "author": "社区",
+      "target_version": "*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2829207309",
+      "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "734129025",
+      "loc_id": "cloudwu_zh",
+      "name": "Cloud Wu 中文翻译（本体汉化）",
+      "author": "Cloud Wu",
+      "target_version": "*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=734129025",
+      "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "937289339",
+      "loc_id": "realspace_zh",
+      "name": "真实星空（Real Space）独立汉化包",
+      "author": "社区",
+      "target_version": "4.*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=1351953375",
+      "status": "not_downloaded"
+    },
+    {
+      "mod_steam_id": "683409704",
+      "loc_id": "tieba_zh_old",
+      "name": "贴吧汉化（旧，停止更新）",
+      "author": "贴吧汉化组",
+      "target_version": "*",
+      "source": "steam",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=683409704",
+      "status": "not_downloaded"
     }
   ]
 }
