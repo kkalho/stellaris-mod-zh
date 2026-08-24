@@ -31,6 +31,30 @@
       "comment_summary": "NGA 玩家评价：立绘党的福音，让星球系统不再单调；系列子模组丰富可按需选择。注意与 UOD 需装兼容补丁。",
       "recommend": "推荐",
       "source_url": "https://nga.178.com/thread.php?fid=-320014"
+    },
+    {
+      "steam_id": "683230077",
+      "platform": "nga",
+      "score": 8.3,
+      "comment_summary": "NGA 讨论：舰船扩展类第一梯队，内容丰富（新舰种、轨道环升级、武器与事件）；唯一缺点是舰船槽位强度膨胀明显，满配可达原版同型约 3 倍。Stage1st 玩家评价其「在舰船 Mod 里有不可撼动的地位，大多数船模 Mod 都对其兼容」。",
+      "recommend": "推荐",
+      "source_url": "https://ngabbs.com/read.php?tid=42170434"
+    },
+    {
+      "steam_id": "937289339",
+      "platform": "tieba",
+      "score": 8.0,
+      "comment_summary": "贴吧/百度知道讨论：真实星空侧重恒星与星系视觉（真实光谱、多星系统），观感沉浸适合截图党；但内容不如行星多样性丰富、性能开销较大，常与 PD 二选一；Reddit 玩家形容「ITS A VIBE」，长期用于每局游玩。",
+      "recommend": "推荐",
+      "source_url": "https://sala.baidu.com/p/8321678957"
+    },
+    {
+      "steam_id": "727000451",
+      "platform": "nga",
+      "score": 8.2,
+      "comment_summary": "被多家榜单列为「新手三件套」之一。事件补充量大（70+ 异常、21 个挖掘点、大量殖民/外交事件），团队自 2016 年持续更新；英文评测称其「相当于免费的 DLC」，与游戏本体融合自然。",
+      "recommend": "推荐",
+      "source_url": "https://gamerempire.net/stellaris-best-mods/"
     }
   ]
 }

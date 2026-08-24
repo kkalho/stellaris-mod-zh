@@ -101,6 +101,9 @@ def cmd_community(args):
         import json
         with open(args.import_file, encoding="utf-8") as f:
             data = json.load(f)
+        # 兼容两种格式：直接列表，或 {"community": [...]}
+        if isinstance(data, dict):
+            data = data.get("community", [])
         n = cr.import_json(data)
         print(f"导入社区口碑: {n} 条")
         n2 = cr.recompute_all()
