@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-24 21:20",
-  "db_total": 427,
-  "db_translated": 427,
+  "updated_at": "2026-08-24 21:30",
+  "db_total": 477,
+  "db_translated": 477,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    427
+    477
   ],
-  "translated_rank_count": 427,
-  "next_batch_start_rank": 428,
+  "translated_rank_count": 477,
+  "next_batch_start_rank": 478,
   "next_batch_size": 50,
-  "remaining": 593,
+  "remaining": 543,
   "next_batch_preview": [
     {
-      "rank": 278,
-      "id": "1726290528",
-      "title": "24 Building Slots"
+      "rank": 428,
+      "id": "2976573664",
+      "title": "Expanded Stellaris Ascension Perks (Delta)"
     },
     {
-      "rank": 279,
-      "id": "3032768344",
-      "title": "Real Terraforming"
+      "rank": 429,
+      "id": "1286356239",
+      "title": "Planet Raider"
     },
     {
-      "rank": 280,
-      "id": "1777266185",
-      "title": "Kurogane Expanded"
+      "rank": 430,
+      "id": "2436969913",
+      "title": "Integrated Repeatable Technologies"
     },
     {
-      "rank": 281,
-      "id": "2608299476",
-      "title": "UI Overhaul Dynamic - More Tradition Categories (64)"
+      "rank": 431,
+      "id": "1506080933",
+      "title": "No Names on the Map"
     },
     {
-      "rank": 282,
-      "id": "2104538771",
-      "title": "UTD: Flags: Emblems & Backgrounds"
+      "rank": 432,
+      "id": "2810064268",
+      "title": "碧蓝档案故事包 BlueArchive story pack - BETA"
     }
   ]
 }
