@@ -464,12 +464,20 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
-    port = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 8080
-    auto_open = "--no-browser" not in sys.argv
-    print(f"Paradox MOD 管理工具已启动: http://127.0.0.1:{port}")
+    # 参数：python web_server_multigame.py [端口] [--no-browser] [--host 0.0.0.0]
+    args_list = sys.argv[1:]
+    host = "127.0.0.1"  # 默认仅本机（安全）；部署到云服务器用 --host 0.0.0.0
+    if "--host" in args_list:
+        i = args_list.index("--host")
+        if i + 1 < len(args_list):
+            host = args_list[i + 1]
+            del args_list[i:i + 2]
+    port = int(args_list[0]) if args_list and args_list[0].isdigit() else 8080
+    auto_open = "--no-browser" not in args_list
+    print(f"Paradox MOD 管理工具已启动: http://{host}:{port}")
     print(f"支持游戏: {list_games()}")
-    # 绑定 127.0.0.1（仅本机，安全）；访问统一用 127.0.0.1 避免 localhost 的 IPv6 解析延迟
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    # 绑定 host（默认 127.0.0.1 仅本机；云服务器用 0.0.0.0 对外开放）
+    server = ThreadingHTTPServer((host, port), Handler)
     if auto_open:
         import threading
         import webbrowser
