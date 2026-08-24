@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-08-24 21:05",
-  "db_total": 327,
-  "db_translated": 327,
+  "updated_at": "2026-08-24 21:15",
+  "db_total": 377,
+  "db_translated": 377,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    327
+    377
   ],
-  "translated_rank_count": 327,
-  "next_batch_start_rank": 328,
+  "translated_rank_count": 377,
+  "next_batch_start_rank": 378,
   "next_batch_size": 50,
-  "remaining": 693,
+  "remaining": 643,
   "next_batch_preview": [
     {
       "rank": 278,
