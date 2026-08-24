@@ -112,12 +112,20 @@ def cmd_community(args):
 def cmd_update(args):
     cfg = get_game(args.game, BASE_DIR)
     from core.updater import DataUpdater
+    from core.steam_fetch import sync_subscriptions
+    sys.path.append(os.path.join(BASE_DIR, "scripts"))
+    from snapshot_trend import snapshot  # noqa: E402
     db = ModDB(cfg)
     updater = DataUpdater(cfg, db)
-    # 注册示例任务（实际的 fetch_fn 需接入 Steam API）
+    # 真实 Steam API 增量同步（订阅量/更新时间）
     updater.register_task(
         "steam_sync",
-        lambda: {"updated": 0, "note": "需配置 Steam API fetch 函数"},
+        lambda: sync_subscriptions(cfg, db, stale_days=args.stale_days, verbose=True),
+        schedule_hours=24)
+    # 订阅热度趋势快照（每日）
+    updater.register_task(
+        "trend_snapshot",
+        lambda: snapshot(args.game, verbose=True),
         schedule_hours=24)
     results = updater.run(force=args.force, verbose=True)
     print("\n更新结果:")
@@ -169,7 +177,9 @@ def main():
     p_c.set_defaults(fn=cmd_community)
 
     p_u = sub.add_parser("update", help="数据更新")
-    p_u.add_argument("--force", action="store_true")
+    p_u.add_argument("--force", action="store_true", help="忽略计划时间强制更新")
+    p_u.add_argument("--stale-days", type=int, default=3,
+                     help="超过 N 天未抓取的 MOD 才更新（默认 3）")
     add_game_opt(p_u)
     p_u.set_defaults(fn=cmd_update)
 

@@ -202,8 +202,9 @@ class LocalScanner:
         sql = "SELECT * FROM local_mods WHERE game_id=?"
         if only_unknown:
             sql += " AND in_knowledge=0"
-        rows = self.conn.execute(sql, (self.game.game_id,)).fetchall()
-        return [dict(zip([d[0] for d in self.conn.description], r)) for r in rows]
+        cur = self.conn.execute(sql, (self.game.game_id,))
+        cols = [d[0] for d in cur.description]
+        return [dict(zip(cols, r)) for r in cur.fetchall()]
 
     def stats(self) -> Dict[str, int]:
         total = self.conn.execute(

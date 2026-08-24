@@ -10,3 +10,5 @@ Thumbs.db
 data/**/mods.db
 data/**/local.db
 data/**/update_state.json
+data/**/mods.db-shm
+data/**/mods.db-wal

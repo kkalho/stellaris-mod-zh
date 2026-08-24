@@ -13,6 +13,8 @@ API（带游戏上下文）:
     GET /api/<game>/mod?id=     → MOD 详情（含翻译/DLC/兼容性/社区）
     GET /api/<game>/categories  → 标签分类
     GET /api/<game>/local       → 本地 MOD 列表
+    GET /api/<game>/localizations → 汉化包数据库
+    GET /api/<game>/trend       → 订阅热度趋势（每日快照涨跌）
     GET /api/<game>/dlcs        → DLC 清单
 """
 from __future__ import annotations
@@ -155,6 +157,18 @@ def get_detail(game_id, steam_id, db=None):
     required = json.loads(m.get("required_dlcs") or "[]")
     optional = json.loads(m.get("optional_dlcs") or "[]")
     dlc_map = {d.app_id: d for d in cfg.load_dlcs()}
+    # 汉化包（该 MOD 对应的汉化包记录）
+    from core.localization_matcher import LocalizationMatcher
+    matcher = LocalizationMatcher(cfg)
+    localizations = [{
+        "loc_id": l.get("loc_id", ""),
+        "name": l.get("name", ""),
+        "author": l.get("author", ""),
+        "target_version": l.get("target_version", ""),
+        "source": l.get("source", ""),
+        "source_url": l.get("source_url", ""),
+        "status": l.get("status", "not_downloaded"),
+    } for l in matcher.find_for_mod(str(m.get("steam_id", "")))]
     return {
         "id": m.get("steam_id"),
         "title": trans.get("title", m.get("title_en") or m.get("title")),
@@ -179,6 +193,7 @@ def get_detail(game_id, steam_id, db=None):
                           for d in required],
         "optional_dlcs": [{"app_id": d, "name": dlc_map.get(d).name_zh if dlc_map.get(d) else d}
                           for d in optional],
+        "localizations": localizations,
         "compat": {
             "conflicts": json.loads(compat["conflicts"]) if compat and compat.get("conflicts") else [],
             "requires": json.loads(compat["requires"]) if compat and compat.get("requires") else [],
@@ -228,6 +243,72 @@ def get_local(game_id):
     mods = scanner.list_local()
     scanner.close()
     return mods
+
+
+def get_localizations(game_id, db=None):
+    """汉化包数据库（localization.json + 关联 MOD 信息）"""
+    from core.localization_matcher import LocalizationMatcher
+    cfg = get_cfg(game_id)
+    matcher = LocalizationMatcher(cfg)
+    if db is None:
+        db = get_db(game_id)
+    locs = []
+    for loc in matcher.all():
+        mod = db.get_mod_by_steam_id(str(loc.get("mod_steam_id", "")))
+        locs.append({
+            "mod_steam_id": loc.get("mod_steam_id", ""),
+            "loc_id": loc.get("loc_id", ""),
+            "name": loc.get("name", ""),
+            "author": loc.get("author", ""),
+            "target_version": loc.get("target_version", ""),
+            "source": loc.get("source", ""),
+            "source_url": loc.get("source_url", ""),
+            "status": loc.get("status", "not_downloaded"),
+            "mod_title": mod.get("title_en") if mod else "",
+            "mod_subs": mod.get("subscriptions") or 0 if mod else 0,
+            "mod_status": mod.get("status") if mod else "",
+        })
+    # 按 MOD 订阅量降序
+    locs.sort(key=lambda x: x["mod_subs"], reverse=True)
+    return locs
+
+
+def get_trend(game_id, db=None):
+    """订阅热度趋势：首末快照对比，返回各 MOD 涨跌（按涨跌排序）"""
+    if db is None:
+        db = get_db(game_id)
+    conn = db.conn
+    # 确保 trend 表存在（可能还没快照过）
+    conn.execute("""CREATE TABLE IF NOT EXISTS trend (
+        steam_id TEXT NOT NULL, date TEXT NOT NULL, subs INTEGER DEFAULT 0,
+        PRIMARY KEY (steam_id, date))""")
+    dates = [r[0] for r in conn.execute(
+        "SELECT DISTINCT date FROM trend ORDER BY date").fetchall()]
+    if len(dates) < 2:
+        return {"dates": dates, "mods": [],
+                "note": "暂无趋势数据（需至少 2 天快照）。请运行 python -m core.cli update 每日生成，"
+                        "或手动执行 scripts/snapshot_trend.py"}
+    first, last = dates[0], dates[-1]
+    rows = conn.execute("""
+        SELECT t.steam_id, t.subs AS first_subs, t2.subs AS last_subs
+        FROM trend t
+        JOIN trend t2 ON t2.steam_id = t.steam_id AND t2.date = ?
+        WHERE t.date = ?
+    """, (last, first)).fetchall()
+    out = []
+    for sid, first_subs, last_subs in rows:
+        mod = db.get_mod_by_steam_id(str(sid))
+        f, l = first_subs or 0, last_subs or 0
+        out.append({
+            "steam_id": str(sid),
+            "title": (mod.get("title") or mod.get("title_en")) if mod else str(sid),
+            "first_subs": f,
+            "last_subs": l,
+            "diff": l - f,
+            "pct": round((l - f) / f * 100, 2) if f else 0.0,
+        })
+    out.sort(key=lambda x: x["diff"], reverse=True)
+    return {"dates": dates, "mods": out, "note": ""}
 
 
 def get_dlc_missing(game_id, owned_app_ids, db=None):
@@ -348,6 +429,10 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json({"categories": get_categories(game_id, db)})
                 elif api_name == "local":
                     self._send_json({"local": get_local(game_id)})
+                elif api_name == "localizations":
+                    self._send_json({"localizations": get_localizations(game_id, db)})
+                elif api_name == "trend":
+                    self._send_json(get_trend(game_id, db))
                 elif api_name == "dlcs":
                     cfg = get_cfg(game_id)
                     dlcs = [{"app_id": d.app_id, "name": d.name, "name_zh": d.name_zh}

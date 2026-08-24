@@ -27,20 +27,22 @@
 | 封面图 | 100% | **100%** | Steam 官方图床 preview_url |
 | 总分 | 227 | 300 | 订阅量合计 2064 万（CK3） |
 
-### 2.2 已实现功能（16 项改进中完成 12 项）
+### 2.2 已实现功能（16 项改进中完成 14 项）
 ✅ 截图预览 ✅ 兼容性矩阵 ✅ 玩法溯源(177/177) ✅ 废弃警告 ✅ 综合评分
 ✅ 智能搜索(拼音/同义词) ✅ 一键订阅 ✅ DLC 依赖标注 ✅ 汉化包匹配
 ✅ 本地 MOD 检测 ✅ 社区口碑 ✅ 数据自动更新框架 ✅ 多游戏架构
 ✅ 网页版 DLC 缺失检测面板
+✅ **网页版汉化包版块**（2026-08-24：/api/<game>/localizations + 前端面板 + 详情页汉化包区块）
+✅ **网页版本地 MOD 检测版块**（2026-08-24：前端面板，修复 local_scanner.list_local bug）
+✅ **updater 真实 Steam API**（2026-08-24：core/steam_fetch.py 接入 GetPublishedFileDetails，去掉模拟占位）
+✅ **订阅热度趋势**（2026-08-24：scripts/snapshot_trend.py 每日快照 + /api/<game>/trend + 前端涨跌榜）
 
 ### 2.3 待办（未完成）
 - [x] **抓取 CK3 热门 MOD 数据**（300 条已入库，Top 100 已翻译）← 2026-08-22 完成
 - [ ] 抓取 HOI4 热门 MOD 数据（框架就绪，库为空）
 - [ ] CK3 剩余 200 条翻译（101-300，下批从 rank 101 开始）
-- [ ] 网页版汉化包展示版块（数据有，前端未渲染）
-- [ ] 网页版本地 MOD 检测版块（API 有 /local，前端未渲染）
-- [ ] updater 接入真实 Steam API fetch 函数（当前是占位）
-- [ ] 订阅热度趋势（每日快照）
+- [ ] **群星汉化包数据扩充**（当前仅 3 条：鸽组主汉化/巨构/NSC3，需逐个 Steam 核实）
+- [ ] updater 首次实跑验证（2026-08-24 网络连不上 Steam 域名，代码已验证降级路径）
 - [ ] 扩展到 Top 500/1000
 - [ ] CK3/HOI4 的社区口碑、汉化包数据
 
@@ -82,7 +84,9 @@ python -m core.cli update --force --game stellaris
 - **抓取**：Steam 榜单 → `scripts/auto_fetch.py`（详情）→ `build_db.py`（建库）→ `import_translations.py`（翻译）
 - **CK3 版抓取链**：`scripts/fetch_ck3_workshop_top.py`（榜单→data/ck3/workshop_top.json）→ `scripts/fetch_ck3_details.py`（详情→data/ck3/details.jsonl）→ `scripts/build_ck3_db.py`（直接写新架构 ModDB）→ `scripts/patch_ck3_missing.py`（榜单有/详情缺的兜底补录）→ `scripts/import_ck3_translations.py`（翻译导入）
 - **迁移**：`scripts/migrate_to_multigame.py`（旧单游戏库 → 新多游戏架构）
-- **查询**：前端 → `/api/<game>/search|mod|dlcs|dlc-missing|local` → ModDB
+- **趋势快照**：`scripts/snapshot_trend.py`（每日快照订阅量 → mods.db trend 表；已注册进 updater）
+- **增量更新**：`python -m core.cli update --force --game stellaris`（Steam API 同步订阅量 + 趋势快照）
+- **查询**：前端 → `/api/<game>/search|mod|dlcs|dlc-missing|local|localizations|trend` → ModDB
 
 ## 4. 关键技术坑（血泪教训，勿重蹈）
 
@@ -95,6 +99,8 @@ python -m core.cli update --force --game stellaris
 7. **数据真实原则**：DLC 依赖启发式检测有误报，**无明确 require 依据不标「必需」**，一律标「可选」。
 8. **迁移脚本**：`ModDB.upsert_mod` 必须含 steam_id 字段；`LocalModInfo` 需含 size_mb 字段（曾漏）。
 9. **旧库 schema 兼容**：`data/ck3/mods.db` 等旧建库缺少 `pinyin_idx` 列，写库前需 `PRAGMA table_info` 检查并 `ALTER TABLE ADD COLUMN`（见 build_ck3_db.py）。
+10. **`self.conn.description` 是 Bug**：`description` 是**游标**属性不是连接属性，`local_scanner.list_local` 曾因此 500（已修：`cur = conn.execute(...); cols = [d[0] for d in cur.description]`）。
+11. **Steam 域名时段性不可达**：steamcommunity.com / api.steampowered.com 在国内网络**有时段性全拒**（baidu 正常，WinError 10061 连接拒绝）。抓取/更新脚本须做快速失败：ConnectionError 不重试（见 steam_fetch.py 的 net_down 标志），避免傻等。
 
 ## 5. 常用命令速查
 
@@ -113,6 +119,9 @@ python scripts/fetch_ck3_details.py --sleep 12        # 详情（断点续抓）
 python scripts/build_ck3_db.py                        # 建库
 python scripts/patch_ck3_missing.py                   # 兜底补录
 python scripts/import_ck3_translations.py             # 翻译导入
+# 增量更新 + 趋势快照（群星）
+python -m core.cli update --game stellaris --force    # Steam 同步订阅量 + 每日趋势快照
+python scripts/snapshot_trend.py --game stellaris     # 仅手动快照
 # 提交推送（GitHub 偶发网络波动需重试）
 git add -A && git commit -m "..." && git push origin master
 ```
@@ -128,14 +137,15 @@ git add -A && git commit -m "..." && git push origin master
 
 ## 7. 项目质量现状
 
-- **诚实说明**：CK3 数据已抓取入库（300 条），翻译完成 Top 100；HOI4 仍是空框架；社区口碑仅群星 3 个样例；DLC 依赖是可选级启发式；updater 的 Steam fetch 是占位
+- **诚实说明**：群星模块功能已补齐（汉化包/本地 MOD/趋势/updater 真实 API）；汉化包数据仅 3 条待扩充；updater 真实同步待 Steam 网络恢复后首次实跑；CK3 翻译完成 Top 100；HOI4 仍是空框架；社区口碑仅群星 3 个样例
 - **性能**：服务并发已优化，6 并发 0.13s；SQLite 毫秒级
 - **测试**：无自动化测试脚本，靠 curl/CLI 手工验证
 
 ## 8. 下一步建议（按优先级）
 
-1. **CK3 剩余翻译**：101-300 条中文标题/简介翻译（脚本已就绪，续写 translations/ck3_batchN_zh.json 即可）
-2. **抓 HOI4 数据**：复用 CK3 脚本链，改 app_id（HOI4=394360）抓热门 Mod
-3. **网页版汉化包 + 本地 MOD 版块**：后端数据/API 已就绪，只需前端渲染
-4. **updater 接真实 Steam API**：实现增量同步订阅量
-5. **数据自动化**：定时任务每日更新
+1. **群星汉化包数据扩充**：用 WebSearch/Steam 核实热门 MOD 汉化包（鸽组/巨构/NSC3 已有），写入 localization.json（数据真实原则：必须核实，禁止编造）
+2. **updater 实跑**：Steam 网络恢复后 `python -m core.cli update --force --game stellaris` 验证真实增量同步
+3. **CK3 剩余翻译**：101-300 条（脚本就绪）
+4. **抓 HOI4 数据**：复用 CK3 脚本链，改 app_id（394360）
+5. **数据自动化**：定时任务每日 update（steam_sync + trend_snapshot 已注册）
+6. **扩展到 Top 500/1000**

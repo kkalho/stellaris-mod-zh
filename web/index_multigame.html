@@ -232,9 +232,15 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
         <option value="120">120 条</option>
       </select>
       <button class="dlc-btn" style="margin-left:auto" onclick="openDlcPanel()">🧩 DLC 检测</button>
+      <button class="dlc-btn" onclick="openLocPanel()">🌐 汉化包</button>
+      <button class="dlc-btn" onclick="openLocalPanel()">📁 本地 MOD</button>
+      <button class="dlc-btn" onclick="openTrendPanel()">📈 热度趋势</button>
       <button class="back-btn" style="margin-bottom:0" onclick="clearFilters()">清除筛选</button>
     </div>
     <div id="dlcPanel" class="dlc-panel" style="display:none"></div>
+    <div id="locPanel" class="dlc-panel" style="display:none"></div>
+    <div id="localPanel" class="dlc-panel" style="display:none"></div>
+    <div id="trendPanel" class="dlc-panel" style="display:none"></div>
   </div>
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
   <div class="pager" id="pager" style="display:none">
@@ -447,6 +453,170 @@ async function runDlcCheck() {
   }
 }
 
+let locCache = null;
+async function openLocPanel() {
+  const panel = $('locPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  // 关闭 DLC 面板，避免互相遮挡
+  const dlcPanel = $('dlcPanel');
+  if (dlcPanel.style.display === 'block') dlcPanel.style.display = 'none';
+  panel.style.display = 'block';
+  panel.innerHTML = '<div class="loading">正在加载汉化包数据库...</div>';
+  try {
+    if (!locCache) {
+      const d = await api('/api/' + GAME + '/localizations');
+      locCache = d.localizations || [];
+    }
+    const locs = locCache;
+    if (locs.length === 0) {
+      panel.innerHTML = `<h3>🌐 汉化包数据库</h3><div style="color:#8a93a8;font-size:13px">当前游戏暂无汉化包记录。</div>
+        <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('locPanel').style.display='none'">关闭</button>`;
+      return;
+    }
+    const rows = locs.map(l => {
+      const stMap = {not_downloaded: '未下载', downloaded: '已下载', outdated: '版本过旧'};
+      const st = stMap[l.status] || l.status || '';
+      const stColor = l.status === 'downloaded' ? '#c0dd97' : (l.status === 'outdated' ? '#f5c775' : '#8a93a8');
+      return `<div class="mod-card" style="cursor:default">
+        <div class="body" style="min-width:0">
+          <div class="top">
+            <div class="name">🌐 ${esc(l.name)}</div>
+            <div class="subs">🛰 ${fmt(l.mod_subs)} 订阅</div>
+          </div>
+          <div class="summary">
+            对应 MOD：<span style="color:#9fc0ff;cursor:pointer" onclick="showDetail('${esc(l.mod_steam_id)}')">${esc(l.mod_title || l.mod_steam_id)}</span>
+            &nbsp;·&nbsp; 作者：${esc(l.author || '-')}
+            &nbsp;·&nbsp; 目标版本：<span style="color:#e8edf8">${esc(l.target_version || '*')}</span>
+          </div>
+          <div class="id">
+            状态：<span style="color:${stColor}">${esc(st)}</span>
+            ${l.source_url ? ` · <a style="color:#6fa8ff" href="${esc(l.source_url)}" target="_blank">Steam 链接 ↗</a>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    panel.innerHTML = `
+      <h3>🌐 汉化包数据库（${locs.length} 个）</h3>
+      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">已收录的官方/社区汉化包，点击对应 MOD 可查看详情：</div>
+      ${rows}
+      <button class="back-btn" style="margin-top:4px;margin-bottom:0" onclick="$('locPanel').style.display='none'">关闭</button>`;
+  } catch (e) {
+    panel.innerHTML = `<div class="status-warn">加载汉化包数据库失败：${esc(String(e))}</div>`;
+  }
+}
+
+let localCache = null;
+async function openLocalPanel() {
+  const panel = $('localPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  $('dlcPanel').style.display = 'none';
+  $('locPanel').style.display = 'none';
+  panel.style.display = 'block';
+  panel.innerHTML = '<div class="loading">正在读取本地 MOD 列表...</div>';
+  try {
+    if (!localCache) {
+      const d = await api('/api/' + GAME + '/local');
+      localCache = d.local || [];
+    }
+    const mods = localCache;
+    if (mods.length === 0) {
+      panel.innerHTML = `<h3>📁 本地 MOD 检测</h3>
+        <div style="color:#8a93a8;font-size:13px;line-height:1.8">本地数据库中暂无 MOD 记录。<br>
+        请先运行扫描命令，把本机已订阅/已安装的 MOD 写入本地库：<br>
+        <code style="color:#9fc0ff">python -m core.cli scan --game ${esc(GAME)}</code><br>
+        （扫描结果保存在 <code style="color:#9fc0ff">data/${esc(GAME)}/local.db</code>）</div>
+        <button class="back-btn" style="margin-top:12px;margin-bottom:0" onclick="$('localPanel').style.display='none'">关闭</button>`;
+      return;
+    }
+    const known = mods.filter(m => m.in_knowledge === 1);
+    const unknown = mods.filter(m => m.in_knowledge !== 1);
+    const srcMap = {steam: 'Steam 工坊', local: '本地自制', paradox_mods: 'Paradox Mods'};
+    const card = (m, i) => {
+      const src = srcMap[m.source] || m.source || '-';
+      const kb = m.in_knowledge === 1;
+      return `<div class="mod-card" style="cursor:default">
+        <div class="body" style="min-width:0">
+          <div class="top">
+            <div class="name">${esc(m.display_name || m.name)} ${kb ? '<span class="score-pill high" style="margin-left:0">✓ 已收录</span>' : '<span class="status-badge deprecated">未收录</span>'}</div>
+            <div class="subs">${esc(src)}</div>
+          </div>
+          <div class="summary">
+            版本：${esc(m.version || '-')} · 大小：${m.size_mb ? m.size_mb.toFixed(1) + ' MB' : '-'}
+            ${m.steam_id ? ` · Steam ID：<span style="color:#9fc0ff;cursor:pointer" onclick="showDetail('${esc(m.steam_id)}')">${esc(m.steam_id)}</span>` : ''}
+          </div>
+          <div class="id">
+            ${kb ? '<span style="color:#c0dd97">知识库中已收录，可查看中文介绍与评分</span>'
+                 : '<span style="color:#f09595">⚠ 知识库中未收录此 MOD（可能是本地自制/小众 MOD）</span>'}
+          </div>
+        </div>
+      </div>`;
+    };
+    panel.innerHTML = `
+      <h3>📁 本地 MOD 检测（${mods.length} 个）</h3>
+      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:10px">
+        ✅ 已收录 <span style="color:#c0dd97">${known.length}</span> &nbsp;·&nbsp; ⚠ 未收录 <span style="color:#f09595">${unknown.length}</span>
+        &nbsp;·&nbsp; 点击 Steam ID 可查看知识库详情</div>
+      ${mods.map(card).join('')}
+      <div style="color:#5a6478;font-size:12px;margin-top:6px">数据来源：data/${esc(GAME)}/local.db（CLI scan 写入）</div>
+      <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('localPanel').style.display='none'">关闭</button>`;
+  } catch (e) {
+    panel.innerHTML = `<div class="status-warn">读取本地 MOD 失败：${esc(String(e))}</div>`;
+  }
+}
+
+let trendCache = null;
+async function openTrendPanel() {
+  const panel = $('trendPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  $('dlcPanel').style.display = 'none';
+  $('locPanel').style.display = 'none';
+  $('localPanel').style.display = 'none';
+  panel.style.display = 'block';
+  panel.innerHTML = '<div class="loading">正在加载热度趋势...</div>';
+  try {
+    if (!trendCache) {
+      const d = await api('/api/' + GAME + '/trend');
+      trendCache = d;
+    }
+    const t = trendCache;
+    if (t.note) {
+      panel.innerHTML = `<h3>📈 订阅热度趋势</h3>
+        <div style="color:#8a93a8;font-size:13px;line-height:1.8">${esc(t.note)}</div>
+        <div style="color:#5a6478;font-size:12px;margin-top:6px">每日快照将自动记录订阅量，积累 2 天后即可查看涨跌榜。</div>
+        <button class="back-btn" style="margin-top:12px;margin-bottom:0" onclick="$('trendPanel').style.display='none'">关闭</button>`;
+      return;
+    }
+    const dates = t.dates || [];
+    const up = (t.mods || []).filter(m => m.diff > 0).slice(0, 10);
+    const down = (t.mods || []).filter(m => m.diff < 0).slice(0, 10);
+    const row = (m, i) => {
+      const cls = m.diff >= 0 ? '#97c459' : '#f09595';
+      const arrow = m.diff >= 0 ? '▲' : '▼';
+      return `<div class="mod-card" style="cursor:default">
+        <div class="body" style="min-width:0">
+          <div class="top">
+            <div class="name">${i + 1}. ${esc(m.title)}</div>
+            <div class="subs" style="color:${cls}">${arrow} ${fmt(Math.abs(m.diff))} (${m.pct > 0 ? '+' : ''}${m.pct}%)</div>
+          </div>
+          <div class="id">${fmt(m.first_subs)} → ${fmt(m.last_subs)} 订阅</div>
+        </div>
+      </div>`;
+    };
+    const block = (title, list, color) => list.length
+      ? `<div style="color:${color};font-size:13px;font-weight:500;margin:10px 0 6px">${title}（${list.length}）</div>${list.map((m, i) => row(m, i)).join('')}`
+      : '';
+    panel.innerHTML = `
+      <h3>📈 订阅热度趋势（${esc((dates[0] || '') + ' → ' + (dates[dates.length - 1] || ''))}）</h3>
+      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">基于每日快照对比订阅量变化，共 ${t.mods.length} 个 MOD 有完整记录</div>
+      ${block('🚀 上涨最多 Top 10', up, '#97c459')}
+      ${block('📉 下跌最多 Top 10', down, '#f09595')}
+      ${(!up.length && !down.length) ? '<div style="color:#8a93a8;font-size:13px">暂无明显涨跌（快照不足 2 天或订阅量无变化）</div>' : ''}
+      <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('trendPanel').style.display='none'">关闭</button>`;
+  } catch (e) {
+    panel.innerHTML = `<div class="status-warn">加载热度趋势失败：${esc(String(e))}</div>`;
+  }
+}
+
 async function showDetail(id) {
   $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
   $('pager').style.display = 'none';
@@ -504,6 +674,18 @@ async function showDetail(id) {
         `<div class="compat-item"><span class="ci-name">${esc(x.name)}</span> <span class="ci-note">(AppID: ${esc(x.app_id)})</span></div>`).join('')}</div>`;
     }
   }
+  if (d.localizations && d.localizations.length) {
+    const locStMap = {not_downloaded: '未下载', downloaded: '已下载', outdated: '版本过旧'};
+    html += `<h3>🌐 汉化包</h3>`;
+    d.localizations.forEach(l => {
+      const stLabel = locStMap[l.status] || l.status || '-';
+      const stColor = l.status === 'downloaded' ? '#c0dd97' : (l.status === 'outdated' ? '#f5c775' : '#8a93a8');
+      html += `<div class="compat-block best"><div class="cb-title">📦 ${esc(l.name)}${l.target_version ? ` <span style="font-size:11px;color:#8a93a8">(目标版本 ${esc(l.target_version)})</span>` : ''}</div>
+        <div class="compat-item">作者：${esc(l.author || '-')} · 状态：<span style="color:${stColor}">${esc(stLabel)}</span></div>
+        ${l.source_url ? `<div class="compat-item" style="margin-top:4px"><a class="ci-note" style="color:#6fa8ff" href="${esc(l.source_url)}" target="_blank">前往 Steam 查看/订阅 ↗</a></div>` : ''}
+        </div>`;
+    });
+  }
   if (d.community) {
     const cm = d.community;
     const platZh = {tieba: '贴吧', bilibili: 'B站', nga: 'NGA', zhihu: '知乎', steam_zh: 'Steam中文社区'};
@@ -554,6 +736,10 @@ async function loadTop() {
 let GAME = 'stellaris';
 function switchGame() {
   GAME = document.getElementById('gamesel').value;
+  dlcCache = null;   // 切换游戏清空缓存，避免串数据
+  locCache = null;
+  localCache = null;
+  trendCache = null;
   loadTop();
 }
 function makeStars() {
