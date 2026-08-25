@@ -306,12 +306,14 @@ async function loadStats() {
 
 async function loadTags() {
   const r = await api('/api/' + GAME + '/categories');
-  // 按数量取前 14 个分类，显示「英文（中文）数量」格式
+  // 按数量取前 14 个分类；有中文映射时直接显示中文（更清爽）
   const cats = r.categories.filter(c => c.tag && c.tag.trim());
   const top = cats.slice(0, 14);
   $('tagbar').innerHTML = top.map(c => {
-    const label = c.tag_zh ? `${esc(c.tag)}（${esc(c.tag_zh)})` : esc(c.tag);
-    return `<span class="tag-chip" data-tag="${esc(c.tag)}" onclick="toggleTag('${esc(c.tag)}')">${label} (${c.count})</span>`;
+    const label = (c.tag_zh && c.tag_zh !== c.tag)
+      ? `${esc(c.tag_zh)}` : esc(c.tag);
+    const tip = (c.tag_zh && c.tag_zh !== c.tag) ? ` title="${esc(c.tag)}"` : '';
+    return `<span class="tag-chip" data-tag="${esc(c.tag)}"${tip} onclick="toggleTag('${esc(c.tag)}')">${label} (${c.count})</span>`;
   }).join('');
 }
 

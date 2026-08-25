@@ -22,10 +22,28 @@ class CK3Config(GameConfig):
     steam_app_id = "1158310"
 
     TAG_ZH = {
-        "Graphics": "画面美化", "Gameplay": "玩法内容", "Portraits": "肖像",
-        "Events": "事件", "Cultures": "文化", "Religion": "宗教",
-        "Dynasty": "家族", "Succession": "继承", "Balance": "平衡性",
-        "UI": "界面", "Translation": "翻译汉化", "Performance": "性能",
+        # 核心分类（高频）
+        "Gameplay": "玩法内容", "Graphics": "画面美化", "Events": "事件",
+        "Fixes": "Bug 修复", "Utilities": "实用工具", "Balance": "平衡性",
+        "Historical": "历史向", "Decisions": "决议", "Character Interactions": "角色互动",
+        "Culture": "文化", "Portraits": "肖像", "Map": "地图",
+        "Warfare": "战争", "Character Focuses": "角色重心",
+        "Total Conversion": "全面转换", "Religion": "宗教",
+        "Alternative History": "架空历史", "Bookmarks": "书签",
+        "Translation": "翻译汉化", "Schemes": "阴谋", "Sound": "音效",
+        "Overhaul": "全面改造", "Cheats": "作弊", "Game Rules": "游戏规则",
+        "Nicknames": "绰号", "Loading Screens": "载入画面",
+        "Lifestyle": "生活方式", "Characters": "角色", "Gui": "界面",
+        "Utility": "实用工具", "Total Converntion": "全面转换",
+        "Cultures": "文化", "Dynasty": "家族", "Succession": "继承",
+        "UI": "界面", "Performance": "性能",
+        # 版本标签（CK3 版本代号）
+        "1.13 'Basileus'": "适配 1.13", "1.14 'Traverse'": "适配 1.14",
+        "1.15 'Crown'": "适配 1.15", "1.16 'Chamfron'": "适配 1.16",
+        "1.17 'Ascendant'": "适配 1.17", "1.18 'Crane'": "适配 1.18",
+        "1.19 'Scribe'": "适配 1.19",
+        # 其他
+        "QUENTOPOLIS": "昆特城", "Veritas": "Veritas",
     }
 
     def local_mod_dirs(self) -> List[str]:
