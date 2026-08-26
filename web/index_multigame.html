@@ -146,6 +146,12 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 .status-badge.outdated { background: rgba(226,75,74,.15); color: #f0a9a8; border: 1px solid rgba(226,75,74,.35); }
 .status-badge.abandoned { background: rgba(186,117,23,.2); color: #efc56a; border: 1px solid rgba(186,117,23,.45); }
 .status-badge.no_update { background: rgba(186,117,23,.15); color: #e5b65e; border: 1px solid rgba(186,117,23,.4); }
+.version-badge {
+  display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 10px;
+  margin-left: 8px; vertical-align: middle; font-weight: 500;
+}
+.version-badge.new { background: rgba(84,180,120,.18); color: #9fd8b4; border: 1px solid rgba(84,180,120,.4); }
+.version-badge.old { background: rgba(140,150,170,.15); color: #aab3c5; border: 1px solid rgba(140,150,170,.35); }
 .status-warn {
   background: rgba(226,75,74,.1); border: 1px solid rgba(226,75,74,.35);
   border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
@@ -224,6 +230,17 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
         <option value="updated">最近更新</option>
         <option value="name">名称 A-Z</option>
       </select>
+      <span style="font-size:13px;color:#8a93a8">版本：</span>
+      <select id="versionsel" onchange="applyFilters()">
+        <option value="">全部版本</option>
+        <option value="4.x">4.x（当前）</option>
+        <option value="4.4">4.4 飞马</option>
+        <option value="4.3">4.3 鲸鱼座</option>
+        <option value="4.2">4.2 乌鸦座</option>
+        <option value="4.1">4.1 天琴座</option>
+        <option value="4.0">4.0 凤凰</option>
+        <option value="3.x">3.x（旧版）</option>
+      </select>
       <span style="font-size:13px;color:#8a93a8">显示：</span>
       <select id="limitsel" onchange="applyFilters()">
         <option value="0" selected>全部</option>
@@ -286,6 +303,11 @@ function statusBadge(s) {
   if (!s || !STATUS_LABEL[s]) return '';
   return `<span class="status-badge ${esc(s)}">⚠ ${esc(STATUS_LABEL[s])}</span>`;
 }
+function versionBadge(v) {
+  if (!v) return '';
+  const isNew = v.includes('4.4') || v.includes('4.3') || v.includes('4.2') || v.includes('4.1') || v.includes('4.0');
+  return `<span class="version-badge ${isNew ? 'new' : 'old'}" title="${esc(v)}">${esc(v)}</span>`;
+}
 function statusWarn(s) {
   if (!s || !STATUS_LABEL[s]) return '';
   return `<div class="status-warn">⚠ 注意：此 Mod 已被标记为「${esc(STATUS_LABEL[s])}」，可能不再适配最新版本的游戏，安装前请确认。</div>`;
@@ -330,15 +352,18 @@ async function applyFilters() {
   const limit = parseInt($('limitsel').value) || 0;
   const kw = $('kw').value.trim();
   const tag = activeTag || '';
+  const version = $('versionsel').value;
   const path = '/api/' + GAME + '/search?q=' + encodeURIComponent(kw) +
                '&sort=' + sort +
                '&n=' + limit +   // 始终传 n，0 表示全部（后端已支持）
-               (tag ? '&tag=' + encodeURIComponent(tag) : '');
+               (tag ? '&tag=' + encodeURIComponent(tag) : '') +
+               (version ? '&version=' + encodeURIComponent(version) : '');
   $('content').innerHTML = '<div class="loading">正在加载...</div>';
   const r = await api(path);
   allResults = r.results;
   curPage = 1;
-  currentTitle = kw ? `“${kw}” 的搜索结果` : (tag ? `分类：${tag}` : '全部 Mod');
+  const vLabel = version ? ({'4.x':'4.x','4.4':'4.4','4.3':'4.3','4.2':'4.2','4.1':'4.1','4.0':'4.0','3.x':'3.x'}[version] || version) : '';
+  currentTitle = kw ? `“${kw}” 的搜索结果` : (tag ? `分类：${tag}` : (vLabel ? `版本：${vLabel}` : '全部 Mod'));
   renderPaged();
 }
 
@@ -375,7 +400,7 @@ function renderList(rows, title) {
       ${thumb}
       <div class="body">
         <div class="top">
-          <div class="name">${esc(m.title)}${statusBadge(m.status)}</div>
+          <div class="name">${esc(m.title)}${statusBadge(m.status)}${versionBadge(m.version)}</div>
           <div class="subs">🛰 ${fmt(m.subs)} 订阅${scorePill(m.score)}</div>
         </div>
         ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
@@ -638,6 +663,7 @@ async function showDetail(id) {
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">点赞数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
+        ${d.version ? `<div class="meta-item"><div class="k">版本兼容</div><div class="v">${esc(d.version)}</div></div>` : ''}
         <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags_zh || d.tags || '-')}</div></div>
         <div class="meta-item"><div class="k">Steam ID</div><div class="v">${d.id}</div></div>
       </div>`;

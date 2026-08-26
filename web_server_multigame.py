@@ -72,7 +72,7 @@ def calc_score(subs, fav):
         return 0.0
 
 
-def search(game_id, keyword, limit=60, sort="subs", tag=None, db=None):
+def search(game_id, keyword, limit=60, sort="subs", tag=None, version=None, db=None):
     if db is None:
         db = get_db(game_id)
     conn = db.conn
@@ -104,6 +104,17 @@ def search(game_id, keyword, limit=60, sort="subs", tag=None, db=None):
     if tag:
         sql += " AND m.tags LIKE ?"
         params.append(f"%{tag}%")
+    if version:
+        # 版本筛选：匹配「适配 4.4」或「更新于 4.4 时期」
+        # 精确版本如 "4.4"：匹配含 "4.4" 的（"适配 4.4"、"更新于 4.4 时期"）
+        # 通配如 "3.x"：匹配 "3."（"适配 3.14"、"更新于 3.11 时期"，不会误中 "4.3"）
+        if version.endswith(".x"):
+            prefix = version[:-2]
+            sql += " AND m.version LIKE ?"
+            params.append(f"%{prefix}.%")
+        else:
+            sql += " AND m.version LIKE ?"
+            params.append(f"%{version}%")
     sql += f" ORDER BY {order}"
     if limit and limit > 0:
         sql += " LIMIT ?"
@@ -123,6 +134,7 @@ def search(game_id, keyword, limit=60, sort="subs", tag=None, db=None):
             "tags": d.get("tags") or "",
             "preview": d.get("preview_url") or "",
             "status": d.get("status"),
+            "version": d.get("version") or "",
             "score": calc_score(d.get("subscriptions"), d.get("favorites")),
         })
     return results
@@ -184,6 +196,7 @@ def get_detail(game_id, steam_id, db=None):
         "like_ratio": round((m.get("favorites") or 0) / (m.get("subscriptions") or 1) * 100, 1)
                       if m.get("subscriptions") else 0,
         "status": m.get("status"),
+        "version": m.get("version") or "",
         "summary": trans.get("summary", ""),
         "description": trans.get("description", ""),
         "features": features,
@@ -417,7 +430,8 @@ class Handler(BaseHTTPRequestHandler):
                     sort = q.get("sort", ["subs"])[0]
                     n = int(q.get("n", ["0"])[0])
                     tag = q.get("tag", [""])[0]
-                    self._send_json({"results": search(game_id, kw, n, sort, tag, db=db)})
+                    version = q.get("version", [""])[0]
+                    self._send_json({"results": search(game_id, kw, n, sort, tag, version, db=db)})
                 elif api_name == "mod":
                     sid = q.get("id", [""])[0]
                     d = get_detail(game_id, sid, db)
