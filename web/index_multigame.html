@@ -233,13 +233,6 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
       <span style="font-size:13px;color:#8a93a8">版本：</span>
       <select id="versionsel" onchange="applyFilters()">
         <option value="">全部版本</option>
-        <option value="4.x">4.x（当前）</option>
-        <option value="4.4">4.4 飞马</option>
-        <option value="4.3">4.3 鲸鱼座</option>
-        <option value="4.2">4.2 乌鸦座</option>
-        <option value="4.1">4.1 天琴座</option>
-        <option value="4.0">4.0 凤凰</option>
-        <option value="3.x">3.x（旧版）</option>
       </select>
       <span style="font-size:13px;color:#8a93a8">显示：</span>
       <select id="limitsel" onchange="applyFilters()">
@@ -339,6 +332,26 @@ async function loadTags() {
   }).join('');
 }
 
+let versionLabels = {};   // 版本号 → 展示名（来自 /versions 接口）
+async function loadVersions() {
+  // 版本筛选选项从数据生成（/api/<game>/versions），游戏升级出新版本无需改前端
+  try {
+    const r = await api('/api/' + GAME + '/versions');
+    const vs = r.versions || [];
+    versionLabels = {};
+    const has4 = vs.some(v => v.v.startsWith('4.'));
+    const has3 = vs.some(v => v.v.startsWith('3.'));
+    let html = '<option value="">全部版本</option>';
+    if (has4) html += '<option value="4.x">4.x（当前）</option>';
+    vs.forEach(v => {
+      versionLabels[v.v] = v.label;
+      html += `<option value="${esc(v.v)}">${esc(v.label)}（${v.count}）</option>`;
+    });
+    if (has3) html += '<option value="3.x">3.x（旧版）</option>';
+    $('versionsel').innerHTML = html;
+  } catch (e) { /* 接口异常时保留下拉仅剩"全部版本" */ }
+}
+
 function toggleTag(tag) {
   if (activeTag === tag) { activeTag = null; }
   else { activeTag = tag; }
@@ -362,7 +375,7 @@ async function applyFilters() {
   const r = await api(path);
   allResults = r.results;
   curPage = 1;
-  const vLabel = version ? ({'4.x':'4.x','4.4':'4.4','4.3':'4.3','4.2':'4.2','4.1':'4.1','4.0':'4.0','3.x':'3.x'}[version] || version) : '';
+  const vLabel = version ? (versionLabels[version] || version) : '';
   currentTitle = kw ? `“${kw}” 的搜索结果` : (tag ? `分类：${tag}` : (vLabel ? `版本：${vLabel}` : '全部 Mod'));
   renderPaged();
 }
@@ -658,10 +671,10 @@ async function showDetail(id) {
       ${d.title_en && d.title_en !== d.title ? `<div style="color:#8a93a8;font-size:13px;margin-top:-6px;margin-bottom:14px">英文名：${esc(d.title_en)}</div>` : ''}
       <div class="meta">
         <div class="meta-item"><div class="k">综合评分</div><div class="v">⭐ ${d.score ? d.score.toFixed(1) : '-'} / 10</div></div>
-        <div class="meta-item"><div class="k">好评率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
+        <div class="meta-item"><div class="k">收藏率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
         <div class="meta-item"><div class="k">作者</div><div class="v">${esc(d.author)}</div></div>
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
-        <div class="meta-item"><div class="k">点赞数</div><div class="v">${fmt(d.fav)}</div></div>
+        <div class="meta-item"><div class="k">收藏数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
         ${d.version ? `<div class="meta-item"><div class="k">版本兼容</div><div class="v">${esc(d.version)}</div></div>` : ''}
         <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags_zh || d.tags || '-')}</div></div>
@@ -768,6 +781,8 @@ function switchGame() {
   locCache = null;
   localCache = null;
   trendCache = null;
+  $('versionsel').value = '';
+  loadVersions();    // 版本选项随游戏刷新
   loadTop();
 }
 function makeStars() {
@@ -783,6 +798,7 @@ function makeStars() {
 makeStars();
 loadStats();
 loadTags();
+loadVersions();
 loadTop();
 </script>
 </body>

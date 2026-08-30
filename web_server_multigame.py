@@ -12,6 +12,7 @@ API（带游戏上下文）:
     GET /api/<game>/search?q=&sort=&tag=&n=   → 搜索
     GET /api/<game>/mod?id=     → MOD 详情（含翻译/DLC/兼容性/社区）
     GET /api/<game>/categories  → 标签分类
+    GET /api/<game>/versions    → 版本筛选选项（从数据生成，附代号/计数）
     GET /api/<game>/local       → 本地 MOD 列表
     GET /api/<game>/localizations → 汉化包数据库
     GET /api/<game>/trend       → 订阅热度趋势（每日快照涨跌）
@@ -23,7 +24,11 @@ import datetime
 import io
 import json
 import os
+import re
 import sys
+import threading
+import time
+import traceback
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -38,6 +43,28 @@ from core.mod_db import ModDB
 
 # 游戏配置缓存（轻量，无连接）
 _CFG_CACHE = {}
+
+# ---------------------------------------------------------------------------
+# 简单限流（公网部署防刷；2核1.9G 的轻量机扛不住恶意高频请求）
+# ---------------------------------------------------------------------------
+RATE_LIMIT = 120        # 每 IP 每窗口最大请求数
+RATE_WINDOW = 60.0      # 窗口长度（秒）
+_rate_lock = threading.Lock()
+_rate_bucket = {}       # ip -> [window_start, count]
+
+
+def _rate_allow(ip: str) -> bool:
+    now = time.time()
+    with _rate_lock:
+        win, cnt = _rate_bucket.get(ip, (now, 0))
+        if now - win >= RATE_WINDOW:
+            win, cnt = now, 0
+        cnt += 1
+        _rate_bucket[ip] = (win, cnt)
+        if len(_rate_bucket) > 4096:  # 防字典无限膨胀
+            for k in [k for k, (w, _) in _rate_bucket.items() if now - w >= RATE_WINDOW]:
+                del _rate_bucket[k]
+        return cnt <= RATE_LIMIT
 
 
 def get_cfg(game_id: str):
@@ -113,8 +140,11 @@ def search(game_id, keyword, limit=60, sort="subs", tag=None, version=None, db=N
             sql += " AND m.version LIKE ?"
             params.append(f"%{prefix}.%")
         else:
-            sql += " AND m.version LIKE ?"
-            params.append(f"%{version}%")
+            # 精确版本：version 字段由 detect_stellaris_versions 生成，只有
+            # 「适配 X」/「更新于 X 时期」两种格式。等值匹配避免
+            # LIKE '%3.1%' 误中 3.10~3.14（动态下拉暴露细粒度版本后必须精确）。
+            sql += " AND (m.version = ? OR m.version = ? OR m.version = ?)"
+            params.extend([f"适配 {version}", f"更新于 {version} 时期", version])
     sql += f" ORDER BY {order}"
     if limit and limit > 0:
         sql += " LIMIT ?"
@@ -234,6 +264,41 @@ def get_categories(game_id, db=None):
             for k, v in sorted(counter.items(), key=lambda x: -x[1])]
 
 
+def get_versions(game_id, db=None):
+    """版本筛选选项：从库中 version 字段提取去重版本号（避免前端硬编码）。
+
+    version 存储形如「适配 4.4」/「更新于 3.4 时期」，此处提取纯版本号
+    并按数值降序返回，附带代号名（来自游戏配置 VERSION_NAMES）与计数。
+    """
+    if db is None:
+        db = get_db(game_id)
+    cfg = get_cfg(game_id)
+    names = getattr(cfg, "VERSION_NAMES", {}) or {}
+    rows = db.conn.execute(
+        "SELECT version, COUNT(*) AS n FROM mods "
+        "WHERE game_id=? AND version IS NOT NULL AND version != '' "
+        "GROUP BY version", (game_id,)).fetchall()
+    buckets = {}
+    for r in rows:
+        m = re.match(r"^(?:适配|更新于)\s*(\d+(?:\.\d+)*(?:\.x)?)", r["version"])
+        if not m:
+            continue
+        v = m.group(1)
+        buckets[v] = buckets.get(v, 0) + r["n"]
+
+    def vkey(v):
+        parts = []
+        for p in v.split("."):
+            parts.append(99 if p == "x" else int(p))
+        return tuple(parts)
+
+    out = [{"v": v,
+            "label": f"{v} {names[v]}" if v in names else v,
+            "count": n}
+           for v, n in sorted(buckets.items(), key=lambda x: (-vkey(x[0])[0], -vkey(x[0])[1]))]
+    return {"versions": out}
+
+
 def get_stats(game_id, db=None):
     if db is None:
         db = get_db(game_id)
@@ -303,18 +368,19 @@ def get_trend(game_id, db=None):
                         "或手动执行 scripts/snapshot_trend.py"}
     first, last = dates[0], dates[-1]
     rows = conn.execute("""
-        SELECT t.steam_id, t.subs AS first_subs, t2.subs AS last_subs
+        SELECT t.steam_id, t.subs AS first_subs, t2.subs AS last_subs,
+               COALESCE(NULLIF(m.title, ''), m.title_en, t.steam_id) AS title
         FROM trend t
         JOIN trend t2 ON t2.steam_id = t.steam_id AND t2.date = ?
+        LEFT JOIN mods m ON m.steam_id = t.steam_id AND m.game_id = ?
         WHERE t.date = ?
-    """, (last, first)).fetchall()
+    """, (last, game_id, first)).fetchall()
     out = []
-    for sid, first_subs, last_subs in rows:
-        mod = db.get_mod_by_steam_id(str(sid))
+    for sid, first_subs, last_subs, title in rows:
         f, l = first_subs or 0, last_subs or 0
         out.append({
             "steam_id": str(sid),
-            "title": (mod.get("title") or mod.get("title_en")) if mod else str(sid),
+            "title": title or str(sid),
             "first_subs": f,
             "last_subs": l,
             "diff": l - f,
@@ -397,6 +463,10 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
+        # 限流（公网防刷；本地使用不会触达 120 次/分钟）
+        if not _rate_allow(self.client_address[0]):
+            self._send_json({"error": "请求过于频繁，请稍后再试"}, 429)
+            return
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         q = urllib.parse.parse_qs(parsed.query)
@@ -441,6 +511,8 @@ class Handler(BaseHTTPRequestHandler):
                         self._send_json({"error": "not found"}, 404)
                 elif api_name == "categories":
                     self._send_json({"categories": get_categories(game_id, db)})
+                elif api_name == "versions":
+                    self._send_json(get_versions(game_id, db))
                 elif api_name == "local":
                     self._send_json({"local": get_local(game_id)})
                 elif api_name == "localizations":
@@ -457,8 +529,10 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json(get_dlc_missing(game_id, owned, db=db))
                 else:
                     self._send_json({"error": f"unknown api: {api_name}"}, 404)
-            except Exception as e:
-                self._send_json({"error": str(e)}, 500)
+            except Exception:
+                # 详情只进服务端日志，不回传客户端（公网部署防内部信息泄漏）
+                traceback.print_exc()
+                self._send_json({"error": "服务器内部错误"}, 500)
             finally:
                 if db:
                     db.close()

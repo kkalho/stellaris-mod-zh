@@ -12,3 +12,7 @@ data/**/local.db
 data/**/update_state.json
 data/**/mods.db-shm
 data/**/mods.db-wal
+
+# 趋势导出产物（export_trend.py 生成，派生数据不入库）
+data/**/trend_export.json
+data/**/trend_export.json.gz
