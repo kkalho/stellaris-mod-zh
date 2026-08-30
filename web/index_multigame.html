@@ -214,15 +214,22 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 :root {
   --hz-bg: #04070f;
   --hz-panel: rgba(8, 20, 38, .58);
-  --hz-line: rgba(95, 215, 255, .22);
-  --hz-line-strong: rgba(95, 215, 255, .55);
-  --hz-cyan: #5fd7ff;
-  --hz-cyan-soft: rgba(95, 215, 255, .12);
+  --hz-line: rgba(var(--ac-rgb), .22);
+  --hz-line-strong: rgba(var(--ac-rgb), .55);
+  --hz-cyan: var(--ac);
+  --hz-cyan-soft: rgba(var(--ac-rgb), .12);
   --hz-violet: #b18cff;
   --hz-text: #dce8f5;
   --hz-dim: #8fa3bd;
   --hz-cut: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  /* 主题强调色：默认群星青；body[data-theme] 切换 */
+  --ac-rgb: 95, 215, 255;
+  --ac: #5fd7ff;
+  --ac-lite: #9fd8ff;
 }
+body[data-theme="ck3"]   { --ac-rgb: 240, 193, 96;  --ac: #f0c160; --ac-lite: #f5dfa8; }
+body[data-theme="hoi4"]  { --ac-rgb: 214, 168, 106; --ac: #d6a86a; --ac-lite: #e8cfa0; }
+body[data-theme="bridge"]{ --ac-rgb: 177, 140, 255; --ac: #b18cff; --ac-lite: #d3c0ff; }
 body {
   background: radial-gradient(ellipse 120% 70% at 50% -10%, #0c1c36 0%, var(--hz-bg) 58%);
   font-variant-numeric: tabular-nums;
@@ -291,7 +298,7 @@ body {
 /* 列表卡片：玻璃 + 左侧能量条 + 悬停辉光 */
 .mod-card {
   background: linear-gradient(90deg, rgba(10, 26, 48, .5), rgba(10, 20, 38, .28));
-  border: 1px solid rgba(95, 215, 255, .14);
+  border: 1px solid rgba(var(--ac-rgb), .14);
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
   position: relative; backdrop-filter: blur(4px);
   transition: transform .18s, border-color .2s, box-shadow .2s, background .2s;
@@ -302,8 +309,8 @@ body {
   transition: opacity .2s;
 }
 .mod-card:hover {
-  transform: translateY(-2px); border-color: rgba(95, 215, 255, .45);
-  box-shadow: 0 6px 30px rgba(95, 215, 255, .12), inset 0 0 24px rgba(95, 215, 255, .04);
+  transform: translateY(-2px); border-color: rgba(var(--ac-rgb), .45);
+  box-shadow: 0 6px 30px rgba(var(--ac-rgb), .12), inset 0 0 24px rgba(var(--ac-rgb), .04);
   background: linear-gradient(90deg, rgba(14, 34, 62, .66), rgba(10, 22, 40, .34));
 }
 .mod-card:hover::before { opacity: 1; box-shadow: 0 0 12px var(--hz-cyan); }
@@ -326,13 +333,13 @@ body {
 }
 .detail h3::before { content: "▍"; color: var(--hz-cyan); text-shadow: 0 0 10px var(--hz-cyan); }
 .detail .meta-item {
-  background: rgba(8, 22, 40, .6); border: 1px solid rgba(95, 215, 255, .14); border-radius: 2px;
+  background: rgba(8, 22, 40, .6); border: 1px solid rgba(var(--ac-rgb), .14); border-radius: 2px;
 }
 /* 徽章/评分：辉光小胶囊 */
 .version-badge, .status-badge, .score-pill { border-radius: 2px; letter-spacing: 1px; }
 .version-badge.new { border-color: rgba(95, 255, 200, .45); color: #9fe8cf; box-shadow: 0 0 10px rgba(95,255,200,.12); }
 .version-badge.old { border-color: rgba(143,163,189,.3); color: #9aa8bd; }
-.score-pill { background: rgba(95, 215, 255, .1); border-color: rgba(95, 215, 255, .35); color: #9fd8ff; }
+.score-pill { background: rgba(var(--ac-rgb), .1); border-color: rgba(var(--ac-rgb), .35); color: var(--ac-lite); }
 .score-pill.high { background: rgba(125, 255, 200, .1); border-color: rgba(125,255,200,.4); color: #9fe8cf; }
 .status-badge.deprecated { box-shadow: 0 0 10px rgba(226,75,74,.15); }
 /* 场景卡与按钮：切角玻璃 */
@@ -342,12 +349,12 @@ body {
 }
 .scene-card:hover {
   border-color: var(--hz-line-strong);
-  box-shadow: 0 0 26px rgba(95, 215, 255, .16); transform: translateY(-2px);
+  box-shadow: 0 0 26px rgba(var(--ac-rgb), .16); transform: translateY(-2px);
 }
 .scene-card .sc-icon { filter: drop-shadow(0 0 8px rgba(95,215,255,.5)); }
 .scene-card .sc-t { color: #eaf6ff; letter-spacing: 1px; }
 .dlc-btn {
-  background: rgba(95, 215, 255, .07); color: #9fd8ff;
+  background: rgba(var(--ac-rgb), .07); color: var(--ac-lite);
   border: 1px solid var(--hz-line); clip-path: var(--hz-cut); border-radius: 0;
   letter-spacing: 1px; transition: all .2s;
 }
@@ -355,12 +362,12 @@ body {
 .back-btn { border-radius: 0; clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px); }
 /* 标签 chip：六边形感 */
 .tag-chip {
-  background: rgba(8, 22, 40, .5); border: 1px solid rgba(95, 215, 255, .18); border-radius: 2px;
+  background: rgba(8, 22, 40, .5); border: 1px solid rgba(var(--ac-rgb), .18); border-radius: 2px;
   clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
 }
 .tag-chip.active {
-  background: rgba(95, 215, 255, .16); border-color: var(--hz-line-strong);
-  color: #d8f3ff; box-shadow: 0 0 14px rgba(95, 215, 255, .2);
+  background: rgba(var(--ac-rgb), .16); border-color: var(--hz-line-strong);
+  color: #d8f3ff; box-shadow: 0 0 14px rgba(var(--ac-rgb), .2);
 }
 /* 统计：全息读数 */
 .stat {
@@ -369,7 +376,7 @@ body {
 }
 .stat .num { color: var(--hz-cyan); text-shadow: 0 0 16px rgba(95,215,255,.4); letter-spacing: 1px; }
 /* 特色/兼容/面板微调 */
-.feature { background: rgba(95, 215, 255, .08); border-color: rgba(95, 215, 255, .3); color: #9fd8ff; border-radius: 2px; }
+.feature { background: rgba(var(--ac-rgb), .08); border-color: rgba(var(--ac-rgb), .3); color: var(--ac-lite); border-radius: 2px; }
 .compat-block, .status-warn, .dlc-panel { border-radius: 2px; }
 .dlc-panel { background: rgba(7, 18, 34, .6); border-color: var(--hz-line); backdrop-filter: blur(10px); }
 .dlc-panel h3 { color: var(--hz-cyan); letter-spacing: 2px; }
@@ -380,12 +387,79 @@ footer { letter-spacing: 2px; }
 @media (prefers-reduced-motion: reduce) {
   .mod-card, .scene-card, .search-row button { transition: none; }
 }
+
+/* ==================== 启动页：星域之门 ==================== */
+body[data-view="launcher"] .game-shell { display: none !important; }
+body[data-view="game"] .launcher { display: none !important; }
+.launcher {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  padding: 60px 24px; position: relative; z-index: 1;
+}
+.l-head { text-align: center; margin-bottom: 50px; }
+.l-head h1 {
+  font-size: clamp(26px, 4vw, 40px); letter-spacing: 10px; color: #eaf6ff;
+  text-shadow: 0 0 26px rgba(177, 140, 255, .5);
+}
+.l-head h1 span { color: var(--hz-violet); }
+.l-head p { color: #8fa3bd; margin-top: 14px; letter-spacing: 3px; font-size: 13px; }
+.l-cards { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; perspective: 1200px; }
+.lcard {
+  --lc-rgb: 95, 215, 255;
+  width: 252px; min-height: 318px; cursor: pointer; position: relative; overflow: hidden;
+  background: linear-gradient(165deg, rgba(var(--lc-rgb), .10), rgba(6, 12, 24, .72));
+  border: 1px solid rgba(var(--lc-rgb), .3);
+  clip-path: var(--hz-cut);
+  padding: 26px 22px;
+  backdrop-filter: blur(6px);
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  transform-style: preserve-3d;
+}
+.lcard:hover {
+  transform: translateY(-8px) rotateX(4deg);
+  box-shadow: 0 18px 60px rgba(var(--lc-rgb), .25);
+  border-color: rgba(var(--lc-rgb), .75);
+}
+.lcard canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
+.lcard .lc-glyph {
+  font-size: 34px; position: relative;
+  filter: drop-shadow(0 0 12px rgba(var(--lc-rgb), .8));
+}
+.lcard .lc-name { color: #eaf6ff; font-size: 19px; font-weight: 600; letter-spacing: 2px; margin-top: 14px; position: relative; }
+.lcard .lc-en { color: rgba(var(--lc-rgb), .85); font-size: 10.5px; letter-spacing: 3px; margin-top: 5px; position: relative; }
+.lcard .lc-desc { color: #8fa3bd; font-size: 12.5px; margin-top: 12px; line-height: 1.7; position: relative; }
+.lcard .lc-stats { margin-top: 16px; font-size: 12px; color: #c8d6e8; position: relative; }
+.lcard .lc-stats b { color: rgb(var(--lc-rgb)); font-size: 15px; }
+.lcard .lc-status {
+  position: absolute; top: 18px; right: 18px; font-size: 11px; letter-spacing: 1px;
+  color: #c8d6e8;
+}
+.lcard .lc-status .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 8px currentColor; }
+.l-hint { text-align: center; color: #5f6d85; margin-top: 42px; font-size: 12px; letter-spacing: 3px; }
+@media (max-width: 900px) {
+  .l-cards { flex-direction: column; align-items: center; gap: 20px; }
+  .lcard { width: min(420px, 92vw); min-height: 0; }
+}
+
+/* ==================== 曲速航行过场 ==================== */
+.warp { position: fixed; inset: 0; z-index: 999; display: none; background: transparent; }
+.warp canvas { width: 100%; height: 100%; display: block; }
 </style>
 </head>
-<body>
+<body data-view="launcher" data-theme="bridge">
 <div class="stars" id="stars"></div>
 
-<section class="hero" id="hero">
+<!-- ==================== 启动页：数据舰桥 ==================== -->
+<section id="launcher" class="launcher">
+  <div class="l-head">
+    <h1>PARADOX <span>数据舰桥</span></h1>
+    <p>三大星域 · 中文 MOD 知识库 · 选择星域开始航行</p>
+  </div>
+  <div class="l-cards" id="launcherCards"></div>
+  <div class="l-hint">悬停点亮星域 · 点击曲速航行 · 浏览器后退返回舰桥</div>
+</section>
+
+<!-- ==================== 游戏视图 ==================== -->
+<section class="hero game-shell" id="hero">
   <canvas id="galaxy"></canvas>
   <div class="hero-title">
     <h1>群星 MOD <span>星图档案</span></h1>
@@ -396,7 +470,7 @@ footer { letter-spacing: 2px; }
   <div class="hero-legend" id="galaxyLegend"></div>
 </section>
 
-<div class="game-bar" style="justify-content:center">
+<div class="game-bar game-shell" style="justify-content:center">
   <span style="color:#8fa3bd;font-size:13px">游戏：</span>
   <select id="gamesel" onchange="switchGame()">
     <option value="stellaris" selected>群星 (Stellaris)</option>
@@ -405,7 +479,7 @@ footer { letter-spacing: 2px; }
   </select>
 </div>
 
-<div class="search-box">
+<div class="search-box game-shell">
   <div class="search-row">
     <input id="kw" type="text" placeholder="输入 Mod 名称或关键词，如：巨构 / giga / 星球多样性 / UI" onkeydown="if(event.key==='Enter')doSearch()">
     <button onclick="doSearch()">查询</button>
@@ -413,7 +487,7 @@ footer { letter-spacing: 2px; }
   <div class="hint">支持中英文混合搜索 · 点击结果卡片查看完整中文介绍</div>
 </div>
 
-<main>
+<main class="game-shell">
   <div class="scene-cards" id="sceneCards">
     <div class="scene-card" onclick="openPicksPanel()"><div class="sc-icon">🚀</div><div class="sc-t">新手入门</div><div class="sc-d">精选推荐 · 汉化与必装</div></div>
     <div class="scene-card" onclick="sceneGo('graphics')"><div class="sc-icon">🎨</div><div class="sc-t">画面美化</div><div class="sc-d">星空、舰船与界面升级</div></div>
@@ -465,6 +539,9 @@ footer { letter-spacing: 2px; }
 </main>
 
 <footer>数据来源：Steam 创意工坊公开数据 · 由 AI 翻译整理 · 仅供学习交流</footer>
+
+<!-- 曲速航行过场 -->
+<div id="warp" class="warp"><canvas id="warpCanvas"></canvas></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"
         onerror="window.__NO_THREE=1"></script>
@@ -603,6 +680,7 @@ function sceneGo(key) {
 function buildURL(over) {
   // 把当前筛选状态编进 URL：可分享、可刷新、浏览器后退可用
   const p = new URLSearchParams();
+  if (GAME) p.set('game', GAME);
   const q = $('kw').value.trim();
   if (q) p.set('q', q);
   if (activeTag) p.set('tag', activeTag);
@@ -621,14 +699,8 @@ function buildURL(over) {
 function applyFromURL(opts) {
   opts = opts || {};
   const p = new URLSearchParams(location.search);
-  if (![...p.keys()].length) {
-    if (opts.fromPop) {   // 后退回无参数首页
-      $('toolbar').style.display = 'block';
-      renderPaged();
-      window.scrollTo({ top: 0 });
-    }
-    return false;
-  }
+  const keys = [...p.keys()].filter(k => k !== 'game');   // lone ?game= 不算筛选
+  if (!keys.length) return false;
   const id = (p.get('id') || '').replace(/[^0-9]/g, '');
   $('kw').value = p.get('q') || '';
   activeTag = p.get('tag') || null;
@@ -646,7 +718,7 @@ function applyFromURL(opts) {
   });
   return true;
 }
-window.addEventListener('popstate', () => applyFromURL({ fromPop: true }));
+window.addEventListener('popstate', () => route());
 
 function toggleTag(tag) {
   if (activeTag === tag) { activeTag = null; }
@@ -1141,6 +1213,14 @@ async function loadTop() {
     // n=0 表示返回全部（后端已支持），让用户可以翻完所有 Mod
     const r = await api('/api/' + GAME + '/top?n=0');
     allResults = r.results;
+    if (!allResults.length) {   // 空星域（如 HOI4 未收录）：占位页
+      $('content').innerHTML = `<div class="status-warn" style="text-align:center;padding:56px 20px;line-height:2.4">
+        ⚙ 此星域尚未收录档案<br>
+        <span style="color:#8fa3bd;font-size:13px">侦测与收录流程即将开始，敬请期待</span><br>
+        <button class="dlc-btn" style="margin-top:14px" onclick="showLauncher()">← 返回数据舰桥</button></div>`;
+      $('pager').style.display = 'none';
+      return;
+    }
     curPage = 1;
     currentTitle = '🔥 全部 Mod（按订阅量排序）';
     renderPaged();
@@ -1151,15 +1231,10 @@ async function loadTop() {
 
 let GAME = 'stellaris';
 function switchGame() {
-  GAME = document.getElementById('gamesel').value;
-  dlcCache = null;   // 切换游戏清空缓存，避免串数据
-  locCache = null;
-  localCache = null;
-  trendCache = null;
-  picksCache = null;
-  $('versionsel').value = '';
-  loadVersions();    // 版本选项随游戏刷新
-  loadTop();
+  const v = document.getElementById('gamesel').value;
+  if (v === GAME) return;
+  enterGame(v, { warp: true });
+  history.replaceState({}, '', '?game=' + v);
 }
 function makeStars() {
   let html = '';
@@ -1440,12 +1515,155 @@ function galaxy2DFallback(canvas) {
   if (badge) badge.textContent = '静态星图模式';
 }
 
+// ==================== 数据舰桥：启动页 + 星域路由 + 曲速过场 ====================
+const GAME_META = {
+  stellaris: { name: '群星星域', en: 'STELLARIS', glyph: '✦', rgb: '95,215,255',
+    desc: '银河星图与中文档案库<br>版本兼容 · DLC 检测 · 热度趋势' },
+  ck3: { name: 'CK3 星域', en: 'CRUSADER KINGS III', glyph: '♜', rgb: '240,193,96',
+    desc: '中世纪王朝档案库<br>事件剧情 · 人物与文化' },
+  hoi4: { name: 'HOI4 星域', en: 'HEARTS OF IRON IV', glyph: '⚙', rgb: '214,168,106',
+    desc: '钢铁战争档案库<br>星域侦测中 · 收录即将开始' },
+};
+const THEME_RGB = { stellaris: '95,215,255', ck3: '240,193,96', hoi4: '214,168,106', bridge: '177,140,255' };
+
+function buildLauncher() {
+  const wrap = document.getElementById('launcherCards');
+  wrap.innerHTML = Object.keys(GAME_META).map(g => {
+    const m = GAME_META[g];
+    return `<div class="lcard" id="lcard-${g}" style="--lc-rgb:${m.rgb}" onclick="launchGame('${g}')">
+      <canvas id="lcv-${g}"></canvas>
+      <div class="lc-status" id="lcstatus-${g}"><span class="dot" style="color:#9fe8cf;background:#9fe8cf"></span>可航行</div>
+      <div class="lc-glyph">${m.glyph}</div>
+      <div class="lc-name">${m.name}</div>
+      <div class="lc-en">${m.en}</div>
+      <div class="lc-desc">${m.desc}</div>
+      <div class="lc-stats" id="lcstats-${g}">档案读取中…</div>
+    </div>`;
+  }).join('');
+  for (const g of Object.keys(GAME_META)) cardParticles(g);
+}
+
+function cardParticles(g) {
+  const cv = document.getElementById('lcv-' + g);
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const rgb = GAME_META[g].rgb;
+  const dots = Array.from({ length: 34 }, () => ({
+    x: Math.random(), y: Math.random(), r: Math.random() * 1.5 + 0.4, v: Math.random() * 0.0005 + 0.0002,
+  }));
+  (function draw() {
+    requestAnimationFrame(draw);
+    if (document.body.dataset.view !== 'launcher') return;
+    const w = cv.width = cv.offsetWidth, h = cv.height = cv.offsetHeight;
+    if (!w) return;
+    ctx.clearRect(0, 0, w, h);
+    for (const d of dots) {
+      d.y -= d.v; if (d.y < 0) d.y = 1;
+      ctx.fillStyle = `rgba(${rgb},${0.22 + d.r * 0.3})`;
+      ctx.beginPath(); ctx.arc(d.x * w, d.y * h, d.r, 0, 7); ctx.fill();
+    }
+  })();
+}
+
+async function loadLauncherStats() {
+  for (const g of Object.keys(GAME_META)) {
+    try {
+      const s = await api('/api/' + g + '/stats');
+      const el = document.getElementById('lcstats-' + g);
+      if (el) el.innerHTML = `已入档 <b>${s.total}</b> · 已译 <b>${s.translated}</b>`;
+      const st = document.getElementById('lcstatus-' + g);
+      if (st && s.total === 0) st.innerHTML = '<span class="dot" style="color:#8fa3bd;background:#8fa3bd"></span>建设中';
+    } catch (e) { /* 单卡统计失败不阻塞 */ }
+  }
+}
+
+function showLauncher() {
+  document.body.dataset.view = 'launcher';
+  document.body.dataset.theme = 'bridge';
+  if (location.search) history.replaceState({}, '', location.pathname);
+  loadLauncherStats();
+}
+
+function enterGame(g, opts) {
+  opts = opts || {};
+  GAME = g;
+  document.body.dataset.theme = g;
+  document.body.dataset.view = 'game';
+  $('gamesel').value = g;
+  dlcCache = null; locCache = null; localCache = null; trendCache = null; picksCache = null;
+  $('versionsel').value = '';
+  $('toolbar').style.display = 'block';
+  initGalaxy();          // 有内建防重入；首次进入时 hero 已可见
+  loadStats();
+  loadTags();
+  loadVersions().then(() => {
+    loadTop().then(() => {           // 先备好全量数据（列表 + 星图）
+      if (opts.fromURL) applyFromURL({ fromPop: true });   // 再叠加 URL 筛选/详情
+      if (opts.onDone) opts.onDone();
+    });
+  });
+}
+
+function launchGame(g) {
+  warpTo(THEME_RGB[g] || '95,215,255', () => {
+    history.pushState({ game: g }, '', '?game=' + g);
+    enterGame(g, {});
+  });
+}
+
+function warpTo(rgb, onMid) {
+  const w = document.getElementById('warp');
+  const cv = document.getElementById('warpCanvas');
+  w.style.display = 'block';
+  cv.width = innerWidth; cv.height = innerHeight;
+  const ctx = cv.getContext('2d');
+  const stars = [];
+  const spawn = () => { const a = Math.random() * Math.PI * 2; return { a, d: Math.random() * 80, v: 2 + Math.random() * 7 }; };
+  for (let i = 0; i < 240; i++) stars.push(spawn());
+  const t0 = performance.now();
+  let switched = false;
+  (function frame(now) {
+    const t = (now - t0) / 950;                       // 0 → 1
+    ctx.fillStyle = `rgba(2,5,12,${Math.min(t * 1.8, 0.94)})`;
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    const cx = cv.width / 2, cy = cv.height / 2, max = Math.max(cv.width, cv.height);
+    for (const s of stars) {
+      s.d *= 1.075; s.v *= 1.02;
+      const x1 = cx + Math.cos(s.a) * s.d, y1 = cy + Math.sin(s.a) * s.d;
+      const x2 = cx + Math.cos(s.a) * (s.d + s.v * 3.2), y2 = cy + Math.sin(s.a) * (s.d + s.v * 3.2);
+      ctx.strokeStyle = `rgba(255,255,255,${0.2 + Math.random() * 0.55})`;
+      ctx.lineWidth = 1.3;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      if (Math.random() < 0.35) {                     // 主题色拖尾
+        ctx.strokeStyle = `rgba(${rgb},${0.3 + Math.random() * 0.45})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 + (x2 - x1) * 1.4, y2 + (y2 - y1) * 1.4); ctx.stroke();
+      }
+      if (s.d > max) Object.assign(s, spawn());
+    }
+    if (t >= 0.72 && !switched) { switched = true; onMid(); }   // 主题色闪光下切视图
+    if (t >= 0.72) {
+      ctx.fillStyle = `rgba(${rgb},${Math.min((t - 0.72) * 2.2, 0.85) * Math.max(0, 1 - (t - 0.72) / 0.28)})`;
+      ctx.fillRect(0, 0, cv.width, cv.height);
+    }
+    if (t < 1) requestAnimationFrame(frame);
+    else w.style.display = 'none';
+  })(t0);
+}
+
+function route() {
+  const p = new URLSearchParams(location.search);
+  // 旧链接兼容：带筛选参数但无 game 参数的历史分享链接 → 群星
+  const g = p.get('game') || (p.toString() ? 'stellaris' : null);
+  if (!g) { showLauncher(); return; }
+  if (GAME !== g) { enterGame(g, { warp: false, fromURL: true }); return; }
+  applyFromURL({ fromPop: true });
+}
+
 // ==================== 启动序列（必须在所有声明之后） ====================
-makeStars();
-loadStats();
-loadTags();
-initGalaxy();
-loadVersions().then(() => { if (!applyFromURL()) loadTop(); });
+makeStars();          // 页面底星野（两视图共用）
+buildLauncher();
+route();
 </script>
 </body>
 </html>
