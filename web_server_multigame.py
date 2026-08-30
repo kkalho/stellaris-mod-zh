@@ -13,6 +13,7 @@ API（带游戏上下文）:
     GET /api/<game>/mod?id=     → MOD 详情（含翻译/DLC/兼容性/社区）
     GET /api/<game>/categories  → 标签分类
     GET /api/<game>/versions    → 版本筛选选项（从数据生成，附代号/计数）
+    GET /api/<game>/picks       → 新手精选推荐（beginner_picks.json + 库内联表）
     GET /api/<game>/local       → 本地 MOD 列表
     GET /api/<game>/localizations → 汉化包数据库
     GET /api/<game>/trend       → 订阅热度趋势（每日快照涨跌）
@@ -282,6 +283,33 @@ def get_versions(game_id, db=None):
     return {"versions": out}
 
 
+def get_picks(game_id, db=None):
+    """新手精选推荐：读 data/<game>/beginner_picks.json（人工/社区核实清单），
+    与库内 MOD 信息联表返回（缺库的条目跳过，保证不留死链）。"""
+    if db is None:
+        db = get_db(game_id)
+    cfg = get_cfg(game_id)
+    data = cfg.load_json("beginner_picks.json", {}) or {}
+    out = []
+    for p in data.get("picks", []):
+        m = db.get_mod_by_steam_id(str(p.get("steam_id", "")))
+        if not m:
+            continue
+        t = db.get_translations(m["id"])
+        out.append({
+            "steam_id": m.get("steam_id"),
+            "title": t.get("title") or m.get("title_en") or m.get("title"),
+            "summary": t.get("summary", ""),
+            "subs": m.get("subscriptions") or 0,
+            "version": m.get("version") or "",
+            "preview": m.get("preview_url") or "",
+            "reason": p.get("reason", ""),
+            "source": p.get("source", ""),
+            "source_url": p.get("source_url", ""),
+        })
+    return {"note": data.get("note", ""), "picks": out}
+
+
 def get_stats(game_id, db=None):
     if db is None:
         db = get_db(game_id)
@@ -496,6 +524,8 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json({"categories": get_categories(game_id, db)})
                 elif api_name == "versions":
                     self._send_json(get_versions(game_id, db))
+                elif api_name == "picks":
+                    self._send_json(get_picks(game_id, db))
                 elif api_name == "local":
                     self._send_json({"local": get_local(game_id)})
                 elif api_name == "localizations":

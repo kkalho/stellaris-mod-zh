@@ -23,15 +23,15 @@
 
 | 游戏 | MOD 数 | 已翻译 | 六字段覆盖 | 说明 |
 |---|---|---|---|---|
-| **群星** | **577**（目标 1020） | 577/577 | **100%** ✅ | 翻译已做完全，下一批 #578 |
-| CK3 | 300 | 300/300 | Top30 完整 | 已翻译，深度字段未精做 |
+| **群星** | **627**（目标 1020） | 627/627 | **100%** ✅ | batch16（#578-627）已完成，下一批 #628 |
+| CK3 | 300 | 300/300 | Top30 完整 | 版本标注 300/300 ✅（1.13-1.19，Wiki 核实） |
 | HOI4 | 0 | - | - | 空框架，未抓取 |
 
 群星**六字段**（title / summary / description / gameplay / reviews / features）**100% 全覆盖**，每个 MOD 详情页都有：中文标题+简介+详细介绍+具体玩法+玩家评价+特色列表。
 
 | 其他数据 | 群星现状 |
 |---|---|
-| 版本兼容标注 | 577/577（280 显式声明 + 297 时间推断） |
+| 版本兼容标注 | 群星 577/577（280 显式 + 297 推断）；CK3 300/300（1.13-1.19，Wiki 核实） |
 | DLC 依赖标注 | 107 个（英文+中文描述双轨检测，均标"可选"级） |
 | 订阅热度趋势 | 577/577（云端已积累 6 天连续快照） |
 | 汉化包 | 9 条（鸽组等，含目标版本） |
@@ -105,7 +105,8 @@
 
 ## 4. 已实现功能（前端网页版）
 
-- ✅ **场景卡入口**（首页四卡：🚀新手入门=当前版本高分 / 🎨画面美化 / 📖剧情事件 / 🧩玩法扩展，一键预设筛选）
+- ✅ **场景卡入口**（首页四卡：🚀新手入门=精选推荐面板 / 🎨画面美化 / 📖剧情事件 / 🧩玩法扩展）
+- ✅ **新手精选推荐面板**（`/api/<game>/picks` + `data/stellaris/beginner_picks.json`：贴吧汉化为社区共识附核实链接，其余按分类订阅量自动选出，非人工评测）
 - ✅ **一键复制清单**（工具栏「📋 复制清单」：把当前筛选结果连同 Steam 链接整组复制，装机清单即得）
 - ✅ **中英文 + 拼音搜索**（pinyin_idx 索引；如 `jugou`→巨构、`nvpu`→美味女仆）
 - ✅ **版本兼容筛选**（下拉从 `/versions` 接口动态生成：全部 / 4.x / 4.4 / 4.3 …，附代号与计数）+ 卡片版本徽章（绿=当前大版本/灰=旧版，随数据走）
@@ -126,10 +127,10 @@
 | 优先级 | 事项 | 说明 |
 |---|---|---|
 | **P1** | **群星扩容** | #578 起，剩余 443 个到 Top 1020。流程全自动化，见 §7 |
-| **P2** | **新手引导深化** | 首页场景卡（🚀🎨📖🧩）已上线；可继续做"第一局推荐"等人工精选内容（需 WebSearch/社区核实，禁止编造） |
+| **P2** | **新手引导深化** | 🌟精选推荐面板已上线（beginner_picks.json）；"第一局推荐"类人工评测内容需 WebSearch/社区核实后扩充，禁止编造 |
 | **P2** | 社区口碑扩充 | 现仅 6 条，需 WebSearch 核实后补充（禁止编造） |
 | **P3** | HOI4 抓取 | 复用 CK3 脚本链改 app_id（394360） |
-| **P3** | CK3 深度字段精做 | 参照群星六字段标准；补兼容性/口碑/汉化包 |
+| **P3** | CK3 深度字段精做 | ~~版本链~~ 已完成（2026-08-30）；剩余：六字段标准、兼容性/口碑/汉化包 |
 
 ## 6. 工具链（用什么干——全部实测可用）
 
@@ -147,11 +148,11 @@
 
 ## 7. 群星扩容标准流程（每批 50 个，约 10 分钟）
 
-**已跑到 #577，下一批 #578-627。用参数化的 `fetch_batch.py`（不要再复制 batch 脚本）。**
+**已跑到 #627，下一批 #628-677。用参数化的 `fetch_batch.py`（不要再复制 batch 脚本）。**
 
 ```bash
 # 1) 抓详情（参数化，无需改代码）
-python scripts/fetch_batch.py --start 578 --end 627      # → 追加到 data/details.jsonl
+python scripts/fetch_batch.py --start 628 --end 677     # → 追加到 data/details.jsonl
 #  ⚠️ 等抓取完成：wc -l data/details.jsonl 两次一致再继续
 
 # 2) 增量入库（不动已有数据，upsert；自动更新 data/stellaris/progress.json）
@@ -296,7 +297,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 6. **git bash 下 taskkill 语法**：`taskkill //F //PID` 在 Git Bash 报错，必须用 PowerShell 工具。
 7. **版本通配误匹配**：`LIKE '%3.%'` 会误中 `4.3`。正确做法：通配 `3.x` 用 `LIKE '%3.%'` 配合"适配/更新于"前缀语义，并实测验证 0 误匹配。
 8. **Steam 域名时段性封锁**：抓取脚本必须 ConnectionError 快速失败，不傻等重试。
-9. **本机 venv 缺根证书**：requests 访问 https 报 CERTIFICATE_VERIFY_FAILED。抓取脚本必须 `verify=False` + `urllib3.disable_warnings()`。
+9. **本机 venv 缺根证书**：requests 访问 https 报 CERTIFICATE_VERIFY_FAILED。**2026-08-30 已正确修复**：fetch_batch / core.steam_fetch 优先用 truststore 走 Windows 系统证书库（`pip install truststore`），TLS 校验保持开启；verify=False 已全部移除。极罕见情况才需要 fetch_batch 的 --insecure 兜底。
 10. **旧库/新库路径**：旧单游戏库 `data/stellaris_mods.db`（已于 2026-08-30 删除，git 历史可查，build_db --force 可再生）；新架构 `data/stellaris/mods.db`。旧脚本 `import_translations.py` 已删除——群星用 `import_stellaris_translations.py`。
 11. **抓取未完成就导入**：增量导入前确认 `wc -l data/details.jsonl` 两次一致。
 12. **TAT 细节**：参数是 `--Filters`/`--InvocationTaskIds`；输出默认隐藏需 `--HideOutput false`；输出是 base64；Content base64 ≤64KB。
@@ -329,7 +330,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 
 **已删除/防呆**：旧链路 15 个文件已于 2026-08-30 删除（清单与去向见 `scripts/README.md`，git 历史可查）；`build_db.py` 保留但需显式 `--force`（面向旧库）。
 
-**群星翻译批次**：batch2/8/9（#1-277）· batch10-14（#278-527）· batch15（#528-577，已完成）· 下一批 #578（用 `fetch_batch.py --start 578 --end 627`）
+**群星翻译批次**：batch2/8/9（#1-277）· batch10-14（#278-527）· batch15（#528-577）· batch16（#578-627）· 下一批 #628（`fetch_batch.py --start 628 --end 677`）
 **深度精做存档**：`translations/deep/deep_old_batch{0-3}`（原库段 171 个补译）· `deep_batch{10,12,13}`（扩容段）· `deep_new50`（50 个精做升级）· `deep_new50_mods`（数据库行存档）· `deep_trend`（趋势存档）
 
 ## 13. 接手检查清单（新 AI 开工前必做）

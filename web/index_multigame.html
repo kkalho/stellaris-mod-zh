@@ -230,7 +230,7 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 
 <main>
   <div class="scene-cards" id="sceneCards">
-    <div class="scene-card" onclick="sceneGo('beginner')"><div class="sc-icon">🚀</div><div class="sc-t">新手入门</div><div class="sc-d">适配当前版本的高分 MOD</div></div>
+    <div class="scene-card" onclick="openPicksPanel()"><div class="sc-icon">🚀</div><div class="sc-t">新手入门</div><div class="sc-d">精选推荐 · 汉化与必装</div></div>
     <div class="scene-card" onclick="sceneGo('graphics')"><div class="sc-icon">🎨</div><div class="sc-t">画面美化</div><div class="sc-d">星空、舰船与界面升级</div></div>
     <div class="scene-card" onclick="sceneGo('events')"><div class="sc-icon">📖</div><div class="sc-t">剧情事件</div><div class="sc-d">新事件与新故事</div></div>
     <div class="scene-card" onclick="sceneGo('gameplay')"><div class="sc-icon">🧩</div><div class="sc-t">玩法扩展</div><div class="sc-d">机制与内容深度扩展</div></div>
@@ -258,6 +258,7 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
         <option value="120">120 条</option>
       </select>
       <button class="dlc-btn" style="margin-left:auto" onclick="openDlcPanel()">🧩 DLC 检测</button>
+      <button class="dlc-btn" onclick="openPicksPanel()">🌟 新手推荐</button>
       <button class="dlc-btn" onclick="openLocPanel()">🌐 汉化包</button>
       <button class="dlc-btn" onclick="openLocalPanel()">📁 本地 MOD</button>
       <button class="dlc-btn" onclick="openTrendPanel()">📈 热度趋势</button>
@@ -268,6 +269,7 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
     <div id="locPanel" class="dlc-panel" style="display:none"></div>
     <div id="localPanel" class="dlc-panel" style="display:none"></div>
     <div id="trendPanel" class="dlc-panel" style="display:none"></div>
+    <div id="picksPanel" class="dlc-panel" style="display:none"></div>
   </div>
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
   <div class="pager" id="pager" style="display:none">
@@ -496,6 +498,50 @@ function clearFilters() {
   $('sortsel').value = 'subs';
   $('limitsel').value = '0';
   applyFilters();
+}
+
+let picksCache = null;
+async function openPicksPanel() {
+  const panel = $('picksPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel'].forEach(id => $(id).style.display = 'none');
+  panel.style.display = 'block';
+  panel.innerHTML = '<div class="loading">正在加载新手推荐...</div>';
+  try {
+    if (!picksCache) {
+      const d = await api('/api/' + GAME + '/picks');
+      picksCache = d;
+    }
+    const p = picksCache;
+    if (!(p.picks || []).length) {
+      panel.innerHTML = `<h3>🌟 新手推荐</h3><div style="color:#8a93a8;font-size:13px">当前游戏暂无精选数据（data/${esc(GAME)}/beginner_picks.json）。</div>
+        <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('picksPanel').style.display='none'">关闭</button>`;
+      return;
+    }
+    const rows = p.picks.map((k, i) => `
+      <div class="mod-card" onclick="showDetail('${String(k.steam_id).replace(/[^0-9]/g, '')}')">
+        ${k.preview ? `<div class="thumb"><img src="${esc(k.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>` : '<div class="thumb"><span class="noimg">无预览图</span></div>'}
+        <div class="body" style="min-width:0">
+          <div class="top">
+            <div class="name">${i + 1}. ${esc(k.title)}${versionBadge(k.version)}</div>
+            <div class="subs">🛰 ${fmt(k.subs)} 订阅</div>
+          </div>
+          ${k.summary ? `<div class="summary">${esc(k.summary)}</div>` : ''}
+          <div class="id" style="color:#9fc0ff">💡 ${esc(k.reason)}</div>
+          ${k.source ? `<div class="id">来源：${esc(k.source)}${k.source_url ? ` · <a style="color:#6fa8ff" href="${esc(k.source_url)}" target="_blank" rel="noopener">核实链接 ↗</a>` : ''}</div>` : ''}
+        </div>
+      </div>`).join('');
+    panel.innerHTML = `
+      <h3>🌟 新手入门推荐</h3>
+      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">${esc(p.note || '精选清单：先汉化，再按分类挑高订阅的适配 MOD')}</div>
+      ${rows}
+      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+        <button class="dlc-btn" onclick="$('picksPanel').style.display='none';sceneGo('beginner')">查看全部适配当前版本 MOD →</button>
+        <button class="back-btn" style="margin-bottom:0" onclick="$('picksPanel').style.display='none'">关闭</button>
+      </div>`;
+  } catch (e) {
+    panel.innerHTML = `<div class="status-warn">加载新手推荐失败：${esc(e.message)}</div>`;
+  }
 }
 
 let dlcCache = null;
@@ -857,6 +903,7 @@ function switchGame() {
   locCache = null;
   localCache = null;
   trendCache = null;
+  picksCache = null;
   $('versionsel').value = '';
   loadVersions();    // 版本选项随游戏刷新
   loadTop();
