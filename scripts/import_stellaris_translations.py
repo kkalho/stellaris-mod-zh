@@ -58,7 +58,7 @@ def main():
             import_file(db, f)
     n = db.conn.execute("SELECT COUNT(DISTINCT mod_id) FROM translations").fetchone()[0]
     trans_mods = db.conn.execute(
-        "SELECT COUNT(*) FROM mods WHERE game_id='ck3' AND translated=1").fetchone()[0]
+        "SELECT COUNT(*) FROM mods WHERE game_id='stellaris' AND translated=1").fetchone()[0]
     print(f"Stellaris 知识库翻译记录: {n} 条，已翻译 Mod: {trans_mods} 个")
     db.close()
 

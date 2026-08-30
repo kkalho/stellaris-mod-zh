@@ -14,6 +14,7 @@
 | 拼音索引 | `python scripts/rebuild_pinyin_idx.py` | 含中文译名拼音 |
 | 趋势快照 | `python scripts/snapshot_trend.py --game stellaris` | 每日一行 |
 | 趋势导出 | `python scripts/export_trend.py` | 云端备份用 |
+| 云端全量同步 | `export_cloud_sync.py`（本地导出）→ 推送 git → TAT 执行 `cloud_sync_example.sh` | 云端「= 本地」确定性收敛，见交接文档 §8 |
 | 抓取榜单 | `python scripts/fetch_workshop_top.py` | 创意工坊页面前 N |
 
 日常大部分场景只需 **verify_db / rebuild_all / fetch_batch** 三个。

@@ -1,11 +1,13 @@
 # 项目说明书：Paradox 中文 MOD 查询工具（stellaris-mod-zh）
 
 > **本文档是自包含交接说明书**——新会话/另一 AI 仅凭本文即可完整接手项目。
-> 最后更新：2026-08-30（git `62ff11b`，实测数据核对）
-> **2026-08-30 维护轮**：坑 #1 根因已修复（`upsert_mod` 改部分更新）；新增
-> `rebuild_all.py` 收敛流水线 / `verify_db.py` 数据体检 / `fetch_batch.py` 参数化抓取 /
-> `export_trend.py` 趋势备份；服务端加限流与 `/versions` 接口；`build_db.py`、
-> `update_all.py` 已加防呆（见 §10）。
+> 最后更新：2026-08-30（两轮维护，实测数据核对）
+> **维护轮 1**：坑 #1 根因已修复（`upsert_mod` 改部分更新）；新增 `rebuild_all.py` 收敛流水线 /
+> `verify_db.py` 数据体检 / `fetch_batch.py` 参数化抓取 / `export_trend.py` 趋势备份；
+> 服务端加限流与 `/versions` 接口；前端版本下拉动态化；`build_db.py` 加 `--force` 防呆。
+> **维护轮 2**：progress.json 由 `import_new_batch` 自动更新（迁移至 `data/stellaris/`）；
+> DLC 标注并入中文翻译（81→107）；旧链路 15 个文件删除（见 `scripts/README.md`）；
+> 云端经全量行存档与本地完全收敛（TAT 实测公网 577/577，见 §8 云同步机制）。
 
 ---
 
@@ -27,7 +29,7 @@
 | 其他数据 | 群星现状 |
 |---|---|
 | 版本兼容标注 | 577/577（280 显式声明 + 297 时间推断） |
-| DLC 依赖标注 | 81 个（均为"可选"级，数据真实原则） |
+| DLC 依赖标注 | 107 个（英文+中文描述双轨检测，均标"可选"级） |
 | 订阅热度趋势 | 577/577（云端已积累 6 天连续快照） |
 | 汉化包 | 9 条（鸽组等，含目标版本） |
 | 兼容性矩阵 | 16 条（冲突/依赖/最佳搭配/补丁） |
@@ -50,7 +52,7 @@
 |---|---|
 | 本地仓库 | `D:/Projects/walong/stellaris-mod-zh/` |
 | GitHub | `https://github.com/kkalho/stellaris-mod-zh`（用户 kkalho，master 分支） |
-| 云端公网 | `http://150.158.24.195:8080` |
+| 云端公网 | `http://150.158.24.195:8080`（2026-08-30 已与本地收敛，公网实测 577/577） |
 | 云端目录 | `/opt/stellaris-mod-zh`（systemd 服务 `stellaris-mod`） |
 
 ## 2. 架构（数据流全景）
@@ -70,7 +72,8 @@
 数据层    data/<game>/{mods.db, local.db, localization.json, community_seed.json, update_state.json}
 原始数据  data/details.jsonl（Steam 详情流水，607 行 / 4.1MB）
           data/workshop_top1000.json（官方榜单 1020 条）
-          data/progress.json（扩容进度：下一批 #578）
+          data/stellaris/progress.json（扩容进度，import_new_batch 自动更新）
+          data/stellaris/mods_full_sync.json（云端全量行存档，export_cloud_sync 生成）
 存档      translations/（翻译 JSON）+ translations/deep/（深度精做存档 + 数据库行存档）
 ```
 
@@ -87,7 +90,7 @@
 | `reviews` | 玩家评价（好评/差评结构化） | 577 |
 | `features` | 特色标签列表（JSON 数组，3-6 个） | 577 |
 | `version` | 版本兼容：`适配 4.4` / `更新于 3.4 时期` | 577 |
-| `optional_dlcs` | DLC 提及（JSON 数组，均标"可选"） | 81 |
+| `optional_dlcs` | DLC 提及（JSON 数组，均标"可选"；英文+中文双轨检测） | 107 |
 | `pinyin_idx` | 拼音搜索索引（英文+中文译名全拼+首字母） | 577 |
 | `status` | `deprecated`（42 个）/ 其他废弃态 | 42 |
 | `score` / `like_ratio` | 综合评分（订阅+收藏启发式）/ 好评率 | 577 |
@@ -144,7 +147,7 @@
 python scripts/fetch_batch.py --start 578 --end 627      # → 追加到 data/details.jsonl
 #  ⚠️ 等抓取完成：wc -l data/details.jsonl 两次一致再继续
 
-# 2) 增量入库（不动已有数据，upsert）
+# 2) 增量入库（不动已有数据，upsert；自动更新 data/stellaris/progress.json）
 python scripts/import_new_batch.py 578 627
 
 # 3) 精做翻译（六字段：title/summary/description/gameplay/reviews/features）
@@ -200,10 +203,13 @@ tccli tat RunCommand --region ap-shanghai --Content "$B64" \
   --InstanceIds '["lhins-ca3ol8ju"]' --CommandType SHELL --Timeout 300
 ```
 
-**数据库不同步 git（.gitignore）**，云端靠三种方式更新：
-1. 同款脚本重新生成（import_new_batch / import_stellaris_translations / detect_*）
-2. **小存档直插**（推荐）：本地导出 JSON → git → 云端 python 直插（见 `translations/deep/deep_new50_mods.json` 做法）
-3. 大文件（如 4.1MB 的 details.jsonl）**不要用 curl 拉**，会截断（实测只传下 474KB）
+**数据库不同步 git（.gitignore）**，云端更新方式（按推荐顺序）：
+1. ⭐ **全量行存档（现役机制，2026-08-30 起实测跑通）**：
+   - 本地 `python scripts/export_cloud_sync.py` → git 提交推送（data/stellaris/mods_full_sync.json）
+   - TAT 执行同步脚本：curl 从 jsDelivr 拉**固定 commit SHA** 的代码与存档（逐文件字节数校验，防截断/防缓存陈旧）→ `apply_cloud_sync.py`（UPDATE 保云端主键 + INSERT 分流，不破坏 translations/trend 外键）→ 导入新批次翻译 → 重启服务 → curl 自验
+   - 2026-08-30 实战记录：更新 527 + 插入 50 = 577，公网复验 stats/DLC/版本接口与本地逐位一致；脚本模板见 `scripts/cloud_sync_example.sh`
+2. 同款脚本重新生成（import_new_batch / import_stellaris_translations / detect_*）——适合只差翻译/标注的场景
+3. 大文件（如 4.1MB 的 details.jsonl）**不要用 curl 拉旧镜像**，会截断（坑 #3）；必须拉时用 jsDelivr 固定 SHA + 字节数校验
 
 **每日自动更新**：服务器 crontab `0 4 * * *` 跑 `core.cli update --game stellaris --force`（Steam 同步订阅量 + 趋势快照）。云端已积累 6 天连续快照。
 **趋势备份（推荐加到同一 cron）**：cron 追加 `python scripts/export_trend.py`，把 trend 表导出成 `data/stellaris/trend_export.json`；需要回传本地时用 TAT 执行 `gzip -k trend_export.json && base64 trend_export.json.gz`（gzip 后约 20-40KB，满足 TAT 64KB 输出上限）。
@@ -281,7 +287,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 7. **版本通配误匹配**：`LIKE '%3.%'` 会误中 `4.3`。正确做法：通配 `3.x` 用 `LIKE '%3.%'` 配合"适配/更新于"前缀语义，并实测验证 0 误匹配。
 8. **Steam 域名时段性封锁**：抓取脚本必须 ConnectionError 快速失败，不傻等重试。
 9. **本机 venv 缺根证书**：requests 访问 https 报 CERTIFICATE_VERIFY_FAILED。抓取脚本必须 `verify=False` + `urllib3.disable_warnings()`。
-10. **旧库/新库路径**：旧单游戏库 `data/stellaris_mods.db`，新架构 `data/stellaris/mods.db`。`import_translations.py` 连**旧库**——群星用 `import_stellaris_translations.py`。
+10. **旧库/新库路径**：旧单游戏库 `data/stellaris_mods.db`（已于 2026-08-30 删除，git 历史可查，build_db --force 可再生）；新架构 `data/stellaris/mods.db`。旧脚本 `import_translations.py` 已删除——群星用 `import_stellaris_translations.py`。
 11. **抓取未完成就导入**：增量导入前确认 `wc -l data/details.jsonl` 两次一致。
 12. **TAT 细节**：参数是 `--Filters`/`--InvocationTaskIds`；输出默认隐藏需 `--HideOutput false`；输出是 base64；Content base64 ≤64KB。
 13. **Keep-Alive 挂起**：web 服务必须 `protocol_version="HTTP/1.0"` + ThreadingHTTPServer；访问用 127.0.0.1 而非 localhost。
@@ -304,14 +310,14 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 | `web/index_multigame.html` | 前端单文件（纯 JS；版本下拉从 `/versions` 接口动态生成） |
 | `core/` | 功能层：DLC 检测/汉化包/本地扫描/口碑/updater/steam_fetch/cli（`mod_db.upsert_mod` 已改部分更新） |
 | `games/{stellaris,ck3,hoi4}/config/game.py` | 游戏配置（TAG_ZH 标签映射、VERSION_NAMES 版本代号、DLC 清单、本地目录） |
-| `scripts/` | **rebuild_all（收敛重建）/ verify_db（数据体检）/ fetch_batch（参数化抓取）/ export_trend（趋势备份）**；抓取 fetch_batch9~16（旧，已由 fetch_batch.py 取代）、导入（import_*）、标注（detect_* / rebuild_pinyin_idx / snapshot_trend） |
+| `scripts/` | **见 scripts/README.md（工具分工总览）**：rebuild_all（收敛重建）/ verify_db（体检）/ fetch_batch（参数化抓取）/ export_trend / export_cloud_sync + apply_cloud_sync（云端全量同步对）/ import_new_batch（含 progress.json 自动更新）/ 导入与标注脚本；CK3 工具链（P3 用） |
 | `translations/` | 翻译存档（batchN_zh.json + deep/ 深度精做存档） |
-| `data/` | details.jsonl / workshop_top1000.json / progress.json / <game>/mods.db |
+| `data/` | details.jsonl / workshop_top1000.json / <game>/mods.db / stellaris/progress.json / stellaris/mods_full_sync.json |
 | `docs/` | PROJECT_HANDOFF.md（本文）、MULTI_GAME_ARCHITECTURE.md |
 
-**已停用/防呆脚本**：`update_all.py`（硬停用，指路 rebuild_all）；`build_db.py`（需 `--force`，面向旧库）。
+**已删除/防呆**：旧链路 15 个文件已于 2026-08-30 删除（清单与去向见 `scripts/README.md`，git 历史可查）；`build_db.py` 保留但需显式 `--force`（面向旧库）。
 
-**群星翻译批次**：batch2/8/9（#1-277）· batch10（#278-327）· batch11（#328-377）· batch12（#378-427）· batch13（#428-477）· batch14（#478-527）· batch15/16（进行中）
+**群星翻译批次**：batch2/8/9（#1-277）· batch10-14（#278-527）· batch15（#528-577，已完成）· 下一批 #578（用 `fetch_batch.py --start 578 --end 627`）
 **深度精做存档**：`translations/deep/deep_old_batch{0-3}`（原库段 171 个补译）· `deep_batch{10,12,13}`（扩容段）· `deep_new50`（50 个精做升级）· `deep_new50_mods`（数据库行存档）· `deep_trend`（趋势存档）
 
 ## 13. 接手检查清单（新 AI 开工前必做）
@@ -320,5 +326,5 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 2. `python scripts/verify_db.py` —— 数据体检（退出码 0 = 健康；报归零先跑 `rebuild_all.py`）
 3. `curl http://127.0.0.1:8080/api/stellaris/stats` —— 本地服务是否正常（未启动则起服务）
 4. `curl http://150.158.24.195:8080/api/stellaris/stats` —— 云端公网是否可达
-5. 读 `data/progress.json` —— 确认扩容进度（下一批起点）
+5. 读 `data/stellaris/progress.json` —— 确认扩容进度（import_new_batch 自动维护）
 6. **改任何数据后**：跑 `python scripts/verify_db.py` 确认健康 → git 提交 → TAT 云端同步 → 公网复验
