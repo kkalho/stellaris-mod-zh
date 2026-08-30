@@ -1,150 +1,302 @@
 # 项目说明书：Paradox 中文 MOD 查询工具（stellaris-mod-zh）
 
 > **本文档是自包含交接说明书**——新会话/另一 AI 仅凭本文即可完整接手项目。
-> 最后更新：2026-08-24 21:15（与 git `3d2c10b` 一致）
+> 最后更新：2026-08-30（git `62ff11b`，实测数据核对）
 
 ---
 
 ## ⚡ 一分钟速览（四个问题一次看清）
 
 **1. 干了什么？**
-一个面向 Paradox 游戏（群星 / CK3 / HOI4）的**中文 MOD 知识库与网页查询工具**：抓取 Steam 创意工坊公开数据 → 整理成结构化知识库（翻译/评分/DLC/兼容性/汉化包/社区口碑）→ 提供网页查询（支持中英文搜索、MOD 详情、DLC 缺失检测等）→ 已部署到腾讯云公网。
+一个面向 Paradox 游戏（群星 / CK3 / HOI4）的**中文 MOD 知识库与网页查询工具**：抓取 Steam 创意工坊公开数据 → 整理成结构化知识库（翻译/玩法/评价/DLC/版本/兼容性/汉化包/社区口碑）→ 提供网页查询（中英文+拼音搜索、版本筛选、MOD 详情、DLC 缺失检测等）→ 已部署到腾讯云公网。
 
-**2. 干到哪了？（2026-08-24 数据快照）**
-| 游戏 | MOD 数 | 已翻译 | 说明 |
-|---|---|---|---|
-| 群星 | **477**（目标 1000） | 477/477 | 扩容进行中，下一批 #478 |
-| CK3 | 300 | 300/300 | 全部完成 |
-| HOI4 | 0 | - | 空框架，未抓取 |
-| 功能 | 汉化包 9 条 / 社区口碑 6 条 / DLC 标注 65 个 / 兼容性 16 条 | | 云端已部署、每日自动更新 |
+**2. 干到哪了？（2026-08-30 实测快照）**
+
+| 游戏 | MOD 数 | 已翻译 | 六字段覆盖 | 说明 |
+|---|---|---|---|---|
+| **群星** | **577**（目标 1020） | 577/577 | **100%** ✅ | 翻译已做完全，下一批 #578 |
+| CK3 | 300 | 300/300 | Top30 完整 | 已翻译，深度字段未精做 |
+| HOI4 | 0 | - | - | 空框架，未抓取 |
+
+群星**六字段**（title / summary / description / gameplay / reviews / features）**100% 全覆盖**，每个 MOD 详情页都有：中文标题+简介+详细介绍+具体玩法+玩家评价+特色列表。
+
+| 其他数据 | 群星现状 |
+|---|---|
+| 版本兼容标注 | 577/577（280 显式声明 + 297 时间推断） |
+| DLC 依赖标注 | 81 个（均为"可选"级，数据真实原则） |
+| 订阅热度趋势 | 577/577（云端已积累 6 天连续快照） |
+| 汉化包 | 9 条（鸽组等，含目标版本） |
+| 兼容性矩阵 | 16 条（冲突/依赖/最佳搭配/补丁） |
+| 社区口碑 | 6 条（贴吧/B站/NGA，附来源 URL） |
+| 废弃标注 | 42 个 deprecated |
 
 **3. 要干什么？**
-① 群星继续扩容到 Top 1000（剩余 543 个，脚本全自动化）② HOI4 抓取 ③ CK3 兼容性/口碑/汉化包 ④ updater 云端每日真实同步（Steam API 已恢复验证）
+① 群星继续扩容到 Top 1020（剩余 443 个，脚本全自动化）② P2 新手引导/场景化入口 ③ HOI4 抓取 ④ CK3 深度字段精做与兼容性/口碑补全 ⑤ 社区口碑扩充（现仅 6 条）
 
 **4. 用什么干？**
-`Python 3.13 + SQLite + 无框架纯 JS 前端`；数据源 `Steam 官方 API（GetPublishedFileDetails，无需 Key）+ 创意工坊页面内嵌 JSON`；代码托管 `GitHub（kkalho/stellaris-mod-zh）`；云端 `腾讯云轻量服务器 + TAT 自动化助手（免 SSH 远程执行）+ tccli CLI`；服务器下载 GitHub 用 `gh-proxy.com` 镜像。
+`Python 3.13（本地）/ 3.11.6（云端）+ SQLite + 无框架纯 JS 前端`；数据源 `Steam 官方 API（GetPublishedFileDetails，无需 Key）+ 创意工坊页面内嵌 JSON`；代码托管 `GitHub（kkalho/stellaris-mod-zh，master）`；云端 `腾讯云轻量服务器 + TAT 自动化助手（免 SSH 远程执行）+ tccli CLI`；服务器下载 GitHub 用 **jsDelivr CDN**（gh-proxy 有缓存问题，见技术坑）。
 
 ---
 
 ## 1. 项目是什么
 
-**核心价值**：让中文玩家**秒查**一个 MOD 是什么、怎么玩、好不好玩、和谁冲突/搭配、缺不缺 DLC、有没有汉化包。
+**核心价值**：让中文玩家**秒查**一个 MOD 是什么、怎么玩、好不好玩、和谁冲突/搭配、缺不缺 DLC、适配哪个版本、有没有汉化包。
 
-- 本地仓库：`D:/Projects/walong/stellaris-mod-zh/`
-- GitHub：`https://github.com/kkalho/stellaris-mod-zh`（用户 kkalho，master 分支）
-- 云端：`http://150.158.24.195:8080`（腾讯云轻量服务器，公网可用）
+| 项 | 值 |
+|---|---|
+| 本地仓库 | `D:/Projects/walong/stellaris-mod-zh/` |
+| GitHub | `https://github.com/kkalho/stellaris-mod-zh`（用户 kkalho，master 分支） |
+| 云端公网 | `http://150.158.24.195:8080` |
+| 云端目录 | `/opt/stellaris-mod-zh`（systemd 服务 `stellaris-mod`） |
 
 ## 2. 架构（数据流全景）
 
 ```
-展示层    web_server_multigame.py（HTTP 服务，--host 参数控制监听）+ web/index_multigame.html（前端，纯 JS）
-功能层    core/ 下：dlc_checker.py · localization_matcher.py · local_scanner.py · community_rating.py · updater.py · steam_fetch.py · cli.py
+展示层    web_server_multigame.py（HTTP 服务，默认 127.0.0.1:8080，云端 --host 0.0.0.0）
+          web/index_multigame.html（前端，纯 JS 单文件，761 行）
+功能层    core/ 下：
+            dlc_checker.py      DLC 缺失检测
+            localization_matcher.py  汉化包匹配
+            local_scanner.py    本地 MOD 扫描（读 Paradox 目录）
+            community_rating.py 社区口碑
+            updater.py / steam_fetch.py  Steam 增量同步（订阅量）
+            cli.py             命令行入口（update / community / trend_snapshot）
+            game_config.py / mod_db.py   游戏抽象与 SQLite 封装
 游戏层    games/{stellaris,ck3,hoi4}/config/game.py（继承 GameConfig，@register_game 注册）
-核心层    core/game_config.py（抽象+注册表）· core/mod_db.py（ModDB：游戏隔离 SQLite）
-数据层    data/<game>/{mods.db, local.db, dlc.json, localization.json, community_seed.json, update_state.json}
-原始数据  data/details.jsonl（Steam 详情流水）· data/workshop_top1000.json（官方榜单 1020 条）· data/progress.json（翻译进度）
+数据层    data/<game>/{mods.db, local.db, localization.json, community_seed.json, update_state.json}
+原始数据  data/details.jsonl（Steam 详情流水，607 行 / 4.1MB）
+          data/workshop_top1000.json（官方榜单 1020 条）
+          data/progress.json（扩容进度：下一批 #578）
+存档      translations/（翻译 JSON）+ translations/deep/（深度精做存档 + 数据库行存档）
 ```
 
-**数据流**：Steam 榜单/详情（官方 API）→ 抓取脚本 → mods.db（SQLite）→ 翻译 JSON → 导入 → 前端查询（/api/<game>/...）→ 云端部署（TAT 同步）
+**数据流**：Steam 榜单/详情（官方 API）→ 抓取脚本 → `data/details.jsonl` → 增量入库 `mods.db` → 翻译 JSON 导入 → 网页查询（`/api/<game>/...`）→ TAT 云端同步。
 
-## 3. 数据现状（2026-08-24 实测）
+## 3. 数据库字段说明（群星 mods.db）
 
-| 数据维度 | 群星 | CK3 | HOI4 |
-|---|---|---|---|
-| MOD 总数 | 477（扩容中） | 300 | 0 |
-| 中文翻译 | 477/477 | 300/300 | - |
-| DLC 依赖标注 | 65 个（可选级启发式） | 启发式 | - |
-| 汉化包 | 9 条 | - | - |
-| 社区口碑 | 6 条（贴吧/B站/NGA） | - | - |
-| 兼容性矩阵 | 16 个热门 | - | - |
-| 封面图 | 100% | 100% | - |
+| 字段 | 说明 | 覆盖 |
+|---|---|---|
+| `title` / `title_en` | 中文显示名（优先）/ 英文原名 | 577 |
+| `summary` | 一句话简介（translations 表） | 577 |
+| `description` | 详细介绍（300-600 字精做） | 577 |
+| `gameplay` | 具体玩法（要点式） | 577 |
+| `reviews` | 玩家评价（好评/差评结构化） | 577 |
+| `features` | 特色标签列表（JSON 数组，3-6 个） | 577 |
+| `version` | 版本兼容：`适配 4.4` / `更新于 3.4 时期` | 577 |
+| `optional_dlcs` | DLC 提及（JSON 数组，均标"可选"） | 81 |
+| `pinyin_idx` | 拼音搜索索引（英文+中文译名全拼+首字母） | 577 |
+| `status` | `deprecated`（42 个）/ 其他废弃态 | 42 |
+| `score` / `like_ratio` | 综合评分（订阅+收藏启发式）/ 好评率 | 577 |
+| `subscriptions` / `favorites` | 订阅量 / 收藏数（Steam 同步） | 577 |
+| `tags` | Steam 原始标签（逗号分隔，已配 188 条中文映射） | 577 |
 
-**数据真实原则**：所有数据必须来自 Steam 官方/公开渠道核实，禁止编造。DLC 依赖无明确 require 依据一律标「可选」。
+**translations 表结构**：`(id, mod_id, field, zh_text, quality, updated_at)`，`field` 取值即上表六个翻译字段。
+**trend 表结构**：`(steam_id, date, subs)`，每日一行，主键 `(steam_id, date)`。
 
 ## 4. 已实现功能（前端网页版）
 
-- ✅ 中英文搜索（拼音索引 pinyin_idx + 翻译参与匹配）
-- ✅ MOD 详情（翻译描述/玩法/特性/评分/封面/废弃警告）
+- ✅ **中英文 + 拼音搜索**（pinyin_idx 索引；如 `jugou`→巨构、`nvpu`→美味女仆）
+- ✅ **版本兼容筛选**（下拉：全部 / 4.x / 4.4 / 4.3 / 4.2 / 4.1 / 4.0 / 3.x）+ 卡片版本徽章（绿=新版/灰=旧版）
+- ✅ **标签筛选**（Top 14 高频标签，已全部中文化，悬停显示英文原名）
+- ✅ **排序**：订阅量升降 / 最近更新 / 名称
+- ✅ MOD 详情（标题/简介/详细介绍/具体玩法/玩家评价/特色/评分/封面/废弃警告）
 - ✅ DLC 缺失检测面板（勾选已购 DLC → 检测缺依赖 MOD）
 - ✅ 汉化包版块（数据库 + 详情页展示 + 总览面板）
 - ✅ 本地 MOD 检测版块（读取 local.db，标记已收录/未收录）
-- ✅ 订阅热度趋势（每日快照 trend 表 + 涨跌榜）
+- ✅ 订阅热度趋势（每日快照 + 涨跌榜，577/577 全覆盖）
 - ✅ 兼容性矩阵（冲突/依赖/最佳搭配/补丁）、社区口碑（评分+摘要+来源）
 - ✅ 游戏切换（群星/CK3/HOI4 左上角下拉）
 
 ## 5. 待办（按优先级）
 
-1. **群星扩容**：#478 起，剩余 543 个到 Top 1000（脚本全自动化，每批：fetch_batchN 抓详情 → import_new_batch 增量入库 → batchN_zh.json 翻译 → import_stellaris_translations 导入 → git 提交 → TAT 云端同步）
-2. **HOI4 抓取**：复用 CK3 脚本链改 app_id（394360）
-3. **CK3 补充**：兼容性矩阵/社区口碑/汉化包
-4. **updater 实跑确认**：Steam API 已恢复（2026-08-24 本机 277 个同步成功）；云端 crontab 每天 04:00 自动跑
+| 优先级 | 事项 | 说明 |
+|---|---|---|
+| **P1** | **群星扩容** | #578 起，剩余 443 个到 Top 1020。流程全自动化，见 §7 |
+| **P2** | **新手引导/场景化入口** | 首页加"新手入门 / 按目的找 MOD / 热门合集"，让完全没玩过的人能用起来 |
+| **P2** | 社区口碑扩充 | 现仅 6 条，需 WebSearch 核实后补充（禁止编造） |
+| **P3** | HOI4 抓取 | 复用 CK3 脚本链改 app_id（394360） |
+| **P3** | CK3 深度字段精做 | 参照群星六字段标准；补兼容性/口碑/汉化包 |
 
 ## 6. 工具链（用什么干——全部实测可用）
 
 | 工具 | 用途 | 关键点 |
 |---|---|---|
-| **Steam 官方 API** | GetPublishedFileDetails（POST，无需 Key）抓详情 | 单批 ≤50 个 ID；本机/云端均有时段性封锁，脚本需快速失败（ConnectionError 不重试） |
-| **Steam 页面内嵌 JSON** | 创意工坊榜单（window.SSR.renderContext → queryData） | fetch_workshop_top.py 抓前 1000 |
-| **GitHub** | 代码托管 + Release 放部署包 | kkalho/stellaris-mod-zh；服务器下载走 gh-proxy.com 镜像（直连会被限） |
+| **Steam 官方 API** | GetPublishedFileDetails（POST，无需 Key）抓详情 | 单批 ≤50 个 ID；本机/云端均有时段性封锁，脚本需快速失败 |
+| **Steam 页面内嵌 JSON** | 创意工坊榜单（`window.SSR.renderContext`） | `fetch_workshop_top.py` 抓前 1020 |
+| **GitHub** | 代码托管 + Release | `kkalho/stellaris-mod-zh`；服务器下载走 **jsDelivr CDN**（推荐）或 gh-proxy |
 | **腾讯云 TAT 自动化助手** | **免 SSH 远程执行命令**（云端运维核心） | `tccli tat RunCommand`（Content base64 ≤64KB）+ `DescribeInvocationTasks --Filters '[{"Name":"invocation-id","Values":["inv-xxx"]}]' --HideOutput false`（输出 base64） |
-| **tccli（腾讯云 CLI）** | 查资源/执行 TAT | 已登录 profile default（UIN 100049338267 Root，地域 ap-guangzhou）；lighthouse DescribeInstances 查轻量服务器 |
-| **gh CLI** | 创建 GitHub Release 上传部署包 | 已认证 kkalho |
-| **WebSearch/WebFetch** | 社区口碑/汉化包核实（Steam 封锁时唯一核实通道） | 交叉验证避免编造 |
+| **tccli（腾讯云 CLI）** | 查资源/执行 TAT | 已登录 profile default，地域 `ap-shanghai`，实例 `lhins-ca3ol8ju` |
+| **jsDelivr CDN** | 服务器拉 GitHub 文件（推荐方案） | `https://cdn.jsdelivr.net/gh/kkalho/stellaris-mod-zh@master/<path>`，比 gh-proxy 缓存更新快 |
+| **gh-proxy.com** | 备选镜像 | ⚠️ 有缓存问题（曾反复拉到旧版），大文件（>1MB）易截断 |
+| **WebSearch** | 社区口碑/汉化包核实 | 交叉验证，禁止编造 |
 | **本地 Python venv** | 开发/抓取环境 | `C:/Users/wangf/.workbuddy/binaries/python/envs/default/Scripts/python.exe`（已装 pypinyin） |
 
-## 7. 云端部署（完整方法）
+## 7. 群星扩容标准流程（每批 50 个，约 10 分钟）
 
-**服务器**：腾讯云轻量应用服务器「DeepSeek TUI-ODDY」
-- 实例 ID `lhins-ca3ol8ju`｜上海 ap-shanghai-5｜2C2G / 40GB SSD｜OpenCloudOS 9｜公网 **150.158.24.195**｜包年包月 2027-05-30 到期
-- 防火墙已放行 8080（MOD 工具）/ 8000 / 18789(OpenClaw) / 22 / 80 / 443
-
-**部署方式（免 SSH，全程 API）**：
-1. 本地打包：`D:/Projects/temp/stellaris-mod-zh-deploy/`（代码 + data/ 各 mods.db + deploy_lighthouse.sh），`tar -czf` 产出部署包
-2. 上传：`gh release create deploy-XXXX stellaris-mod-zh-deploy.tar.gz --repo kkalho/stellaris-mod-zh`
-3. 服务器执行：TAT RunCommand 推命令 → 服务器 `curl -L` 从 gh-proxy 镜像下载 → `tar -xzf` → `bash deploy_lighthouse.sh`（装依赖→拷到 /opt/stellaris-mod-zh→systemd 服务 stellaris-mod→防火墙）
-4. 验证：`curl http://150.158.24.195:8080/api/stellaris/stats`
-
-**日常更新（数据同步到云端）**：
-- 代码/翻译 JSON 走 git 提交 → TAT 命令 `curl` 拉取 raw（gh-proxy 镜像）→ 跑导入脚本 → `systemctl restart stellaris-mod`
-- 数据库（mods.db 被 .gitignore）不直接传，云端用同款脚本（import_new_batch / import_stellaris_translations / detect_stellaris_dlcs）重新生成
-- **每日自动更新**：服务器 crontab `0 4 * * * cd /opt/stellaris-mod-zh && /usr/bin/python3 -m core.cli update --game stellaris --force`（Steam 同步订阅量 + 趋势快照）
-
-## 8. 常用命令速查
+**已跑到 #577，下一批 #578-627。已有 fetch_batch15/16 脚本可改 rank 生成。**
 
 ```bash
-# 本地启动服务（默认 127.0.0.1；云端用 --host 0.0.0.0）
-python web_server_multigame.py 8080 --no-browser [--host 0.0.0.0]
-# 数据更新（Steam 真实同步 + 趋势快照）
-python -m core.cli update --game stellaris --force --stale-days 1
-# 群星扩容一批（例：#478-527）
-python scripts/fetch_batch14.py            # 抓详情（改 rank 范围生成）
-python scripts/import_new_batch.py 478 527 # 增量入库
-python scripts/import_stellaris_translations.py translations/batch14_zh.json
-# DLC 标注重检 / 社区口碑导入
-python scripts/detect_stellaris_dlcs.py
-python -m core.cli community --game stellaris --import-file data/stellaris/community_seed.json
-# 云端远程执行（TAT）
-tccli tat RunCommand --region ap-shanghai --Content <base64命令> --InstanceIds '["lhins-ca3ol8ju"]' --CommandType SHELL --Timeout 300
-# git 提交推送
+# 1) 抓详情（改脚本里的 rank 范围，如 578-627）
+python scripts/fetch_batch16.py                  # → 追加到 data/details.jsonl
+#  ⚠️ 等抓取完成：wc -l data/details.jsonl 两次一致再继续
+
+# 2) 增量入库（不动已有数据，upsert）
+python scripts/import_new_batch.py 578 627
+
+# 3) 精做翻译（六字段：title/summary/description/gameplay/reviews/features）
+#    建议用子智能体并行：每批 50 个拆 1-3 个子 Agent，各自输出 JSON
+#    格式见 §9；中文 MOD 保留原名；reviews 只写作者自述，禁编造
+
+# 4) 导入翻译
+python scripts/import_stellaris_translations.py translations/batchN_zh.json
+
+# 5) 重跑标注脚本（数据库重建后字段会丢，必须重跑）
+python scripts/detect_stellaris_versions.py      # 版本兼容标注
+python scripts/detect_stellaris_dlcs.py          # DLC 依赖标注
+python scripts/rebuild_pinyin_idx.py             # 拼音索引（含中文译名拼音）
+
+# 6) 趋势快照
+python scripts/snapshot_trend.py --game stellaris
+
+# 7) 提交 + 云端同步（见 §8）
 git add -A && git commit -m "..." && git push origin master
 ```
 
-## 9. 关键技术坑（血泪教训，勿重蹈）
+**翻译质量基准**（参照前 10 个精做 MOD）：
+- `description` 300-600 字，要点式「•」排版
+- `gameplay` 300-600 字，讲清楚怎么玩
+- `reviews` 150-300 字，好评/差评结构化
+- `features` 3-6 个 4-12 字短标签
 
-1. **Steam 域名时段性封锁**：steamcommunity.com / api.steampowered.com 在国内网络**有时段性全拒**（baidu 正常、WinError 10061）。抓取/更新脚本必须 ConnectionError 快速失败（见 steam_fetch.py 的 net_down 标志），不傻等重试。
-2. **本机 venv 缺根证书**：requests 访问 https 报 CERTIFICATE_VERIFY_FAILED。**所有抓取脚本必须 verify=False + urllib3.disable_warnings()**。
-3. **旧库/新库路径**：旧单游戏库 `data/stellaris_mods.db`，新架构 `data/stellaris/mods.db`。`import_translations.py` 连旧库——群星翻译用 `import_stellaris_translations.py`（新架构），CK3 用 `import_ck3_translations.py`。
-4. **并行会话重建清数据**：`build_db.py` 全量重建会清 DLC 标注等字段。多会话协作时重跑 detect_stellaris_dlcs 等修复脚本。
-5. **抓取未完成就导入**：增量导入前确认 `data/details.jsonl` 行数稳定（wc -l 两次一致）。
-6. **TAT 细节**：DescribeInvocationTasks 参数是 `--Filters`/`--InvocationTaskIds`（不是 InvocationIds）；输出默认隐藏需 `--HideOutput false`；输出是 base64；命令 Content base64 ≤64KB；云端 curl 拉取必须校验文件字节数（曾静默失败）。
-7. **服务器访问 GitHub 慢**：用 gh-proxy.com 镜像（`https://gh-proxy.com/https://raw.githubusercontent.com/...`），直连/ghproxy.net 都卡。
-8. **Keep-Alive 挂起**：web 服务必须 `protocol_version="HTTP/1.0"` + ThreadingHTTPServer；访问用 127.0.0.1 而非 localhost（IPv6 解析延迟）。
-9. **SQLite 连接锁死**：web 服务每请求独立连接，`PRAGMA busy_timeout=8000`；外部脚本改库后旧连接会挂死。
-10. **翻译文件格式**：`translations/batchN_zh.json` → `{"translations":[{"steam_id","title_zh","summary_zh",...}]}`；中文 MOD 保留原名不翻译。
+## 8. 云端部署（完整方法）
 
-## 10. 翻译文件清单（群星批次）
+**服务器**：腾讯云轻量应用服务器「DeepSeek TUI-ODDY」
+- 实例 ID `lhins-ca3ol8ju`｜上海 ap-shanghai｜**2核 / 1.9G 内存 / 36G 磁盘**｜OpenCloudOS 9.6
+- 公网 **150.158.24.195**｜防火墙已放行 8080 / 8000 / 18789 / 22 / 80 / 443
+- Python 3.11.6｜git 2.43.7｜vim 9.0｜**tmux 未安装**
+- 网络：**GitHub 直连不通**，Steam API 连通正常
 
-- batch2/batch8/batch9：旧批次（#1-277）
-- batch10（#278-327）、batch11（#328-377）、batch12（#378-427）、batch13（#428-477）
-- CK3：ck3_top30_zh（#1-30 完整）、ck3_batch2_zh（#31-100）、ck3_batch3-6_zh（#101-300）
-- progress.json 记录进度（下一批 #478）
+**首次部署**（免 SSH，全程 API）：
+1. 本地打包：代码 + data/ 各 mods.db + `deploy_lighthouse.sh` → `tar -czf`
+2. 上传：`gh release create deploy-XXXX <包> --repo kkalho/stellaris-mod-zh`
+3. 服务器执行：TAT RunCommand 推命令 → `curl -L` 从镜像下载 → `tar -xzf` → `bash deploy_lighthouse.sh`（装依赖 → 拷到 `/opt/stellaris-mod-zh` → 建 systemd 服务 `stellaris-mod`）
+4. 验证：`curl http://150.158.24.195:8080/api/stellaris/stats`
+
+**日常同步（代码/翻译）**：
+```bash
+# 本地生成 TAT 脚本（jsDelivr 拉取 → 导入 → 重启 → 验证），例：
+#   curl -sL -o <文件> "https://cdn.jsdelivr.net/gh/kkalho/stellaris-mod-zh@master/<路径>"
+#   /usr/bin/python3 scripts/import_stellaris_translations.py translations/xxx.json
+#   sudo systemctl restart stellaris-mod
+B64=$(base64 -w0 cloud_sync.sh)
+tccli tat RunCommand --region ap-shanghai --Content "$B64" \
+  --InstanceIds '["lhins-ca3ol8ju"]' --CommandType SHELL --Timeout 300
+```
+
+**数据库不同步 git（.gitignore）**，云端靠三种方式更新：
+1. 同款脚本重新生成（import_new_batch / import_stellaris_translations / detect_*）
+2. **小存档直插**（推荐）：本地导出 JSON → git → 云端 python 直插（见 `translations/deep/deep_new50_mods.json` 做法）
+3. 大文件（如 4.1MB 的 details.jsonl）**不要用 curl 拉**，会截断（实测只传下 474KB）
+
+**每日自动更新**：服务器 crontab `0 4 * * *` 跑 `core.cli update --game stellaris --force`（Steam 同步订阅量 + 趋势快照）。云端已积累 6 天连续快照。
+
+## 9. 常用命令速查
+
+```bash
+# 本地启动服务（默认 127.0.0.1:8080；云端 --host 0.0.0.0）
+python web_server_multigame.py 8080 --no-browser [--host 0.0.0.0]
+
+# 数据更新（Steam 真实同步 + 趋势快照）
+python -m core.cli update --game stellaris --force --stale-days 1
+
+# 重跑标注（数据库重建后必做）
+python scripts/detect_stellaris_versions.py
+python scripts/detect_stellaris_dlcs.py
+python scripts/rebuild_pinyin_idx.py
+python scripts/snapshot_trend.py --game stellaris
+
+# 翻译导入
+python scripts/import_stellaris_translations.py translations/batchN_zh.json   # 群星
+python scripts/import_ck3_translations.py translations/ck3_batchN_zh.json     # CK3
+
+# 社区口碑导入
+python -m core.cli community --game stellaris --import-file data/stellaris/community_seed.json
+
+# 云端远程执行（TAT）
+tccli tat RunCommand --region ap-shanghai --Content <base64命令> \
+  --InstanceIds '["lhins-ca3ol8ju"]' --CommandType SHELL --Timeout 300
+tccli tat DescribeInvocationTasks --region ap-shanghai \
+  --Filters '[{"Name":"invocation-id","Values":["inv-xxx"]}]' --HideOutput false
+
+# 查 API 覆盖
+curl "http://127.0.0.1:8080/api/stellaris/stats"          # 统计
+curl "http://127.0.0.1:8080/api/stellaris/search?q=巨构&sort=subs&tag=Gameplay&version=4.4&n=10"
+curl "http://127.0.0.1:8080/api/stellaris/mod?id=1121692237"  # 详情
+curl "http://127.0.0.1:8080/api/stellaris/categories"     # 标签（含 tag_zh）
+curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
+```
+
+**翻译 JSON 格式**（`translations/batchN_zh.json`）：
+```json
+{
+  "game": "stellaris",
+  "source": "Steam 原文核实 + AI 翻译（第 N 批：榜单 X-Y）",
+  "translations": [
+    {"steam_id": "1726290528", "title_zh": "...", "summary_zh": "...",
+     "description_zh": "...", "gameplay_zh": "...", "reviews_zh": "...",
+     "features_zh": ["特色1", "特色2"]}
+  ]
+}
+```
+**深度精做存档**（`translations/deep/deep_*.json`）是数组格式，字段为 `steam_id` / `description` / `gameplay` / `reviews` / `features`，需用自定义脚本导入（`on conflict do update`）。
+
+## 10. 关键技术坑（血泪教训，勿重蹈）
+
+1. **并行会话重建清数据**（⚠️ 最高频）：`build_db.py` 全量重建会清 `version` / `optional_dlcs` 等字段。**每次发现字段归零，重跑 `detect_stellaris_versions.py` + `detect_stellaris_dlcs.py` 即可恢复**（2026-08-30 就踩了一次）。
+2. **gh-proxy 缓存旧版**：反复拉取都拿到旧文件。解决：改用 **jsDelivr CDN**；或在脚本里校验文件字节数，小于预期就重试。
+3. **大文件 curl 截断**：服务器拉 4.1MB 的 `details.jsonl` 只传下 474KB，导致 JSON 解析失败、导入 0 条。解决：数据库变更导出成小 JSON 存档直插，别拉大文件。
+4. **云端缺目录**：`curl -o translations/deep/xxx.json` 若目录不存在会静默失败。脚本里先 `mkdir -p`。
+5. **多实例抢占 8080**：旧进程没杀干净，新服务起不来或 curl 连到旧代码。解决：`Get-Process python | Stop-Process -Force`（PowerShell），确认 `netstat` 只有一个监听。
+6. **git bash 下 taskkill 语法**：`taskkill //F //PID` 在 Git Bash 报错，必须用 PowerShell 工具。
+7. **版本通配误匹配**：`LIKE '%3.%'` 会误中 `4.3`。正确做法：通配 `3.x` 用 `LIKE '%3.%'` 配合"适配/更新于"前缀语义，并实测验证 0 误匹配。
+8. **Steam 域名时段性封锁**：抓取脚本必须 ConnectionError 快速失败，不傻等重试。
+9. **本机 venv 缺根证书**：requests 访问 https 报 CERTIFICATE_VERIFY_FAILED。抓取脚本必须 `verify=False` + `urllib3.disable_warnings()`。
+10. **旧库/新库路径**：旧单游戏库 `data/stellaris_mods.db`，新架构 `data/stellaris/mods.db`。`import_translations.py` 连**旧库**——群星用 `import_stellaris_translations.py`。
+11. **抓取未完成就导入**：增量导入前确认 `wc -l data/details.jsonl` 两次一致。
+12. **TAT 细节**：参数是 `--Filters`/`--InvocationTaskIds`；输出默认隐藏需 `--HideOutput false`；输出是 base64；Content base64 ≤64KB。
+13. **Keep-Alive 挂起**：web 服务必须 `protocol_version="HTTP/1.0"` + ThreadingHTTPServer；访问用 127.0.0.1 而非 localhost。
+14. **SQLite 锁**：web 服务每请求独立连接，`PRAGMA busy_timeout=8000`；外部脚本改库后旧连接可能挂死。
+15. **CRLF 警告**：git 提交时 LF/CRLF 转换警告属正常，不影响功能。
+
+## 11. 数据真实原则（铁律）
+
+- 所有 MOD 数据必须来自 **Steam 官方 API / 创意工坊页面 / 官方 Wiki** 核实，**禁止编造**
+- DLC 依赖：无明确 require 依据的一律标「**可选**」（描述提及级），不谎称必需
+- 玩家评价 `reviews`：只写**作者自述**的定位/适用人群/已知问题，**禁止编造订阅量、评分、玩家言论**
+- 已废弃/过时的 MOD **必须如实标注**（前端有 `⚠ 已废弃` 徽章）
+- 社区口碑需 **WebSearch 交叉验证**并附来源 URL
+
+## 12. 文件清单
+
+| 路径 | 说明 |
+|---|---|
+| `web_server_multigame.py` | HTTP 服务（多游戏 API，9 个路由） |
+| `web/index_multigame.html` | 前端单文件（761 行，纯 JS） |
+| `core/` | 功能层：DLC 检测/汉化包/本地扫描/口碑/updater/steam_fetch/cli |
+| `games/{stellaris,ck3,hoi4}/config/game.py` | 游戏配置（TAG_ZH 标签映射、DLC 清单、本地目录） |
+| `scripts/` | 抓取（fetch_*）、导入（import_*）、标注（detect_* / rebuild_pinyin_idx / snapshot_trend） |
+| `translations/` | 翻译存档（batchN_zh.json + deep/ 深度精做存档） |
+| `data/` | details.jsonl / workshop_top1000.json / progress.json / <game>/mods.db |
+| `docs/` | PROJECT_HANDOFF.md（本文）、MULTI_GAME_ARCHITECTURE.md |
+
+**群星翻译批次**：batch2/8/9（#1-277）· batch10（#278-327）· batch11（#328-377）· batch12（#378-427）· batch13（#428-477）· batch14（#478-527）· batch15/16（进行中）
+**深度精做存档**：`translations/deep/deep_old_batch{0-3}`（原库段 171 个补译）· `deep_batch{10,12,13}`（扩容段）· `deep_new50`（50 个精做升级）· `deep_new50_mods`（数据库行存档）· `deep_trend`（趋势存档）
+
+## 13. 接手检查清单（新 AI 开工前必做）
+
+1. `cd D:/Projects/walong/stellaris-mod-zh && git log --oneline -5` —— 确认最新提交
+2. 检查版本/DLC 标注是否为 0（是则重跑 detect_* 脚本，见坑 #1）
+3. `curl http://127.0.0.1:8080/api/stellaris/stats` —— 本地服务是否正常（未启动则起服务）
+4. `curl http://150.158.24.195:8080/api/stellaris/stats` —— 云端公网是否可达
+5. 读 `data/progress.json` —— 确认扩容进度（下一批起点）
+6. **改任何数据后**：重跑标注脚本 → 本地验证 → git 提交 → TAT 云端同步 → 公网复验
