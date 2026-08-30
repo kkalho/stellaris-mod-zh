@@ -44,7 +44,7 @@ class ModDB:
         optional_dlcs TEXT,                   -- JSON 数组: 可选 DLC app_id
         localization_id TEXT,                 -- 关联的汉化包 ID
         score         REAL DEFAULT 0,         -- 综合评分
-        like_ratio    REAL DEFAULT 0,         -- 好评率
+        like_ratio    REAL DEFAULT 0,         -- 收藏率（favorites/subscriptions，非 Steam 好评率）
         community_score REAL DEFAULT 0,       -- 社区评分
         status        TEXT,                   -- deprecated/outdated/abandoned
         pinyin_idx    TEXT,                   -- 拼音搜索索引
@@ -96,7 +96,13 @@ class ModDB:
     # ------------------------------------------------------------------
 
     def upsert_mod(self, data: Dict[str, Any]) -> int:
-        """插入或更新一个 MOD，返回 mod_id"""
+        """插入或更新一个 MOD，返回 mod_id。
+
+        更新已有记录时只写 data 中显式提供的字段：version / optional_dlcs /
+        status / translated 等派生字段未提供则保持原值。
+        这是「重建后标注归零」（交接文档坑 #1）的根因修复——任何脚本对
+        已有 MOD 重新 upsert 都不会再清掉标注字段。
+        """
         now = time.strftime("%Y-%m-%d")
         c = self.conn.cursor()
         steam_id = str(data.get("steam_id", ""))
@@ -136,8 +142,10 @@ class ModDB:
             "fetched_at": now,
         }
         if mod_id:
-            cols = ", ".join(f"{k}=?" for k in fields)
-            c.execute(f"UPDATE mods SET {cols} WHERE id=?", (*fields.values(), mod_id))
+            # 只更新 data 中显式提供的字段；fetched_at 是写入时间戳，总是刷新
+            update = {k: v for k, v in fields.items() if k in data or k in ("game_id", "fetched_at")}
+            cols = ", ".join(f"{k}=?" for k in update)
+            c.execute(f"UPDATE mods SET {cols} WHERE id=?", (*update.values(), mod_id))
         else:
             cols = ", ".join(fields.keys())
             placeholders = ", ".join("?" * len(fields))
