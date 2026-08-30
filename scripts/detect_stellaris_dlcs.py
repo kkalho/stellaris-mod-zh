@@ -1,8 +1,12 @@
 """群星 DLC 依赖标注修复/重检脚本
 
 背景：build_db 重建会丢 DLC 标注（2026-08-24 发现库中 0 条标注）。
-本脚本从 MOD 描述（description_clean）重新检测 DLC 提及，按数据真实原则
+本脚本从 MOD 描述重新检测 DLC 提及，按数据真实原则
 全部标为「可选」（无明确 require 依据不标必需）。
+
+检测文本 = 英文描述（description_clean）+ 中文翻译描述（translations.description），
+中文关键词（乌托邦/机械时代/霸主…）与英文关键词双轨覆盖，
+2026-08-30 起并入中文文本后命中率显著提升。
 
 用法: python scripts/detect_stellaris_dlcs.py
 """
@@ -28,11 +32,22 @@ def main():
 
     hit_count = 0
     hit_by_dlc = {}
+    # 中文描述（翻译表）并入检测文本，中文关键词（乌托邦/机械时代等）才能命中
+    zh_desc = dict(db.conn.execute(
+        "SELECT t.mod_id, t.zh_text FROM translations t "
+        "JOIN mods m ON m.id = t.mod_id WHERE m.game_id='stellaris' AND t.field='description'"
+    ).fetchall())
     for m in mods:
         sid = m.get("steam_id")
         if not sid:
             continue
-        detected = cfg.detect_required_dlcs(m)
+        merged = dict(m)
+        # 原语义：description_clean 为空时回退原始 description；再叠加中文翻译。
+        # 必须是「原检测文本 ∪ 中文」的严格超集，否则英文命中会丢失。
+        base = m.get("description_clean") or m.get("description") or ""
+        zh = zh_desc.get(m["id"]) or ""
+        merged["description_clean"] = " ".join(x for x in [base, zh] if x)
+        detected = cfg.detect_required_dlcs(merged)
         # 数据真实原则：全部标可选（描述提及相关功能，非必需声明）
         db.conn.execute(
             "UPDATE mods SET optional_dlcs=? WHERE id=?",
