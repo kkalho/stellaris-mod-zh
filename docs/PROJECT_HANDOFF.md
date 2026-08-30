@@ -222,7 +222,7 @@ tccli tat RunCommand --region ap-shanghai --Content "$B64" \
    - TAT 执行同步脚本：curl 从 jsDelivr 拉**固定 commit SHA** 的代码与存档（逐文件字节数校验，防截断/防缓存陈旧）→ `apply_cloud_sync.py`（UPDATE 保云端主键 + INSERT 分流，不破坏 translations/trend 外键）→ 导入新批次翻译 → 重启服务 → curl 自验
    - 2026-08-30 实战记录：更新 527 + 插入 50 = 577，公网复验 stats/DLC/版本接口与本地逐位一致；脚本模板见 `scripts/cloud_sync_example.sh`
 2. 同款脚本重新生成（import_new_batch / import_stellaris_translations / detect_*）——适合只差翻译/标注的场景
-3. 大文件（如 4.1MB 的 details.jsonl）**不要用 curl 拉旧镜像**，会截断（坑 #3）；必须拉时用 jsDelivr 固定 SHA + 字节数校验
+3. 大文件（如 4.5MB 的 details.jsonl / mods_full_sync.json）**不要用 curl 拉旧镜像**，会截断（坑 #3）；必须拉时用 jsDelivr 固定 SHA + 字节数校验。**大存档建议同时提交 .gz 副本**（约 1/4 体积）：2026-08-30 r7 实测 4.7MB 明文两次 TAT 超时，1.07MB .gz 一次成功（云端 `gunzip -f` 解压后校验字节数）
 
 **每日自动更新**：服务器 crontab `0 4 * * *` 跑 `core.cli update --game stellaris --force`（Steam 同步订阅量 + 趋势快照）。云端已积累 6 天连续快照。
 **趋势备份（推荐加到同一 cron）**：cron 追加 `python scripts/export_trend.py`，把 trend 表导出成 `data/stellaris/trend_export.json`；需要回传本地时用 TAT 执行 `gzip -k trend_export.json && base64 trend_export.json.gz`（gzip 后约 20-40KB，满足 TAT 64KB 输出上限）。
