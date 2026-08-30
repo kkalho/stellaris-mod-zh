@@ -39,7 +39,16 @@ def main():
         "rows": rows,
     }
     cfg.save_json("mods_full_sync.json", payload)
-    print(f"导出 {len(rows)} 行 → data/stellaris/mods_full_sync.json"
+
+    # 同步产出 .gz 副本（r13 教训：gz 靠手工压缩会漏更新——旧 gz 混进 git，
+    # 云端解压出 777 行旧存档。这里从刚导出的明文现压，保证两者永远一致）
+    import gzip
+    import shutil
+    src = os.path.join(cfg.data_dir, "mods_full_sync.json")
+    dst = src + ".gz"
+    with open(src, "rb") as fin, gzip.open(dst, "wb", compresslevel=9) as fout:
+        shutil.copyfileobj(fin, fout)
+    print(f"导出 {len(rows)} 行 → data/stellaris/mods_full_sync.json（.gz 副本已同步生成）"
           f"（不含 id，云端 apply 时更新/插入分流）")
 
 

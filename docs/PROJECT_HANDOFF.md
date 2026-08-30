@@ -21,6 +21,12 @@
 > P7 清单冲突检测（/api/<game>/conflict-check + 「⚔ 冲突检测」面板：两两冲突配对/缺失依赖/
 > 覆盖率如实提示）；compat 挖掘器 mine_compat.py 入 rebuild 流水线（compat 16→152 行，
 > 手工种子优先合并）；深链冷加载 bug 修复（route 分支）。
+> **维护轮 7（同日）**：P5 遗珠榜（/gems：收藏率≥15%×订阅300~3万×近18月有更新，前24，纯计算）
+> + P6 活跃徽章（活跃≤180天/较久未更≤540天/久未更新，随 search/mod 下发）；修复详情/换游戏
+> 视图工具栏面板残留（picks/cc 同受影响）；扩容 batch20 至 **827/1020**（翻译 3 子智能体并行）；
+> 云同步 r12/r13 两坑：curl 无 -m 遇 jsDelivr 挂起整段 TIMEOUT（模板已修）、export 不产出 .gz
+> 致旧 gz 混入 git（export_cloud_sync.py 已改为现压 .gz；apply 不写 translations，新批次必须
+> 另跑 import_stellaris_translations.py，同步脚本要有行数 sanity check）。
 > **协作注意**：存在并行 AI 会话同时扩容与操作云端（journal 中非本会话的重启记录为证）。
 > 云端同步前建议先查最近 TAT 调用；本地 8099 测试服务用完即关，避免误导用户。
 
@@ -238,6 +244,7 @@ tccli tat RunCommand --region ap-shanghai --Content "$B64" \
 2. 同款脚本重新生成（import_new_batch / import_stellaris_translations / detect_*）——适合只差翻译/标注的场景
 3. 大文件（如 4.5MB 的 details.jsonl / mods_full_sync.json）**不要用 curl 拉旧镜像**，会截断（坑 #3）；必须拉时用 jsDelivr 固定 SHA + 字节数校验。**大存档建议同时提交 .gz 副本**（约 1/4 体积）：2026-08-30 r7 实测 4.7MB 明文两次 TAT 超时，1.07MB .gz 一次成功（云端 `gunzip -f` 解压后校验字节数）
 4. **curl 必须带 `-m` 超时 + gh-proxy 回退**（r12 教训，2026-08-30）：jsDelivr 偶发连接挂起（0 字节收满 40s），无 `-m` 的 curl 会把整段 TAT 拖到 300s TIMEOUT 且输出全丢；r12b 改为 `curl -m 40` + jsDelivr→gh-proxy→jsDelivr 轮换后一次成功（gh-proxy 用固定 SHA 无缓存坑）。模板 `scripts/cloud_sync_example.sh` 已更新，新脚本直接照抄其 fetch()
+5. **新批次上云 = 存档 apply + 翻译 import 两步缺一不可**（r13 教训，2026-08-30）：`apply_cloud_sync.py` 只写 mods 表，六字段在 translations 表——漏 import 会得到「详情页无中文」的静默残缺。另两个坑：① `export_cloud_sync.py` 当时手工压 .gz，旧 gz 混进 git 导致云端解出 777 行旧存档（现已改为导出时现压，永远一致）；② 同步脚本要 `set -e` + 解压后用 python 校验存档 `count≥预期` 再 apply（busybox gunzip 方言不可靠，r13 的 `gunzip -kf` 静默失败，靠 sanity check 拦下脏写）
 
 **每日自动更新**：服务器 crontab `0 4 * * *` 跑 `core.cli update --game stellaris --force`（Steam 同步订阅量 + 趋势快照）。云端已积累 6 天连续快照。
 **趋势备份（推荐加到同一 cron）**：cron 追加 `python scripts/export_trend.py`，把 trend 表导出成 `data/stellaris/trend_export.json`；需要回传本地时用 TAT 执行 `gzip -k trend_export.json && base64 trend_export.json.gz`（gzip 后约 20-40KB，满足 TAT 64KB 输出上限）。
