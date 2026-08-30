@@ -175,6 +175,12 @@ def main():
         print(f"    口碑 {n} 条，重算推荐指数 {n2} 个 MOD")
     run_step("4/9 导入社区口碑（community_seed.json）", step_import_community, args.dry_run)
 
+    # ---- 4.5) 兼容性数据挖掘（规则法，确定性；手工种子 compat_top15.json 优先合并）----
+    def step_mine_compat():
+        import mine_compat
+        mine_compat.main()
+    run_step("4.5/9 兼容性数据挖掘", step_mine_compat, args.dry_run)
+
     # ---- 5-7) 派生标注（各自管理连接）----
     def step_detect_versions():
         import detect_stellaris_versions

@@ -598,6 +598,24 @@ function versionBadge(v) {
   const isNew = m && parseInt(m[1], 10) === currentMajor;
   return `<span class="version-badge ${isNew ? 'new' : 'old'}" title="${esc(v)}">${esc(v)}</span>`;
 }
+// 旧版风险分级（P2）：同为旧版，纯视觉/音频类耐旧，代码机制类易炸
+function versionRisk(d) {
+  const v = String(d.version || '');
+  if (!v || !currentMajor) return null;
+  const m = v.match(/(\d+)\.(\d+|x)/);
+  if (!m) return null;
+  const major = +m[1];
+  const minor = m[2] === 'x' ? 99 : +m[2];
+  const vtext = m[1] + '.' + m[2];   // 展示用原始版本文本（2.x 保持 2.x）
+  if (major === currentMajor) return null;   // 当前时期（显式适配或时间推断均为最新）不提示
+  const visual = /\b(graphics|music|sounds?|portraits?|ship ?sets?|ui|user interface|loading screens?|fonts?|skyboxes?|interfaces?|textures?|lighting|visuals?)\b/i.test(String(d.tags || ''));
+  if (v.includes('适配')) {
+    return { label: `作者适配 ${vtext}（当前 ${currentMajor}.x）· ${visual ? '视觉类，风险较低' : '注意版本差异'}`, cls: 'zh-unknown' };
+  }
+  return visual
+    ? { label: `旧版（${vtext} 时期）· 视觉类风险较低`, cls: 'zh-unknown' }
+    : { label: `旧版（${vtext} 时期）· 机制类可能不兼容`, cls: 'status-badge deprecated' };
+}
 // 中文支持判断（玩家第一问）：汉化包 > 自带中文（Translation 标签）> 未知
 function zhSupport(d) {
   if (d.localizations && d.localizations.length) return { label: '📦 有汉化包', cls: 'zh-ok' };
@@ -1109,6 +1127,7 @@ async function showDetail(id, push = true) {
         <div class="meta-item"><div class="k">收藏率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
         <div class="meta-item"><div class="k">作者</div><div class="v">${/^\d{15,}$/.test(String(d.author || '')) ? `<a style="color:#6fa8ff;text-decoration:none" href="https://steamcommunity.com/profiles/${esc(d.author)}" target="_blank" rel="noopener">作者主页 ↗</a>` : (esc(d.author) || '-')}</div></div>
         <div class="meta-item"><div class="k">中文支持</div><div class="v"><span class="status-badge ${zh.cls}" style="margin:0">${zh.label}</span></div></div>
+        ${versionRisk(d) ? `<div class="meta-item" style="grid-column:1/-1"><div class="k">旧版风险提示</div><div class="v"><span class="status-badge ${versionRisk(d).cls}" style="margin:0">${versionRisk(d).label}</span></div></div>` : ''}
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">收藏数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
@@ -1617,7 +1636,8 @@ function enterGame(g, opts) {
   loadStats();
   loadTags();
   loadVersions().then(() => {
-    loadTop().then(() => {           // 先备好全量数据（列表 + 星图）
+    loadTop().then(() => {
+      gameViewInit = true;
       if (opts.fromURL) applyFromURL({ fromPop: true });   // 再叠加 URL 筛选/详情
       if (opts.onDone) opts.onDone();
     });
@@ -1672,6 +1692,7 @@ function warpTo(rgb, onMid) {
   }, 16);
 }
 
+let gameViewInit = false;   // 游戏视图是否已完成过数据初始化
 function route() {
   const p = new URLSearchParams(location.search);
   // 旧链接兼容：带筛选参数但无 game 参数的历史分享链接 → 群星
@@ -1679,7 +1700,11 @@ function route() {
   if (!g) { showLauncher(); return; }
   if (GAME !== g) { enterGame(g, { warp: false, fromURL: true }); return; }
   if (document.body.dataset.view !== 'game') {
-    // 前进/后退回到当前游戏：数据仍在，只切视图，不重新加载
+    if (!gameViewInit) {   // 冷加载深链：数据还没初始化过，必须走完整进入流程
+      enterGame(g, { warp: false, fromURL: true });
+      return;
+    }
+    // 会话内前进/后退回到当前游戏：数据仍在，仅切视图
     document.body.dataset.view = 'game';
     document.body.dataset.theme = g;
     $('gamesel').value = g;
