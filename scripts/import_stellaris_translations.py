@@ -6,7 +6,7 @@
                      "description_zh": "...", "gameplay_zh": "...",
                      "features_zh": [...], "reviews_zh": "..."}]}
 """
-import sys, io, json, os, time
+import sys, io, json, os, re, time
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
@@ -16,6 +16,19 @@ sys.path.insert(0, BASE_DIR)
 import games.stellaris.config.game  # noqa: F401  触发注册
 from core.game_config import get_game
 from core.mod_db import ModDB
+
+# 翻译存档开头的过程性标签（如「【具体玩法】（已按 Steam 原文核实）」）与前端
+# 章节标题重复；导入时统一剥离，保证「从 git 重建」与线上清洗后的文案一致。
+_META_BRACKETS = re.compile(r"^(?:\s*【[^】]{0,24}】)+\s*")
+_META_PAREN = re.compile(r"^（已[^）]{0,30}核实）\s*")
+
+
+def clean_meta(text: str) -> str:
+    if not text:
+        return text
+    t = _META_BRACKETS.sub("", text.strip())
+    t = _META_PAREN.sub("", t).strip()
+    return t or text
 
 
 def import_file(db: ModDB, path: str):
@@ -30,11 +43,13 @@ def import_file(db: ModDB, path: str):
             continue
         mod_id = mod["id"]
         # 中文标题写入 translations 表（title 字段，前端优先展示）；英文原名保留在 mods.title_en
-        for field, key in [("title", "title_zh"), ("summary", "summary_zh"),
+        if t.get("title_zh"):
+            db.set_translation(mod_id, "title", t["title_zh"], "ai_reviewed")
+        for field, key in [("summary", "summary_zh"),
                            ("description", "description_zh"),
                            ("gameplay", "gameplay_zh"), ("reviews", "reviews_zh")]:
             if t.get(key):
-                db.set_translation(mod_id, field, t[key], "ai_reviewed")
+                db.set_translation(mod_id, field, clean_meta(t[key]), "ai_reviewed")
         if t.get("features_zh"):
             db.set_translation(mod_id, "features", json.dumps(t["features_zh"], ensure_ascii=False), "ai_reviewed")
         # 标记已翻译 + 中文标题覆盖显示名

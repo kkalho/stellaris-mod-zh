@@ -134,6 +134,7 @@ def main():
 
     # ---- 3) 深度精做存档导入（覆盖批次翻译的 description/gameplay/reviews/features）----
     def step_import_deep():
+        from import_stellaris_translations import clean_meta
         db = ModDB(cfg)
         n = 0
         for path in deeps:
@@ -145,7 +146,7 @@ def main():
                     continue
                 for field in ("description", "gameplay", "reviews"):
                     if it.get(field):
-                        db.set_translation(mod["id"], field, it[field], "ai_reviewed")
+                        db.set_translation(mod["id"], field, clean_meta(it[field]), "ai_reviewed")
                 if it.get("features"):
                     val = (json.dumps(it["features"], ensure_ascii=False)
                            if isinstance(it["features"], list) else str(it["features"]))

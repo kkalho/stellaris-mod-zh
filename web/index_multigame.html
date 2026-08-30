@@ -34,7 +34,7 @@ header p { color: #8a93a8; margin-top: 6px; font-size: 13px; }
   outline: none; transition: border-color .2s;
 }
 .search-row input:focus { border-color: rgba(100,140,255,.6); }
-.search-row input::placeholder { color: #5a6478; }
+.search-row input::placeholder { color: #7b87a0; }
 .search-row button {
   padding: 13px 26px; font-size: 15px; cursor: pointer;
   background: linear-gradient(135deg, #3a6bd8, #2a4fae);
@@ -42,7 +42,7 @@ header p { color: #8a93a8; margin-top: 6px; font-size: 13px; }
   transition: transform .15s, box-shadow .15s;
 }
 .search-row button:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(60,110,220,.35); }
-.hint { text-align: center; color: #5a6478; font-size: 12px; margin-top: 10px; }
+.hint { text-align: center; color: #7b87a0; font-size: 12px; margin-top: 10px; }
 main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 10px 20px 60px; }
 .stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 10px 0 20px; }
 .stat {
@@ -104,13 +104,13 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
   display: flex; align-items: center; justify-content: center;
 }
 .mod-card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.mod-card .thumb .noimg { font-size: 11px; color: #5a6478; }
+.mod-card .thumb .noimg { font-size: 11px; color: #7b87a0; }
 .mod-card .body { flex: 1; min-width: 0; }
 .mod-card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .mod-card .name { font-size: 15px; color: #e8edf8; font-weight: 500; }
 .mod-card .subs { font-size: 13px; color: #6fa8ff; white-space: nowrap; }
 .mod-card .summary { font-size: 13px; color: #9aa4bc; margin-top: 6px; line-height: 1.6; }
-.mod-card .id { font-size: 11px; color: #5a6478; margin-top: 6px; }
+.mod-card .id { font-size: 11px; color: #7b87a0; margin-top: 6px; }
 .detail-preview {
   border-radius: 10px; overflow: hidden; margin-bottom: 16px;
   background: rgba(10,16,30,.6); max-height: 320px;
@@ -124,7 +124,7 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 .detail h2 { color: #e8edf8; font-size: 20px; margin-bottom: 12px; }
 .detail .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
 .detail .meta-item { background: rgba(10,16,30,.6); border-radius: 8px; padding: 8px 12px; }
-.detail .meta-item .k { font-size: 11px; color: #5a6478; }
+.detail .meta-item .k { font-size: 11px; color: #7b87a0; }
 .detail .meta-item .v { font-size: 14px; color: #d8dde8; margin-top: 2px; }
 .detail h3 { color: #6fa8ff; font-size: 15px; margin: 18px 0 8px; }
 .compat-block { background: rgba(10,16,30,.55); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
@@ -179,7 +179,7 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
   border-radius: 8px; transition: color .2s, border-color .2s;
 }
 .back-btn:hover { color: #e8edf8; border-color: rgba(100,140,255,.5); }
-.loading { text-align: center; color: #5a6478; padding: 40px 0; font-size: 14px; }
+.loading { text-align: center; color: #7b87a0; padding: 40px 0; font-size: 14px; }
 footer { position: relative; z-index: 1; text-align: center; color: #4a5468; font-size: 12px; padding: 20px; }
 .pager { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
 .pager button {
@@ -193,6 +193,12 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 .game-bar { position: relative; z-index: 1; max-width: 680px; margin: 0 auto 10px; padding: 0 20px; display: flex; align-items: center; gap: 8px; }
 .game-bar select { padding: 7px 12px; font-size: 13px; color: #d8dde8; background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25); border-radius: 8px; outline: none; cursor: pointer; }
 .game-bar select option { background: #141c32; }
+@media (max-width: 480px) {
+  .stats { gap: 8px; }
+  .stat { min-width: 0; flex: 1 1 0; padding: 10px 6px; }
+  .stat .num { font-size: 17px; }
+  .stat .label { font-size: 11px; }
+}
 .scene-cards { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
 .scene-card {
   cursor: pointer; background: rgba(20,28,50,.7); border: 1px solid rgba(100,140,255,.2);
@@ -274,7 +280,7 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
   <div class="pager" id="pager" style="display:none">
     <button id="prevBtn" onclick="page(-1)">← 上一页</button>
-    <span id="pageInfo" style="color:#5a6478;font-size:13px;align-self:center"></span>
+    <span id="pageInfo" style="color:#7b87a0;font-size:13px;align-self:center"></span>
     <button id="nextBtn" onclick="page(1)">下一页 →</button>
   </div>
 </main>
@@ -285,6 +291,8 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 const $ = id => document.getElementById(id);
 let allResults = [];
 let curPage = 1;
+let pendingPage = 1;
+let listScrollY = 0;   // 进入详情前列表的滚动位置（返回时恢复）
 const PER_PAGE = 15;
 let activeTag = null;
 let currentTitle = '🔥 订阅量 Top';
@@ -364,6 +372,9 @@ async function loadTags() {
       const tip = (c.tag_zh && c.tag_zh !== c.tag) ? ` title="${esc(c.tag)}"` : '';
       return `<span class="tag-chip" data-tag="${esc(c.tag)}"${tip} onclick="toggleTag('${esc(c.tag)}')">${label} (${c.count})</span>`;
     }).join('');
+    // URL 恢复的激活标签（applyFromURL 可能先于本函数设置了 activeTag）
+    document.querySelectorAll('.tag-chip').forEach(el =>
+      el.classList.toggle('active', el.dataset.tag === activeTag));
   } catch (e) { /* 标签栏加载失败不阻塞主列表 */ }
 }
 
@@ -408,6 +419,54 @@ function sceneGo(key) {
   applyFilters();
   window.scrollTo({ top: 220, behavior: 'smooth' });
 }
+function buildURL(over) {
+  // 把当前筛选状态编进 URL：可分享、可刷新、浏览器后退可用
+  const p = new URLSearchParams();
+  const q = $('kw').value.trim();
+  if (q) p.set('q', q);
+  if (activeTag) p.set('tag', activeTag);
+  const ver = $('versionsel').value;
+  if (ver) p.set('version', ver);
+  const sort = $('sortsel').value;
+  if (sort && sort !== 'subs') p.set('sort', sort);
+  const lim = $('limitsel').value;
+  if (lim && lim !== '0') p.set('n', lim);
+  if (curPage > 1) p.set('page', curPage);
+  if (over && over.id) p.set('id', over.id);
+  const s = p.toString();
+  return s ? '?' + s : location.pathname;
+}
+
+function applyFromURL(opts) {
+  opts = opts || {};
+  const p = new URLSearchParams(location.search);
+  if (![...p.keys()].length) {
+    if (opts.fromPop) {   // 后退回无参数首页
+      $('toolbar').style.display = 'block';
+      renderPaged();
+      window.scrollTo({ top: 0 });
+    }
+    return false;
+  }
+  const id = (p.get('id') || '').replace(/[^0-9]/g, '');
+  $('kw').value = p.get('q') || '';
+  activeTag = p.get('tag') || null;
+  document.querySelectorAll('.tag-chip').forEach(el =>
+    el.classList.toggle('active', el.dataset.tag === activeTag));
+  $('versionsel').value = p.get('version') || '';
+  $('sortsel').value = p.get('sort') || 'subs';
+  $('limitsel').value = p.get('n') || '0';
+  pendingPage = parseInt(p.get('page'), 10) || 1;
+  $('toolbar').style.display = 'block';
+  if (id) { showDetail(id, false); return true; }
+  applyFilters().then(() => {
+    if (pendingPage > 1 && pendingPage !== curPage) { curPage = pendingPage; renderPaged(); }
+    if (opts.fromPop) window.scrollTo({ top: listScrollY || 0 });
+  });
+  return true;
+}
+window.addEventListener('popstate', () => applyFromURL({ fromPop: true }));
+
 function toggleTag(tag) {
   if (activeTag === tag) { activeTag = null; }
   else { activeTag = tag; }
@@ -437,6 +496,7 @@ async function applyFilters() {
   const tLabel = tag ? (tagZhMap[tag] || tag) : '';
   currentTitle = kw ? `“${kw}” 的搜索结果` : (tLabel ? `分类：${tLabel}` : (vLabel ? `版本：${vLabel}` : '全部 Mod'));
   renderPaged();
+  history.replaceState({}, '', buildURL());   // 筛选状态入 URL（可分享/可刷新）
 }
 
 function renderPaged() {
@@ -454,6 +514,7 @@ function renderPaged() {
 function page(dir) {
   curPage += dir;
   renderPaged();
+  history.replaceState({}, '', buildURL());
   window.scrollTo({ top: 300, behavior: 'smooth' });
 }
 
@@ -586,7 +647,7 @@ async function runDlcCheck() {
     r.warnings.slice(0, 30).forEach(w => {
       const names = w.missing.map(m => m.name_zh).join('、');
       html += `<div class="dlc-warn">
-        <div class="dw-title">📦 ${esc(w.mod.title)} <span style="color:#5a6478;font-size:11px">(${fmt(w.mod.subs)} 订阅)</span></div>
+        <div class="dw-title">📦 ${esc(w.mod.title)} <span style="color:#7b87a0;font-size:11px">(${fmt(w.mod.subs)} 订阅)</span></div>
         <div class="dw-missing">缺少：${esc(names)}</div>
       </div>`;
     });
@@ -701,7 +762,7 @@ async function openLocalPanel() {
         ✅ 已收录 <span style="color:#c0dd97">${known.length}</span> &nbsp;·&nbsp; ⚠ 未收录 <span style="color:#f09595">${unknown.length}</span>
         &nbsp;·&nbsp; 点击 Steam ID 可查看知识库详情</div>
       ${mods.map(card).join('')}
-      <div style="color:#5a6478;font-size:12px;margin-top:6px">数据来源：data/${esc(GAME)}/local.db（CLI scan 写入）</div>
+      <div style="color:#7b87a0;font-size:12px;margin-top:6px">数据来源：data/${esc(GAME)}/local.db（CLI scan 写入）</div>
       <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('localPanel').style.display='none'">关闭</button>`;
   } catch (e) {
     panel.innerHTML = `<div class="status-warn">读取本地 MOD 失败：${esc(String(e))}</div>`;
@@ -726,7 +787,7 @@ async function openTrendPanel() {
     if (t.note) {
       panel.innerHTML = `<h3>📈 订阅热度趋势</h3>
         <div style="color:#8a93a8;font-size:13px;line-height:1.8">${esc(t.note)}</div>
-        <div style="color:#5a6478;font-size:12px;margin-top:6px">每日快照将自动记录订阅量，积累 2 天后即可查看涨跌榜。</div>
+        <div style="color:#7b87a0;font-size:12px;margin-top:6px">每日快照将自动记录订阅量，积累 2 天后即可查看涨跌榜。</div>
         <button class="back-btn" style="margin-top:12px;margin-bottom:0" onclick="$('trendPanel').style.display='none'">关闭</button>`;
       return;
     }
@@ -761,7 +822,8 @@ async function openTrendPanel() {
   }
 }
 
-async function showDetail(id) {
+async function showDetail(id, push = true) {
+  listScrollY = window.scrollY;   // 记住列表位置，返回时恢复
   $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
   $('pager').style.display = 'none';
   let d;
@@ -779,7 +841,7 @@ async function showDetail(id) {
       <div class="meta">
         <div class="meta-item"><div class="k">综合评分</div><div class="v">⭐ ${d.score ? d.score.toFixed(1) : '-'} / 10</div></div>
         <div class="meta-item"><div class="k">收藏率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
-        <div class="meta-item"><div class="k">作者</div><div class="v">${esc(d.author)}</div></div>
+        <div class="meta-item"><div class="k">作者</div><div class="v">${/^\d{15,}$/.test(String(d.author || '')) ? `<a style="color:#6fa8ff;text-decoration:none" href="https://steamcommunity.com/profiles/${esc(d.author)}" target="_blank" rel="noopener">作者主页 ↗</a>` : (esc(d.author) || '-')}</div></div>
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">收藏数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
@@ -852,6 +914,10 @@ async function showDetail(id) {
     <a class="link" style="margin-top:0;cursor:pointer" onclick="copyId('${sid}')">📋 复制 Mod ID</a>
   </div></div>`;
   $('content').innerHTML = html;
+  // 直接定位到详情主体，跳过首页那一屏固定内容
+  const el = document.querySelector('.detail');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (push !== false) history.pushState({ view: 'detail', id: sid }, '', buildURL({ id: sid }));
 }
 
 function toast(msg) {
@@ -880,6 +946,11 @@ function copyList() {
 function backToList() {
   $('toolbar').style.display = 'block';
   renderPaged();
+  window.scrollTo({ top: listScrollY || 0 });
+  // 返回按钮也走历史栈：浏览器"前进"可回到详情
+  if (new URLSearchParams(location.search).get('id')) {
+    history.pushState({ view: 'list' }, '', buildURL());
+  }
 }
 
 async function loadTop() {
@@ -921,8 +992,7 @@ function makeStars() {
 makeStars();
 loadStats();
 loadTags();
-loadVersions();
-loadTop();
+loadVersions().then(() => { if (!applyFromURL()) loadTop(); });
 </script>
 </body>
 </html>
