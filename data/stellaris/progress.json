@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-30 20:56",
-  "db_total": 677,
-  "db_translated": 677,
+  "updated_at": "2026-08-30 21:08",
+  "db_total": 727,
+  "db_translated": 727,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    677
+    727
   ],
-  "translated_rank_count": 677,
-  "next_batch_start_rank": 678,
+  "translated_rank_count": 727,
+  "next_batch_start_rank": 728,
   "next_batch_size": 50,
-  "remaining": 343,
+  "remaining": 293,
   "next_batch_preview": [
     {
-      "rank": 678,
-      "id": "3556222090",
-      "title": "BPV Reborn - Zone Double Row Mode"
+      "rank": 728,
+      "id": "1978311827",
+      "title": "hololive advisors"
     },
     {
-      "rank": 679,
-      "id": "689858852",
-      "title": "Ancient Ship Types"
+      "rank": 729,
+      "id": "3451188081",
+      "title": "Galactic Community Overhaul [4.4.x]"
     },
     {
-      "rank": 680,
-      "id": "1212536129",
-      "title": "Just Star Names"
+      "rank": 730,
+      "id": "3011811483",
+      "title": "旧天体战舰 F Celestial warships"
     },
     {
-      "rank": 681,
-      "id": "917206871",
-      "title": "EG* - Dimmer Core"
+      "rank": 731,
+      "id": "2603957954",
+      "title": "Lots of Traditions - 48 Tradition Slots"
     },
     {
-      "rank": 682,
-      "id": "1690425831",
-      "title": "[已经废弃]The DAL Species Mod约会大作战种族"
+      "rank": 732,
+      "id": "2310338497",
+      "title": "!! 01 Immersive Beautiful Universe [Abandoned]"
     }
   ]
 }
