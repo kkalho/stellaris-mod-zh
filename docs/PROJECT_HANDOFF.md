@@ -27,6 +27,13 @@
 > 云同步 r12/r13 两坑：curl 无 -m 遇 jsDelivr 挂起整段 TIMEOUT（模板已修）、export 不产出 .gz
 > 致旧 gz 混入 git（export_cloud_sync.py 已改为现压 .gz；apply 不写 translations，新批次必须
 > 另跑 import_stellaris_translations.py，同步脚本要有行数 sanity check）。
+> **维护轮 8（同日）**：模块精进四包——①信任包（footer「数据说明」面板把数据边界亮给用户 +
+> 详情页「数据更新」格 + 「报告勘误」预填 Issue 链接 + GitHub 反馈链接）；②分享包（og 标签 +
+> favicon.svg + 自绘 og_card.png，服务器白名单静态路由，og:image 硬编码公网 IP）；③遗珠上星图
+> （24 颗金色菱形脉冲星标 + 悬浮「遗珠·收藏率」，顺修星图悬浮张冠李戴——G.mods 需与 pos 排序
+> 对齐；新增 window.GALAXY_INFO 测试钩子）；④运维（同步模板 bak 只留 3 份；键盘快捷键
+> `/` 聚焦搜索、Esc 关面板/返回列表）。注意：本机 Pillow 与 Python 3.15 不兼容，资产生成用
+> py -3.14 跑 scripts/gen_share_assets.py；web_server 起服务前先 python -m py_compile 自检。
 > **协作注意**：存在并行 AI 会话同时扩容与操作云端（journal 中非本会话的重启记录为证）。
 > 云端同步前建议先查最近 TAT 调用；本地 8099 测试服务用完即关，避免误导用户。
 
