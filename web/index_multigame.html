@@ -556,7 +556,9 @@ let activeTag = null;
 let currentTitle = '🔥 订阅量 Top';
 
 async function api(path) {
-  const r = await fetch(path);
+  let r;
+  try { r = await fetch(path); }
+  catch (e) { throw new Error('无法连接服务器（可能正在更新维护，请稍后刷新重试）'); }
   let d = null;
   try { d = await r.json(); } catch (e) { throw new Error('服务返回异常'); }
   if (!r.ok) throw new Error((d && d.error) ? d.error : ('请求失败 (' + r.status + ')'));
