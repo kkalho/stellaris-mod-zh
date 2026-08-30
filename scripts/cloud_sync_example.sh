@@ -52,6 +52,8 @@ fetch data/stellaris/mods_full_sync.json 4000000
 
 echo "=== backup db ==="
 cp data/stellaris/mods.db "data/stellaris/mods.db.bak-$(date +%Y%m%d%H%M%S)"
+# 只保留最近 3 份备份（36G 磁盘长跑防堆积）
+ls -1t data/stellaris/mods.db.bak-* 2>/dev/null | tail -n +4 | xargs -r rm -f
 
 echo "=== apply rows ==="
 python3 scripts/apply_cloud_sync.py

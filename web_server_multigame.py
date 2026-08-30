@@ -182,6 +182,7 @@ def get_detail(game_id, steam_id, db=None):
             pass
     ts = int(m.get("time_updated") or 0)
     updated = datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d") if ts else "未知"
+    fetched = str(m.get("fetched_at") or "")[:10]   # 库里已是 YYYY-MM-DD 日期串
     cfg = get_cfg(game_id)
     required = json.loads(m.get("required_dlcs") or "[]")
     optional = json.loads(m.get("optional_dlcs") or "[]")
@@ -208,6 +209,7 @@ def get_detail(game_id, steam_id, db=None):
         "tags": m.get("tags") or "",
         "url": m.get("url") or "",
         "updated": updated,
+        "fetched": fetched,
         "preview": m.get("preview_url") or "",
         "score": calc_score(m.get("subscriptions"), m.get("favorites")),
         "act": activity_of(m.get("time_updated")),
@@ -633,6 +635,21 @@ class Handler(BaseHTTPRequestHandler):
         # 网页界面
         if path == "/":
             self._send_html(self._load_index())
+            return
+        # 白名单静态资源（favicon / OG 分享图）：固定文件名，防路径穿越
+        if path in ("/favicon.svg", "/og_card.png"):
+            fp = os.path.join(BASE, "web", path.lstrip("/"))
+            if os.path.exists(fp):
+                ctype = "image/svg+xml" if path.endswith(".svg") else "image/png"
+                self.send_response(200)
+                self.send_header("Content-Type", ctype)
+                self.send_header("Content-Length", str(os.path.getsize(fp)))
+                self.send_header("Cache-Control", "public, max-age=86400")
+                self.end_headers()
+                with open(fp, "rb") as f:
+                    self.wfile.write(f.read())
+                return
+            self._send_json({"error": "not found"}, 404)
             return
         # 游戏列表
         if path == "/api/games":

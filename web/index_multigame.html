@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>群星 Mod 查询工具</title>
+<title>群星 Mod 查询工具 · 中文知识库</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="description" content="群星（Stellaris）创意工坊 MOD 中文知识库：800+ MOD 中文详情、汉化包索引、清单冲突检测、遗珠榜与版本适配标注。">
+<meta property="og:title" content="群星 Mod 查询工具 · 中文知识库">
+<meta property="og:description" content="800+ 创意工坊 MOD 中文档案：汉化包索引、兼容冲突检测、遗珠榜、版本适配标注。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="http://150.158.24.195:8080/og_card.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -159,6 +166,10 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 .act-badge.active { background: rgba(84,180,120,.16); color:#9fd8b4; border:1px solid rgba(84,180,120,.4); }
 .act-badge.slow { background: rgba(186,117,23,.14); color:#e5b65e; border:1px solid rgba(186,117,23,.4); }
 .act-badge.stale { background: rgba(140,150,170,.12); color:#aab3c5; border:1px solid rgba(140,150,170,.35); }
+/* 数据说明面板排版 */
+.meta-doc { font-size: 13px; line-height: 1.9; color: #b8c2d4; }
+.meta-doc p { margin: 6px 0; }
+.meta-doc b { color: #d8e4f5; }
 .status-warn {
   background: rgba(226,75,74,.1); border: 1px solid rgba(226,75,74,.35);
   border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
@@ -188,6 +199,8 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 .back-btn:hover { color: #e8edf8; border-color: rgba(100,140,255,.5); }
 .loading { text-align: center; color: #7b87a0; padding: 40px 0; font-size: 14px; }
 footer { position: relative; z-index: 1; text-align: center; color: #4a5468; font-size: 12px; padding: 20px; }
+footer a { color: #5e6c88; text-decoration: none; border-bottom: 1px dashed #3a4356; }
+footer a:hover { color: #9fc0ff; border-color: #5e82c8; }
 .pager { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
 .pager button {
   padding: 8px 20px; font-size: 13px; cursor: pointer;
@@ -539,6 +552,7 @@ body[data-view="game"] .launcher { display: none !important; }
     <div id="trendPanel" class="dlc-panel" style="display:none"></div>
     <div id="picksPanel" class="dlc-panel" style="display:none"></div>
     <div id="gemsPanel" class="dlc-panel" style="display:none"></div>
+    <div id="metaPanel" class="dlc-panel" style="display:none"></div>
     <div id="ccPanel" class="dlc-panel" style="display:none"></div>
   </div>
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
@@ -549,7 +563,11 @@ body[data-view="game"] .launcher { display: none !important; }
   </div>
 </main>
 
-<footer>数据来源：Steam 创意工坊公开数据 · 由 AI 翻译整理 · 仅供学习交流</footer>
+<footer>数据来源：Steam 创意工坊公开数据 · 由 AI 翻译整理 · 仅供学习交流
+  <span> · <a href="javascript:void(0)" onclick="openMetaPanel()">数据说明</a>
+  · <a href="https://github.com/kkalho/stellaris-mod-zh" target="_blank" rel="noopener">GitHub</a>
+  · <a href="https://github.com/kkalho/stellaris-mod-zh/issues" target="_blank" rel="noopener">反馈问题</a></span>
+</footer>
 
 <!-- 曲速航行过场 -->
 <div id="warp" class="warp"><canvas id="warpCanvas"></canvas></div>
@@ -860,12 +878,32 @@ function clearFilters() {
   applyFilters();
 }
 
+// ==================== 数据说明（信任包）：把数据边界亮给用户看 ====================
+function openMetaPanel() {
+  const panel = $('metaPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel', 'metaPanel'].forEach(id => $(id).style.display = 'none');
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <h3>📊 数据说明</h3>
+    <div class="meta-doc">
+      <p><b>数据从哪来？</b>全部条目来自 Steam 创意工坊公开页面（订阅量、收藏、标签、作者描述），订阅量每日自动同步，详情页「数据更新」即本站最近一次抓取日期。</p>
+      <p><b>中文栏位谁写的？</b>六个中文栏位（标题/简介/介绍/玩法/评价/特色）由 AI 翻译整理。<b>「评价」只概括作者页面里的自述</b>，不代表本站实测，也不采集社区评分；AI 可能有误，请以游戏内实测为准。</p>
+      <p><b>版本标注规则：</b>「适配 X」= 作者声明支持该版本；「更新于 X 时期」= 按最后更新日期推断，仅供参考。</p>
+      <p><b>活跃徽章：</b>🟢 活跃（180 天内有更新）· 🟡 较久未更（540 天内）· ⚪ 久未更新。只说明作者最近有没有动作，视觉类 MOD 不更新 ≠ 不能用。</p>
+      <p><b>💎 遗珠榜规则：</b>收藏率（收藏/订阅）≥15% × 订阅 300~3 万 × 近 18 个月有更新，按收藏数取前 24，纯数据计算无人工编辑。</p>
+      <p><b>术语表：</b><b>弃坑</b>=作者已停止维护（标注 deprecated）；<b>前置</b>=需搭配另一 MOD 才能生效；<b>汉化包</b>=社区制作的中文翻译，需搭配原 MOD；<b>遗珠</b>=收藏率远超大盘但订阅量不高的 MOD。</p>
+      <p style="color:#8a93a8">⚠️ MOD 兼容性随游戏版本与装载顺序变化，本站冲突检测基于描述挖掘、覆盖有限，任何标注都仅供参考，装后请进游戏验证。发现数据错误欢迎 <a style="color:#6fa8ff" href="https://github.com/kkalho/stellaris-mod-zh/issues" target="_blank" rel="noopener">提 Issue 勘误 ↗</a>。</p>
+    </div>
+    <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('metaPanel').style.display='none'">关闭</button>`;
+}
+
 // ==================== 遗珠榜（P5）：高收藏率 × 低订阅 = 大概率曝光不足 ====================
 let gemsCache = null;
 async function openGemsPanel() {
   const panel = $('gemsPanel');
   if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'ccPanel'].forEach(id => $(id).style.display = 'none');
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'ccPanel', 'metaPanel'].forEach(id => $(id).style.display = 'none');
   panel.style.display = 'block';
   panel.innerHTML = '<div class="loading">正在遴选遗珠...</div>';
   try {
@@ -905,7 +943,7 @@ let picksCache = null;
 async function openPicksPanel() {
   const panel = $('picksPanel');
   if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'ccPanel', 'gemsPanel'].forEach(id => $(id).style.display = 'none');
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'ccPanel', 'gemsPanel', 'metaPanel'].forEach(id => $(id).style.display = 'none');
   panel.style.display = 'block';
   panel.innerHTML = '<div class="loading">正在加载新手推荐...</div>';
   try {
@@ -949,7 +987,7 @@ async function openPicksPanel() {
 function openCcPanel() {
   const panel = $('ccPanel');
   if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel'].forEach(id => $(id).style.display = 'none');
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'metaPanel'].forEach(id => $(id).style.display = 'none');
   panel.style.display = 'block';
   panel.innerHTML = `
     <h3>⚔ 我的清单冲突检测</h3>
@@ -1215,7 +1253,7 @@ async function showDetail(id, push = true) {
   listScrollY = window.scrollY;   // 记住列表位置，返回时恢复
   $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
   $('pager').style.display = 'none';
-  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel'].forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel', 'metaPanel'].forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
   let d;
   try { d = await api('/api/' + GAME + '/mod?id=' + encodeURIComponent(id)); }
   catch (e) { contentError(e.message); return; }
@@ -1239,6 +1277,8 @@ async function showDetail(id, push = true) {
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">收藏数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
+        ${d.fetched ? `<div class="meta-item"><div class="k" title="本站最近一次从 Steam 抓取数据的日期">数据更新</div><div class="v">${esc(d.fetched)}</div></div>` : ''}
+        <div class="meta-item"><div class="k">发现问题？</div><div class="v"><a style="color:#6fa8ff;text-decoration:none" target="_blank" rel="noopener" href="https://github.com/kkalho/stellaris-mod-zh/issues/new?title=${encodeURIComponent('[数据勘误] ' + (d.title || d.title_en || sid))}&body=${encodeURIComponent('Steam ID: ' + sid + '\n页面: ' + location.href + '\n问题描述: ')}">报告勘误 ↗</a></div></div>
         ${d.version ? `<div class="meta-item"><div class="k">版本兼容</div><div class="v">${esc(d.version)}</div></div>` : ''}
         <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags_zh || d.tags || '-')}</div></div>
         <div class="meta-item"><div class="k">Steam ID</div><div class="v">${sid}</div></div>
@@ -1366,6 +1406,7 @@ async function loadTop() {
     currentTitle = '🔥 全部 Mod（按订阅量排序）';
     renderPaged();
     if (window.buildGalaxyStars) window.buildGalaxyStars(allResults);   // 星图随数据刷新
+    loadGemMarkers();
   } catch (e) { allResults = []; contentError(e.message); }
 }
 
@@ -1428,6 +1469,17 @@ function makeDotTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+function makeGemTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d');
+  g.fillStyle = '#ffd75f';
+  g.beginPath();
+  g.moveTo(32, 5); g.lineTo(59, 32); g.lineTo(32, 59); g.lineTo(5, 32); g.closePath();
+  g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 4; g.stroke();
+  return new THREE.CanvasTexture(c);
+}
+
 function makePoints(pos, size, color, opacity, tex) {
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -1485,6 +1537,7 @@ function initGalaxy() {
   scene.add(group);
 
   G.dotTex = makeDotTexture();
+  G.gemTex = makeGemTexture();
   group.add(makePoints(randomSpherePoints(isMobile ? 700 : 1500, 900, 1700), 1.8, 0xbfd8ff, 0.5, G.dotTex));
   group.add(makePoints(spiralPoints(isMobile ? 1600 : 2800, 520), 2.3, 0x9fc0ff, 0.45, G.dotTex));
   // 星核辉光
@@ -1567,8 +1620,9 @@ function doHoverPick() {
     G.hoverIdx = best;
     if (best >= 0) {
       const m = G.mods[best];
-      tip.innerHTML = `<div class="ht-name">${esc(m.title || m.title_en || m.id)}</div>`
-        + `<div class="ht-meta">🛰 ${fmt(m.subs || 0)} 订阅 · ${esc(m.version || '版本未知')} · 点击进入档案</div>`;
+      const gr = (G.gemRatio || {})[String(m.id)];
+      tip.innerHTML = `<div class="ht-name">${gr ? '💎 ' : ''}${esc(m.title || m.title_en || m.id)}</div>`
+        + `<div class="ht-meta">${gr ? `遗珠 · 收藏率 ${Math.round(gr * 100)}% · ` : ''}🛰 ${fmt(m.subs || 0)} 订阅 · ${esc(m.version || '版本未知')} · 点击进入档案</div>`;
       tip.style.display = 'block';
       document.getElementById('galaxy').style.cursor = 'pointer';
     } else {
@@ -1592,6 +1646,11 @@ function loop() {
   }
   G.group.rotation.y = G.rotY;
   G.group.rotation.x = G.tiltX;
+  if (G.gemPoints) {
+    const ph = Math.sin(performance.now() / 480);
+    G.gemPoints.material.size = 30 * (1 + 0.18 * ph);
+    G.gemPoints.material.opacity = 0.68 + 0.27 * ph;
+  }
   G.renderer.render(G.scene, G.camera);
   updateProjected();
   if (G.needPick) { doHoverPick(); G.needPick = false; }
@@ -1606,9 +1665,10 @@ window.buildGalaxyStars = function(mods) {
     setTimeout(() => window.buildGalaxyStars(mods), 400);
     return;
   }
-  G.mods = mods;
   if (G.modPoints) { G.group.remove(G.modPoints); G.modPoints.geometry.dispose(); }
   const sorted = [...mods].sort((a, b) => (b.subs || 0) - (a.subs || 0));
+  G.mods = sorted;   // 悬浮拾取按 pos 索引，必须与排序后的数组一致（修悬浮张冠李戴）
+  G.sorted = sorted;
   const n = sorted.length, R = 520;
   const pos = new Float32Array(n * 3), colors = new Float32Array(n * 3);
   const col = new THREE.Color();
@@ -1633,7 +1693,38 @@ window.buildGalaxyStars = function(mods) {
     transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
   G.modPoints = new THREE.Points(geo, mat);
   G.group.add(G.modPoints);
+  applyGemOverlay();
 };
+// 测试钩子：G 是脚本内 const，隔离环境（自动化测试）只能透过 window 读状态
+window.GALAXY_INFO = () => ({ mods: G.sorted ? G.sorted.length : 0,
+  gems: G.gemIds ? G.gemIds.size : 0, gemOverlay: !!G.gemPoints, failed: !!G.failed });
+
+// 遗珠星标：在对应 MOD 的星点位置叠一层金色菱形（数据由 loadGemMarkers 异步提供）
+function applyGemOverlay() {
+  if (G.failed || typeof THREE === 'undefined' || !G.renderer) return;
+  if (!G.sorted || !G.pos || !G.gemIds || !G.gemIds.size) return;
+  if (G.gemPoints) { G.group.remove(G.gemPoints); G.gemPoints.geometry.dispose(); G.gemPoints = null; }
+  const pts = [];
+  for (let i = 0; i < G.sorted.length; i++) {
+    if (G.gemIds.has(String(G.sorted[i].id))) pts.push([G.pos[i*3], G.pos[i*3+1], G.pos[i*3+2]]);
+  }
+  if (!pts.length) return;
+  const p = new Float32Array(pts.length * 3);
+  pts.forEach((q, k) => { p[k*3] = q[0]; p[k*3+1] = q[1]; p[k*3+2] = q[2]; });
+  G.gemPoints = makePoints(p, 30, 0xffd75f, 0.85, G.gemTex || G.dotTex);
+  G.group.add(G.gemPoints);
+}
+
+// 拉遗珠名单并点亮星标（与遗珠榜面板共用 gemsCache）
+async function loadGemMarkers() {
+  try {
+    if (!gemsCache) gemsCache = await api('/api/' + GAME + '/gems');
+    G.gemIds = new Set((gemsCache.gems || []).map(x => String(x.id)));
+    G.gemRatio = {};
+    (gemsCache.gems || []).forEach(x => { G.gemRatio[String(x.id)] = x.ratio; });
+    applyGemOverlay();
+  } catch (e) { /* 星图遗珠标记失败不影响主流程 */ }
+}
 
 // 降级：无 three.js / 无 WebGL 时画一幅静态深空星野，页面功能不受影响
 function galaxy2DFallback(canvas) {
@@ -1655,6 +1746,21 @@ function galaxy2DFallback(canvas) {
   const badge = document.getElementById('heroCount');
   if (badge) badge.textContent = '静态星图模式';
 }
+
+// ==================== 键盘快捷键：/ 聚焦搜索 · Esc 关面板/返回列表 ====================
+document.addEventListener('keydown', (e) => {
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+    e.preventDefault();
+    const kw = document.getElementById('kw');
+    if (kw) kw.focus();
+  } else if (e.key === 'Escape') {
+    const open = ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel', 'metaPanel']
+      .find(id => { const el = document.getElementById(id); return el && el.style.display === 'block'; });
+    if (open) { $(open).style.display = 'none'; return; }
+    if (document.body.dataset.view === 'game' && document.querySelector('.detail')) backToList();
+  }
+});
 
 // ==================== 数据舰桥：启动页 + 星域路由 + 曲速过场 ====================
 const GAME_META = {
@@ -1732,7 +1838,7 @@ function enterGame(g, opts) {
   document.body.dataset.view = 'game';
   $('gamesel').value = g;
   dlcCache = null; locCache = null; localCache = null; trendCache = null; picksCache = null; gemsCache = null;
-  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel'].forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel', 'metaPanel'].forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
   $('versionsel').value = '';
   $('kw').value = '';          // 换星域必须重置搜索态，否则上一游戏的筛选残留
   activeTag = null;
