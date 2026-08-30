@@ -1,6 +1,6 @@
 """构建知识库 SQLite 数据库：导入抓取的详情数据
-用法: python build_db.py
-输出: data/stellaris_mods.db
+用法: python build_db.py --force   （必须显式 --force 才会重建）
+输出: data/stellaris_mods.db  ⚠️ 这是旧版单游戏库（坑 #10）！
 表:
   mods       - Mod 元数据（名称/作者/订阅数/标签/更新时间/预览图）
   translations - 中英对照翻译（mod_id + field + zh_text）
@@ -8,6 +8,12 @@
 数据源:
   1. data/details.jsonl          - 官方 API 完整详情（描述等）
   2. data/workshop_top1000.json  - 官方页面榜单数据（订阅数/评分/预览图，最新）
+
+⚠️ 注意：
+- 本脚本会 DROP 重建整库。现役数据库是 data/stellaris/mods.db（多游戏架构），
+  日常维护请用 scripts/rebuild_all.py（收敛式重建，不丢标注）。
+- 直接跑本脚本 + migrate_to_multigame.py 迁移，正是历史上
+  「重建后 version/DLC 标注归零」事故（坑 #1）的触发链。
 """
 import sys, io, json, os, sqlite3, time, re
 
@@ -67,6 +73,13 @@ def clean_bbcode(text):
 
 
 def main():
+    # 重建保护：本脚本 DROP 重建旧版整库，必须显式 --force
+    if "--force" not in sys.argv:
+        print("⛔ 拒绝执行：本脚本会 DROP 重建旧版单游戏库 data/stellaris_mods.db。\n"
+              "   - 日常维护/数据修复请用: python scripts/rebuild_all.py（收敛式，不丢标注）\n"
+              "   - 确实要重建旧库: python scripts/build_db.py --force")
+        sys.exit(1)
+
     # 读取详情（官方 API 数据）
     details_path = os.path.join(DATA_DIR, "details.jsonl")
     rows = []
