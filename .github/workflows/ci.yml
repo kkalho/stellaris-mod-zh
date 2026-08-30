@@ -1,0 +1,32 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        run: pip install pypinyin pytest
+
+      - name: 语法编译检查
+        run: |
+          python -m compileall -q core scripts games tests web_server_multigame.py
+          bash -n scripts/cloud_sync_example.sh scripts/deploy_lighthouse.sh
+
+      - name: 单元测试
+        run: python -m pytest tests -q
+
+      # 终极回归：知识库必须能仅凭 git 内源文件重建并通过体检——
+      # 这验证「数据库是派生物」的不变量（批次翻译/存档漏提交会在这里当场暴露）
+      - name: 从 git 源文件重建知识库
+        run: python scripts/rebuild_all.py
+
+      - name: 数据体检
+        run: python scripts/verify_db.py
