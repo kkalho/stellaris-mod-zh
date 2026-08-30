@@ -26,6 +26,50 @@ from core.game_config import get_game
 from core.mod_db import ModDB
 
 DATA_DIR = os.path.join(BASE_DIR, "data")
+TOP_PATH = os.path.join(DATA_DIR, "workshop_top1000.json")
+
+
+def update_progress(game_id: str = "stellaris") -> dict:
+    """按「榜单最大已收录 rank」重算扩容进度并写入 data/<game>/progress.json。
+
+    progress.json 是接手清单的进度依据，此前只有文档字符串声称更新、
+    实际从未写入（已修复）。接手后读它即可知道下一批从哪开始。
+    """
+    cfg = get_game(game_id, BASE_DIR)
+    db = ModDB(cfg)
+    with open(TOP_PATH, encoding="utf-8") as f:
+        top = json.load(f)["mods"]
+    existing = {r[0] for r in db.conn.execute(
+        "SELECT steam_id FROM mods WHERE game_id=? AND steam_id IS NOT NULL",
+        (game_id,)).fetchall()}
+    translated = db.conn.execute(
+        "SELECT COUNT(*) FROM mods WHERE game_id=? AND translated=1",
+        (game_id,)).fetchone()[0]
+    db.close()
+
+    max_rank = 0
+    for i, m in enumerate(top, start=1):
+        if str(m.get("publishedfileid", "")) in existing:
+            max_rank = i
+    total = len(top)
+    preview = [{"rank": i,
+                "id": str(top[i - 1].get("publishedfileid", "")),
+                "title": top[i - 1].get("title", "")}
+               for i in range(max_rank + 1, min(max_rank + 6, total + 1))]
+    progress = {
+        "updated_at": time.strftime("%Y-%m-%d %H:%M"),
+        "db_total": len(existing),
+        "db_translated": translated,
+        "workshop_top_total": total,
+        "translated_rank_range": [1, max_rank] if max_rank else [],
+        "translated_rank_count": max_rank,
+        "next_batch_start_rank": max_rank + 1 if max_rank < total else None,
+        "next_batch_size": 50,
+        "remaining": total - max_rank,
+        "next_batch_preview": preview,
+    }
+    cfg.save_json("progress.json", progress)  # → data/<game>/progress.json
+    return progress
 
 
 def clean_bbcode(text: str) -> str:
@@ -130,6 +174,10 @@ def import_range(game_id: str, start: int, end: int, verbose: bool = True) -> di
     total = db.count()
     print(f"\n新增 {added} 个（跳过已存在 {skipped} 个），库中共 {total} 个 MOD")
     db.close()
+    # 更新扩容进度（data/<game>/progress.json，接手清单的进度依据）
+    prog = update_progress(game_id)
+    print(f"进度已更新: 已收录至榜单 #{prog['translated_rank_count']}，"
+          f"下一批 #{prog['next_batch_start_rank']}，剩余 {prog['remaining']} 个")
     return {"added": added, "skipped": skipped, "total": total, "new_ids": new_ids}
 
 
