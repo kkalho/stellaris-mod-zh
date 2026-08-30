@@ -143,6 +143,8 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
   margin-left: 8px; vertical-align: middle; font-weight: 500;
 }
 .status-badge.deprecated { background: rgba(226,75,74,.2); color: #f09595; border: 1px solid rgba(226,75,74,.4); }
+.zh-ok { background: rgba(125,255,200,.12) !important; color: #9fe8cf !important; border-color: rgba(125,255,200,.4) !important; }
+.zh-unknown { background: rgba(143,163,189,.1) !important; color: #9aa8bd !important; border-color: rgba(143,163,189,.3) !important; }
 .status-badge.outdated { background: rgba(226,75,74,.15); color: #f0a9a8; border: 1px solid rgba(226,75,74,.35); }
 .status-badge.abandoned { background: rgba(186,117,23,.2); color: #efc56a; border: 1px solid rgba(186,117,23,.45); }
 .status-badge.no_update { background: rgba(186,117,23,.15); color: #e5b65e; border: 1px solid rgba(186,117,23,.4); }
@@ -596,6 +598,12 @@ function versionBadge(v) {
   const isNew = m && parseInt(m[1], 10) === currentMajor;
   return `<span class="version-badge ${isNew ? 'new' : 'old'}" title="${esc(v)}">${esc(v)}</span>`;
 }
+// 中文支持判断（玩家第一问）：汉化包 > 自带中文（Translation 标签）> 未知
+function zhSupport(d) {
+  if (d.localizations && d.localizations.length) return { label: '📦 有汉化包', cls: 'zh-ok' };
+  if (/translation|汉化|中文/i.test(String(d.tags || ''))) return { label: '✓ 自带中文', cls: 'zh-ok' };
+  return { label: '? 未见中文标注', cls: 'zh-unknown' };
+}
 function statusWarn(s) {
   if (!s || !STATUS_LABEL[s]) return '';
   return `<div class="status-warn">⚠ 注意：此 Mod 已被标记为「${esc(STATUS_LABEL[s])}」，可能不再适配最新版本的游戏，安装前请确认。</div>`;
@@ -781,6 +789,8 @@ function renderList(rows, title) {
   let html = `<div class="list-title">${esc(title)}</div>`;
   rows.forEach(m => {
     const sid = String(m.id == null ? '' : m.id).replace(/[^0-9]/g, '');  // Steam ID 只允许数字
+    const zhBadge = /translation|汉化/i.test(String(m.tags || ''))
+      ? '<span class="status-badge zh-ok" title="自带中文">中</span>' : '';
     const thumb = m.preview
       ? `<div class="thumb"><img src="${esc(m.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>`
       : `<div class="thumb"><span class="noimg">无预览图</span></div>`;
@@ -789,7 +799,7 @@ function renderList(rows, title) {
       ${thumb}
       <div class="body">
         <div class="top">
-          <div class="name">${esc(m.title)}${statusBadge(m.status)}${versionBadge(m.version)}</div>
+          <div class="name">${esc(m.title)}${statusBadge(m.status)}${versionBadge(m.version)}${zhBadge}</div>
           <div class="subs">🛰 ${fmt(m.subs)} 订阅${scorePill(m.score)}</div>
         </div>
         ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
@@ -1086,6 +1096,7 @@ async function showDetail(id, push = true) {
   catch (e) { contentError(e.message); return; }
   if (d.error) { $('content').innerHTML = '<div class="loading">未找到该 Mod</div>'; return; }
   const sid = String(d.id == null ? '' : d.id).replace(/[^0-9]/g, '');
+  const zh = zhSupport(d);
   let html = `
     <button class="back-btn" onclick="backToList()">← 返回列表</button>
     <div class="detail">
@@ -1097,6 +1108,7 @@ async function showDetail(id, push = true) {
         <div class="meta-item"><div class="k">综合评分</div><div class="v">⭐ ${d.score ? d.score.toFixed(1) : '-'} / 10</div></div>
         <div class="meta-item"><div class="k">收藏率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
         <div class="meta-item"><div class="k">作者</div><div class="v">${/^\d{15,}$/.test(String(d.author || '')) ? `<a style="color:#6fa8ff;text-decoration:none" href="https://steamcommunity.com/profiles/${esc(d.author)}" target="_blank" rel="noopener">作者主页 ↗</a>` : (esc(d.author) || '-')}</div></div>
+        <div class="meta-item"><div class="k">中文支持</div><div class="v"><span class="status-badge ${zh.cls}" style="margin:0">${zh.label}</span></div></div>
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">收藏数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
@@ -1631,8 +1643,9 @@ function warpTo(rgb, onMid) {
   for (let i = 0; i < 240; i++) stars.push(spawn());
   const t0 = performance.now();
   let switched = false;
-  (function frame(now) {
-    const t = (now - t0) / 950;                       // 0 → 1
+  // 用 setInterval 而非 rAF：后台标签 rAF 冻结会导致过场永不完成、视图无法切换
+  const timer = setInterval(() => {
+    const t = (performance.now() - t0) / 950;         // 0 → 1
     ctx.fillStyle = `rgba(2,5,12,${Math.min(t * 1.8, 0.94)})`;
     ctx.fillRect(0, 0, cv.width, cv.height);
     const cx = cv.width / 2, cy = cv.height / 2, max = Math.max(cv.width, cv.height);
@@ -1655,9 +1668,8 @@ function warpTo(rgb, onMid) {
       ctx.fillStyle = `rgba(${rgb},${Math.min((t - 0.72) * 2.2, 0.85) * Math.max(0, 1 - (t - 0.72) / 0.28)})`;
       ctx.fillRect(0, 0, cv.width, cv.height);
     }
-    if (t < 1) requestAnimationFrame(frame);
-    else w.style.display = 'none';
-  })(t0);
+    if (t >= 1) { clearInterval(timer); w.style.display = 'none'; }
+  }, 16);
 }
 
 function route() {

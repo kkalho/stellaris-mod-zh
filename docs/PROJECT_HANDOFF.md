@@ -14,7 +14,9 @@
 > 悬停识别点击进详情，CDN 失败自动降级 2D 星野）；数据舰桥启动页（三张星域之门卡 + 曲速
 > 航行过场 + data-theme 主题系统：群星青/CK3金/HOI4钢灰）；路由 `?game=` 深链与浏览器
 > 前进后退；CK3 版本链（1.13-1.19 Wiki 核实）；Uptime 拨测；truststore 修复坑 #9；
-> 扩容 batch17+18 至 **727/1020**；ROADMAP 路线图建立。
+> 扩容 batch17+18 至 727/1020；ROADMAP 路线图建立。
+> **维护轮 5（同日）**：玩家视角巡检（见 ROADMAP「玩家体验增强」P1-P8，P1 中文支持标注已上线）；
+> 扩容 batch19 至 **777/1020**；曲速过场改 setInterval（后台标签 rAF 冻结致过场不完成的 bug）。
 > **协作注意**：存在并行 AI 会话同时扩容与操作云端（journal 中非本会话的重启记录为证）。
 > 云端同步前建议先查最近 TAT 调用；本地 8099 测试服务用完即关，避免误导用户。
 
@@ -29,7 +31,7 @@
 
 | 游戏 | MOD 数 | 已翻译 | 六字段覆盖 | 说明 |
 |---|---|---|---|---|
-| **群星** | **727**（目标 1020） | 727/727 | **100%** ✅ | batch17+18（#628-727）已完成，下一批 #728 |
+| **群星** | **777**（目标 1020） | 777/777 | **100%** ✅ | batch17-19（#628-777）已完成，下一批 #778 |
 | CK3 | 300 | 300/300 | Top30 完整 | 版本标注 300/300 ✅（1.13-1.19，Wiki 核实） |
 | HOI4 | 0 | - | - | 空框架，未抓取 |
 
@@ -159,7 +161,7 @@
 
 ## 7. 群星扩容标准流程（每批 50 个，约 10 分钟）
 
-**已跑到 #727，下一批 #728-777。用参数化的 `fetch_batch.py`（不要再复制 batch 脚本）。**
+**已跑到 #777，下一批 #778-827。用参数化的 `fetch_batch.py`（不要再复制 batch 脚本）。**
 
 ```bash
 # 1) 抓详情（参数化，无需改代码）
@@ -167,7 +169,7 @@ python scripts/fetch_batch.py --start 678 --end 727     # → 追加到 data/det
 #  ⚠️ 等抓取完成：wc -l data/details.jsonl 两次一致再继续
 
 # 2) 增量入库（不动已有数据，upsert；自动更新 data/stellaris/progress.json）
-python scripts/import_new_batch.py 728 777
+python scripts/import_new_batch.py 778 827
 
 # 3) 精做翻译（六字段：title/summary/description/gameplay/reviews/features）
 #    建议用子智能体并行：每批 50 个拆 1-3 个子 Agent，各自输出 JSON
@@ -258,7 +260,7 @@ python scripts/rebuild_pinyin_idx.py
 python scripts/snapshot_trend.py --game stellaris
 
 # 抓取（参数化，替代 fetch_batch9~16）
-python scripts/fetch_batch.py --start 728 --end 777 [--dry-run]
+python scripts/fetch_batch.py --start 778 --end 827 [--dry-run]
 
 # 趋势导出（云端备份用）
 python scripts/export_trend.py
@@ -341,7 +343,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 
 **已删除/防呆**：旧链路 15 个文件已于 2026-08-30 删除（清单与去向见 `scripts/README.md`，git 历史可查）；`build_db.py` 保留但需显式 `--force`（面向旧库）。
 
-**群星翻译批次**：batch2/8/9（#1-277）· batch10-14（#278-527）· batch15（#528-577）· batch16（#578-627）· batch17（#628-677）· batch18（#678-727）· 下一批 #728（`fetch_batch.py --start 728 --end 777`）
+**群星翻译批次**：batch2/8/9（#1-277）· batch10-14（#278-527）· batch15（#528-577）· batch16（#578-627）· batch17（#628-677）· batch18（#678-727）· batch19（#728-777）· 下一批 #778（`fetch_batch.py --start 778 --end 827`）
 **深度精做存档**：`translations/deep/deep_old_batch{0-3}`（原库段 171 个补译）· `deep_batch{10,12,13}`（扩容段）· `deep_new50`（50 个精做升级）· `deep_new50_mods`（数据库行存档）· `deep_trend`（趋势存档）
 
 ## 13. 接手检查清单（新 AI 开工前必做）

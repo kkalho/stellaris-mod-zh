@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-30 21:08",
-  "db_total": 727,
-  "db_translated": 727,
+  "updated_at": "2026-08-30 22:54",
+  "db_total": 777,
+  "db_translated": 777,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    727
+    777
   ],
-  "translated_rank_count": 727,
-  "next_batch_start_rank": 728,
+  "translated_rank_count": 777,
+  "next_batch_start_rank": 778,
   "next_batch_size": 50,
-  "remaining": 293,
+  "remaining": 243,
   "next_batch_preview": [
     {
-      "rank": 728,
-      "id": "1978311827",
-      "title": "hololive advisors"
+      "rank": 778,
+      "id": "3108330591",
+      "title": "MC驻群星汉化"
     },
     {
-      "rank": 729,
-      "id": "3451188081",
-      "title": "Galactic Community Overhaul [4.4.x]"
+      "rank": 779,
+      "id": "2252156569",
+      "title": "Real Space - Planetary Exploration"
     },
     {
-      "rank": 730,
-      "id": "3011811483",
-      "title": "旧天体战舰 F Celestial warships"
+      "rank": 780,
+      "id": "2813707242",
+      "title": "stellaris Galaxy Command ships"
     },
     {
-      "rank": 731,
-      "id": "2603957954",
-      "title": "Lots of Traditions - 48 Tradition Slots"
+      "rank": 781,
+      "id": "1313065097",
+      "title": "Gods and Guardians (2.0/2.1)"
     },
     {
-      "rank": 732,
-      "id": "2310338497",
-      "title": "!! 01 Immersive Beautiful Universe [Abandoned]"
+      "rank": 782,
+      "id": "932345488",
+      "title": "A Galaxy at War: The Galactic Empire Legacy Version 1.9"
     }
   ]
 }
