@@ -1,0 +1,33 @@
+name: Uptime
+
+# 免费可用性监控：GitHub 定时从外部网络拨测公网服务，
+# 失败时 Actions 红灯 + 默认邮件通知仓库所有者。
+# 替代 UptimeRobot 等外部服务：无需注册账号，与仓库同处管理。
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # 每 30 分钟（UTC）
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拨测公网服务（群星 MOD 查询）
+        run: |
+          set -e
+          BASE="http://150.158.24.195:8080"
+          check() {
+            name="$1"; path="$2"; expect="$3"
+            code=$(curl -s -o /tmp/out.json -w '%{http_code}' -m 20 "$BASE$path")
+            echo "$name → HTTP $code"
+            if [ "$code" != "200" ]; then echo "❌ FAIL $name (HTTP $code)"; exit 1; fi
+            if [ -n "$expect" ] && ! grep -q "$expect" /tmp/out.json; then
+              echo "❌ FAIL $name（响应内容异常）"; head -c 300 /tmp/out.json; echo; exit 1
+            fi
+          }
+          check 首页          "/" "群星"
+          check stats        "/api/stellaris/stats" '"total"'
+          check versions     "/api/stellaris/versions" '"versions"'
+          check search巨构   "/api/stellaris/search?q=%E5%B7%A8%E6%9E%84&n=3" '"results"'
+          echo "✅ ALL GREEN"

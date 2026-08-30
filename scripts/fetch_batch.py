@@ -103,18 +103,23 @@ def main():
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                       "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     })
-    # 默认 certifi 正常校验；仅 --insecure 显式降级（坑 #9 的本机旧环境）
+    # TLS 优先级：truststore（Windows 系统证书库，修复本机 venv 链不完整，坑 #9 的正确
+    # 修法，校验保持开启）→ certifi → 仅 --insecure 显式降级（旧机器最后的兜底）
     verify_arg = True
     try:
-        import certifi
-        verify_arg = certifi.where()
-    except ImportError:
-        pass
+        import truststore
+        truststore.inject_into_ssl()
+    except Exception:
+        try:
+            import certifi
+            verify_arg = certifi.where()
+        except ImportError:
+            pass
     if args.insecure:
         import urllib3
         urllib3.disable_warnings()
         verify_arg = False
-        print("⚠ 已按 --insecure 禁用 TLS 校验（坑 #9 环境才需要）")
+        print("⚠ 已按 --insecure 禁用 TLS 校验（信任库都失败时才需要）")
 
     fail_count = 0
     with open(OUT_PATH, "a", encoding="utf-8") as out:

@@ -2,7 +2,7 @@
 
 用途：
 - 增量同步 MOD 订阅量/更新时间/点赞数（updater 真实数据源）
-- 复用 fetch_ck3_details.py 已验证的抓取方式（verify=False 处理本机 SSL）
+- 复用 fetch_ck3_details.py 已验证的抓取方式（本机 SSL 由 truststore 修复，校验保持开启）
 
 接口：
 - fetch_details(ids)                → {steam_id: detail_dict}  批量查详情
@@ -16,9 +16,14 @@ import time
 from typing import Any, Dict, List, Optional
 
 import requests
-import urllib3
 
-urllib3.disable_warnings()  # 本机 venv 缺根证书，verify=False（与抓取脚本一致）
+# TLS 校验保持开启。本机 Windows venv 证书链不完整（坑 #9），用 truststore 走
+# 系统证书库修复；云端（OpenCloudOS）无 truststore，默认链本来就正常，注入跳过即可。
+try:
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
 
 API_URL = "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/"
 BATCH = 50          # 每批查询数量（API 宽松限制，50 稳妥）
@@ -64,7 +69,7 @@ def fetch_details(ids: List[str], session: Optional[requests.Session] = None,
             payload[f"publishedfileids[{i}]"] = fid
         for attempt in range(5):
             try:
-                r = session.post(API_URL, data=payload, timeout=30, verify=False)
+                r = session.post(API_URL, data=payload, timeout=30)
                 r.raise_for_status()
                 items = r.json()["response"]["publishedfiledetails"]
                 for it in items:

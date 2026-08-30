@@ -46,6 +46,13 @@ class CK3Config(GameConfig):
         "QUENTOPOLIS": "昆特城", "Veritas": "Veritas",
     }
 
+    # CK3 版本代号（展示用；日期经官方 Wiki 核实，见 detect_ck3_versions.py）
+    VERSION_NAMES = {
+        "1.13": "Basileus", "1.14": "Traverse", "1.15": "Crown",
+        "1.16": "Chamfron", "1.17": "Ascendant", "1.18": "Crane",
+        "1.19": "Scribe",
+    }
+
     def local_mod_dirs(self) -> List[str]:
         user_home = os.path.expanduser("~")
         dirs = []

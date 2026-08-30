@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-30 14:43",
-  "db_total": 577,
+  "updated_at": "2026-08-30 16:33",
+  "db_total": 627,
   "db_translated": 577,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    577
+    627
   ],
-  "translated_rank_count": 577,
-  "next_batch_start_rank": 578,
+  "translated_rank_count": 627,
+  "next_batch_start_rank": 628,
   "next_batch_size": 50,
-  "remaining": 443,
+  "remaining": 393,
   "next_batch_preview": [
     {
-      "rank": 578,
-      "id": "1620838511",
-      "title": "Expanded Governments"
+      "rank": 628,
+      "id": "2830996883",
+      "title": "UI Overhaul Dynamic + Improved Font"
     },
     {
-      "rank": 579,
-      "id": "2616955720",
-      "title": "额外传统"
+      "rank": 629,
+      "id": "702164152",
+      "title": "TFW's Bunch of Ship Parts 1.9"
     },
     {
-      "rank": 580,
-      "id": "2946000546",
-      "title": "异常/考古/裂隙显示效果（支持铁人/联机）【4.X】"
+      "rank": 630,
+      "id": "2113865264",
+      "title": "10XRepeatableTech"
     },
     {
-      "rank": 581,
-      "id": "682336292",
-      "title": "Flexible Core Planet Cap & Resettlement Cost (2.8)"
+      "rank": 631,
+      "id": "3387068412",
+      "title": "Vanilla Basic Optimization"
     },
     {
-      "rank": 582,
-      "id": "1660235095",
-      "title": "At War: Carrier Enhancements"
+      "rank": 632,
+      "id": "2525278602",
+      "title": "Fleet Formation Mod v2"
     }
   ]
 }
