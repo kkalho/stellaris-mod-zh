@@ -519,6 +519,7 @@ body[data-view="game"] .launcher { display: none !important; }
         <option value="120">120 条</option>
       </select>
       <button class="dlc-btn" style="margin-left:auto" onclick="openDlcPanel()">🧩 DLC 检测</button>
+      <button class="dlc-btn" onclick="openCcPanel()">⚔ 冲突检测</button>
       <button class="dlc-btn" onclick="openPicksPanel()">🌟 新手推荐</button>
       <button class="dlc-btn" onclick="openLocPanel()">🌐 汉化包</button>
       <button class="dlc-btn" onclick="openLocalPanel()">📁 本地 MOD</button>
@@ -531,6 +532,7 @@ body[data-view="game"] .launcher { display: none !important; }
     <div id="localPanel" class="dlc-panel" style="display:none"></div>
     <div id="trendPanel" class="dlc-panel" style="display:none"></div>
     <div id="picksPanel" class="dlc-panel" style="display:none"></div>
+    <div id="ccPanel" class="dlc-panel" style="display:none"></div>
   </div>
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
   <div class="pager" id="pager" style="display:none">
@@ -886,6 +888,55 @@ async function openPicksPanel() {
   } catch (e) {
     panel.innerHTML = `<div class="status-warn">加载新手推荐失败：${esc(e.message)}</div>`;
   }
+}
+
+// ==================== 冲突检测（P7）：输入清单 → 冲突配对 + 缺失依赖 ====================
+function openCcPanel() {
+  const panel = $('ccPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel'].forEach(id => $(id).style.display = 'none');
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <h3>⚔ 我的清单冲突检测</h3>
+    <div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">粘贴你的 MOD 清单（支持 Steam 链接 / 每行一个 ID / 逗号分隔），检测已知冲突与缺失依赖：</div>
+    <textarea id="ccInput" style="width:100%;min-height:110px;background:rgba(8,22,40,.6);color:#dce8f5;border:1px solid rgba(var(--ac-rgb),.3);border-radius:4px;padding:10px;font-size:13px;outline:none" placeholder="1121692237&#10;或 https://steamcommunity.com/sharedfiles/filedetails/?id=1623423360&#10;…"></textarea>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button class="dlc-btn" onclick="runCcCheck($('ccInput').value)">⚔ 开始检测</button>
+      <button class="dlc-btn" onclick="runCcCheck(allResults.map(m => m.id).join(','))">📋 用当前筛选结果</button>
+      <button class="back-btn" style="margin-bottom:0" onclick="$('ccPanel').style.display='none'">关闭</button>
+    </div>
+    <div id="ccResult" style="margin-top:14px"></div>`;
+}
+
+async function runCcCheck(idsText) {
+  const box = $('ccResult');
+  const ids = (idsText || '').match(/\d{6,12}/g) || [];
+  if (!ids.length) { box.innerHTML = '<div class="status-warn">⚠ 未识别到任何 Steam ID（6-12 位数字）</div>'; return; }
+  box.innerHTML = `<div class="loading">正在检测 ${ids.length} 个 MOD…</div>`;
+  let r;
+  try { r = await api('/api/' + GAME + '/conflict-check?ids=' + encodeURIComponent(ids.join(','))); }
+  catch (e) { box.innerHTML = `<div class="status-warn">⚠ ${esc(e.message)}</div>`; return; }
+  let html = `<div style="color:#8fa3bd;font-size:12.5px;margin-bottom:10px">已检测 <b style="color:#dce8f5">${r.checked}</b> 个 MOD（其中 ${r.known_compat} 个有兼容记录）`;
+  if (ids.length !== r.checked) html += ` · ${ids.length - r.checked} 个 ID 不在库中`;
+  html += '</div>';
+  if (r.conflicts.length) {
+    html += `<div style="color:#f09595;font-size:13px;font-weight:500;margin-bottom:8px">⚔ 发现 ${r.conflicts.length} 组已知冲突：</div>`;
+    r.conflicts.forEach(c => {
+      html += `<div class="dlc-warn"><div class="dw-title">⚔ ${esc(c.a.title)} <span style="color:#5a6478;font-size:11px">×</span> ${esc(c.b.title)}</div>
+        <div class="dw-missing">${esc(c.note)}</div></div>`;
+    });
+  }
+  if (r.missing_requires.length) {
+    html += `<div style="color:#f5c775;font-size:13px;font-weight:500;margin:10px 0 8px">🔒 ${r.missing_requires.length} 条缺失依赖（清单里缺少其前置）：</div>`;
+    r.missing_requires.forEach(x => {
+      html += `<div class="dlc-warn" style="border-color:rgba(245,199,117,.35)"><div class="dw-title">🔒 ${esc(x.mod.title)} 需要前置：<span style="color:#f5c775">${esc(x.require)}</span></div></div>`;
+    });
+  }
+  if (!r.conflicts.length && !r.missing_requires.length) {
+    html += `<div class="dlc-ok">✅ 未发现已知冲突与缺失依赖</div>`;
+  }
+  html += `<div style="color:#5f6d85;font-size:11.5px;margin-top:10px">${esc(r.coverage_note)}</div>`;
+  box.innerHTML = html;
 }
 
 let dlcCache = null;

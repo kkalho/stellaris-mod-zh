@@ -14,6 +14,7 @@ API（带游戏上下文）:
     GET /api/<game>/categories  → 标签分类
     GET /api/<game>/versions    → 版本筛选选项（从数据生成，附代号/计数）
     GET /api/<game>/picks       → 新手精选推荐（beginner_picks.json + 库内联表）
+    GET /api/<game>/conflict-check?ids= → 清单冲突/缺失依赖检测（P7）
     GET /api/<game>/local       → 本地 MOD 列表
     GET /api/<game>/localizations → 汉化包数据库
     GET /api/<game>/trend       → 订阅热度趋势（每日快照涨跌）
@@ -310,6 +311,96 @@ def get_picks(game_id, db=None):
     return {"note": data.get("note", ""), "picks": out}
 
 
+def _norm_name(t: str) -> str:
+    """与 mine_compat.py 同源的标题规范化（用于兼容条目 ↔ MOD 匹配）"""
+    t = (t or "").lower()
+    t = re.sub(r"\d+\.\d+(\.\d+)*", " ", t)
+    t = re.sub(r"[^\w\u4e00-\u9fff]+", " ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def conflict_check(game_id, ids, db=None):
+    """清单冲突检测（P7）：给定 steam_id 列表，输出
+    1) 清单内两两冲突（compat.conflicts 条目解析到清单内另一成员）
+    2) 缺失依赖（compat.requires 指向的 MOD 不在清单中）
+    兼容数据来自描述挖掘 + 手工整理，覆盖有限——响应中如实提示。"""
+    if db is None:
+        db = get_db(game_id)
+    ids = list(dict.fromkeys(str(i).strip() for i in ids if str(i).strip().isdigit()))
+    mods = {}
+    for sid in ids:
+        m = db.get_mod_by_steam_id(sid)
+        if m:
+            mods[sid] = m
+
+    def brief(m):
+        t = db.get_translations(m["id"])
+        return {"id": m.get("steam_id"),
+                "title": t.get("title") or m.get("title_en") or m.get("title"),
+                "subs": m.get("subscriptions") or 0}
+
+    # 名字 → steam_id（用于把 compat 条目解析到清单成员）
+    name_map = {}
+    for sid, m in mods.items():
+        for t in filter(None, [m.get("title_en"), m.get("title")]):
+            nn = _norm_name(t)
+            if nn:
+                name_map.setdefault(nn, sid)
+
+    def resolve_target(entry, self_sid):
+        """compat 条目 → 清单内目标 sid；解析不到返回 None"""
+        if not isinstance(entry, dict):
+            return None
+        eid = str(entry.get("id") or "").strip()
+        if eid.isdigit() and eid in mods and eid != self_sid:
+            return eid
+        name = str(entry.get("name") or "")
+        nn = _norm_name(name)
+        if nn in name_map and name_map[nn] != self_sid:
+            return name_map[nn]
+        if len(nn) >= 10:                      # 长名模糊包含（≥10 字符防误配）
+            for k, v in name_map.items():
+                if v != self_sid and (nn in k or k in nn):
+                    return v
+        return None
+
+    conflicts, seen_pairs = [], set()
+    missing_requires = []
+    known = 0
+    for sid, m in mods.items():
+        c = db.get_compat(m["id"])
+        if not c:
+            continue
+        known += 1
+        for entry in (c.get("conflicts") or []):
+            tgt = resolve_target(entry, sid)
+            if not tgt:
+                continue
+            name = entry.get("name") if isinstance(entry, dict) else str(entry)
+            note = (entry.get("note") if isinstance(entry, dict) else "") or name
+            pair = tuple(sorted([sid, tgt]))
+            if pair in seen_pairs:
+                continue
+            seen_pairs.add(pair)
+            conflicts.append({"a": brief(mods[pair[0]]), "b": brief(mods[pair[1]]), "note": note})
+        for entry in (c.get("requires") or []):
+            name = str(entry.get("name") or "") if isinstance(entry, dict) else str(entry)
+            if not name:
+                continue
+            tgt = resolve_target(entry, sid)
+            if tgt is None:                     # 依赖的 MOD 不在清单中
+                missing_requires.append({"mod": brief(m), "require": name})
+
+    conflicts.sort(key=lambda x: -(x["a"]["subs"] + x["b"]["subs"]))
+    return {
+        "checked": len(mods),
+        "known_compat": known,
+        "conflicts": conflicts,
+        "missing_requires": missing_requires[:20],
+        "coverage_note": "兼容数据来自 MOD 描述挖掘与人工整理，覆盖有限——无警告不代表实际无冲突，装后请进游戏验证。",
+    }
+
+
 def get_stats(game_id, db=None):
     if db is None:
         db = get_db(game_id)
@@ -526,6 +617,9 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json(get_versions(game_id, db))
                 elif api_name == "picks":
                     self._send_json(get_picks(game_id, db))
+                elif api_name == "conflict-check":
+                    ids = q.get("ids", [""])[0].split(",")
+                    self._send_json(conflict_check(game_id, ids, db))
                 elif api_name == "local":
                     self._send_json({"local": get_local(game_id)})
                 elif api_name == "localizations":
