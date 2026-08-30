@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-30 17:13",
-  "db_total": 627,
-  "db_translated": 627,
+  "updated_at": "2026-08-30 20:56",
+  "db_total": 677,
+  "db_translated": 677,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    627
+    677
   ],
-  "translated_rank_count": 627,
-  "next_batch_start_rank": 628,
+  "translated_rank_count": 677,
+  "next_batch_start_rank": 678,
   "next_batch_size": 50,
-  "remaining": 393,
+  "remaining": 343,
   "next_batch_preview": [
     {
-      "rank": 628,
-      "id": "2830996883",
-      "title": "UI Overhaul Dynamic + Improved Font"
+      "rank": 678,
+      "id": "3556222090",
+      "title": "BPV Reborn - Zone Double Row Mode"
     },
     {
-      "rank": 629,
-      "id": "702164152",
-      "title": "TFW's Bunch of Ship Parts 1.9"
+      "rank": 679,
+      "id": "689858852",
+      "title": "Ancient Ship Types"
     },
     {
-      "rank": 630,
-      "id": "2113865264",
-      "title": "10XRepeatableTech"
+      "rank": 680,
+      "id": "1212536129",
+      "title": "Just Star Names"
     },
     {
-      "rank": 631,
-      "id": "3387068412",
-      "title": "Vanilla Basic Optimization"
+      "rank": 681,
+      "id": "917206871",
+      "title": "EG* - Dimmer Core"
     },
     {
-      "rank": 632,
-      "id": "2525278602",
-      "title": "Fleet Formation Mod v2"
+      "rank": 682,
+      "id": "1690425831",
+      "title": "[已经废弃]The DAL Species Mod约会大作战种族"
     }
   ]
 }

@@ -1592,6 +1592,12 @@ function enterGame(g, opts) {
   $('gamesel').value = g;
   dlcCache = null; locCache = null; localCache = null; trendCache = null; picksCache = null;
   $('versionsel').value = '';
+  $('kw').value = '';          // 换星域必须重置搜索态，否则上一游戏的筛选残留
+  activeTag = null;
+  $('sortsel').value = 'subs';
+  $('limitsel').value = '0';
+  pendingPage = 1;
+  document.querySelectorAll('.tag-chip').forEach(el => el.classList.remove('active'));
   $('toolbar').style.display = 'block';
   initGalaxy();          // 有内建防重入；首次进入时 hero 已可见
   loadStats();
@@ -1605,6 +1611,7 @@ function enterGame(g, opts) {
 }
 
 function launchGame(g) {
+  if (document.getElementById('warp').style.display === 'block') return;   // 曲速中防连点
   warpTo(THEME_RGB[g] || '95,215,255', () => {
     history.pushState({ game: g }, '', '?game=' + g);
     enterGame(g, {});
@@ -1657,6 +1664,13 @@ function route() {
   const g = p.get('game') || (p.toString() ? 'stellaris' : null);
   if (!g) { showLauncher(); return; }
   if (GAME !== g) { enterGame(g, { warp: false, fromURL: true }); return; }
+  if (document.body.dataset.view !== 'game') {
+    // 前进/后退回到当前游戏：数据仍在，只切视图，不重新加载
+    document.body.dataset.view = 'game';
+    document.body.dataset.theme = g;
+    $('gamesel').value = g;
+    return;
+  }
   applyFromURL({ fromPop: true });
 }
 
