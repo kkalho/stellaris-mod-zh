@@ -82,13 +82,15 @@ def migrate():
             })
         count += 1
 
-    # 2. 迁移 translations
-    trans = conn_old.execute("SELECT * FROM translations").fetchall()
+    # 2. 迁移 translations（按 steam_id 关联新旧库，避免新旧库 mod_id 序列错位）
+    trans = conn_old.execute("""
+        SELECT t.field, t.zh_text, t.quality, m.steam_id
+        FROM translations t JOIN mods m ON m.id = t.mod_id
+    """).fetchall()
     trans_count = 0
     for t in trans:
-        mod = new_db.get_mod(t["mod_id"])
+        mod = new_db.get_mod_by_steam_id(t["steam_id"])
         if not mod:
-            # mod_id 可能不连续，用 steam_id 反查
             continue
         new_db.set_translation(mod["id"], t["field"], t["zh_text"], t["quality"])
         trans_count += 1

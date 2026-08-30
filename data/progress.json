@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-24 21:30",
-  "db_total": 477,
-  "db_translated": 477,
+  "updated_at": "2026-08-26 21:10",
+  "db_total": 577,
+  "db_translated": 577,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    477
+    577
   ],
-  "translated_rank_count": 477,
-  "next_batch_start_rank": 478,
+  "translated_rank_count": 577,
+  "next_batch_start_rank": 578,
   "next_batch_size": 50,
-  "remaining": 543,
+  "remaining": 443,
   "next_batch_preview": [
     {
-      "rank": 428,
-      "id": "2976573664",
-      "title": "Expanded Stellaris Ascension Perks (Delta)"
+      "rank": 578,
+      "id": "1620838511",
+      "title": "Expanded Governments"
     },
     {
-      "rank": 429,
-      "id": "1286356239",
-      "title": "Planet Raider"
+      "rank": 579,
+      "id": "2616955720",
+      "title": "额外传统"
     },
     {
-      "rank": 430,
-      "id": "2436969913",
-      "title": "Integrated Repeatable Technologies"
+      "rank": 580,
+      "id": "2946000546",
+      "title": "异常/考古/裂隙显示效果（支持铁人/联机）【4.X】"
     },
     {
-      "rank": 431,
-      "id": "1506080933",
-      "title": "No Names on the Map"
+      "rank": 581,
+      "id": "682336292",
+      "title": "Flexible Core Planet Cap & Resettlement Cost (2.8)"
     },
     {
-      "rank": 432,
-      "id": "2810064268",
-      "title": "碧蓝档案故事包 BlueArchive story pack - BETA"
+      "rank": 582,
+      "id": "1660235095",
+      "title": "At War: Carrier Enhancements"
     }
   ]
 }

@@ -1,4 +1,4 @@
-"""抓取排名 #428-#477 的 50 个 MOD 详情（官方 API，带重试与限速）
+"""抓取排名 #578-#627 的 50 个 MOD 详情（官方 API，带重试与限速）
 输出: data/details.jsonl（追加）
 """
 import sys, io, json, time, os, re
@@ -8,15 +8,15 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 API_URL = "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/"
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# 读取榜单，取排名 #428-#477 的 publishedfileid
+# 读取榜单，取排名 #578-#627 的 publishedfileid
 with open(os.path.join(BASE, "data", "workshop_top1000.json"), encoding="utf-8") as f:
     mods = json.load(f)["mods"]
 
 target = []
 for i, m in enumerate(mods, start=1):
-    if 428 <= i <= 477:
+    if 578 <= i <= 627:
         target.append(str(m["publishedfileid"]))
-print(f"目标 {len(target)} 个: 排名 #428~#477")
+print(f"目标 {len(target)} 个: 排名 #578~#627")
 
 import requests
 session = requests.Session()
