@@ -23,7 +23,7 @@ import games.stellaris.config.game  # noqa: F401
 import games.ck3.config.game  # noqa: F401
 import games.hoi4.config.game  # noqa: F401
 from core.game_config import get_game
-from core.mod_db import ModDB
+from core.mod_db import ModDB, calc_score
 
 DATA_DIR = os.path.join(BASE_DIR, "data")
 TOP_PATH = os.path.join(DATA_DIR, "workshop_top1000.json")
@@ -77,23 +77,6 @@ def clean_bbcode(text: str) -> str:
         return ""
     text = re.sub(r"\[/?[a-zA-Z0-9=#\"' ]*\]", "", text)
     return text.strip()
-
-
-def _score(subs, fav):
-    try:
-        subs = int(subs or 0)
-        fav = int(fav or 0)
-        if subs <= 0:
-            return 0.0
-        ratio = fav / subs
-        s = 4.0 + (min(ratio, 0.15) / 0.15) * 5.5
-        if subs >= 100000:
-            s += 0.5
-        elif subs >= 50000:
-            s += 0.3
-        return round(min(s, 10.0), 1)
-    except Exception:
-        return 0.0
 
 
 def import_range(game_id: str, start: int, end: int, verbose: bool = True) -> dict:
@@ -150,7 +133,7 @@ def import_range(game_id: str, start: int, end: int, verbose: bool = True) -> di
             "required_dlcs": [],
             "optional_dlcs": [],
             "status": "deprecated" if "DEPRECATED" in (d.get("title") or "").upper() else "",
-            "score": _score(subs, fav),
+            "score": calc_score(subs, fav),
             "like_ratio": round(fav / subs * 100, 1) if subs else 0,
             "translated": 0,
         })

@@ -39,7 +39,7 @@ import games.stellaris.config.game  # noqa: F401
 import games.ck3.config.game  # noqa: F401
 import games.hoi4.config.game  # noqa: F401
 from core.game_config import get_game, list_games
-from core.mod_db import ModDB
+from core.mod_db import ModDB, calc_score
 
 # 游戏配置缓存（轻量，无连接）
 _CFG_CACHE = {}
@@ -80,23 +80,6 @@ def get_db(game_id: str) -> ModDB:
     # 只设置 busy_timeout（连接级），WAL 由首次连接持久化
     db.conn.execute("PRAGMA busy_timeout = 8000")
     return db
-
-
-def calc_score(subs, fav):
-    try:
-        subs = int(subs or 0)
-        fav = int(fav or 0)
-        if subs <= 0:
-            return 0.0
-        ratio = fav / subs
-        s = 4.0 + (min(ratio, 0.15) / 0.15) * 5.5
-        if subs >= 100000:
-            s += 0.5
-        elif subs >= 50000:
-            s += 0.3
-        return round(min(s, 10.0), 1)
-    except Exception:
-        return 0.0
 
 
 def search(game_id, keyword, limit=60, sort="subs", tag=None, version=None, db=None):

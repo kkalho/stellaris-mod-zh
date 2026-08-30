@@ -193,6 +193,16 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 .game-bar { position: relative; z-index: 1; max-width: 680px; margin: 0 auto 10px; padding: 0 20px; display: flex; align-items: center; gap: 8px; }
 .game-bar select { padding: 7px 12px; font-size: 13px; color: #d8dde8; background: rgba(20,28,50,.85); border: 1px solid rgba(100,140,255,.25); border-radius: 8px; outline: none; cursor: pointer; }
 .game-bar select option { background: #141c32; }
+.scene-cards { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.scene-card {
+  cursor: pointer; background: rgba(20,28,50,.7); border: 1px solid rgba(100,140,255,.2);
+  border-radius: 12px; padding: 12px 18px; min-width: 150px; text-align: left;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+.scene-card:hover { background: rgba(28,40,70,.9); border-color: rgba(100,140,255,.5); transform: translateY(-1px); }
+.scene-card .sc-icon { font-size: 20px; }
+.scene-card .sc-t { color: #e8edf8; font-size: 14px; font-weight: 500; margin-top: 4px; }
+.scene-card .sc-d { color: #8a93a8; font-size: 12px; margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -219,6 +229,12 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
 </div>
 
 <main>
+  <div class="scene-cards" id="sceneCards">
+    <div class="scene-card" onclick="sceneGo('beginner')"><div class="sc-icon">🚀</div><div class="sc-t">新手入门</div><div class="sc-d">适配当前版本的高分 MOD</div></div>
+    <div class="scene-card" onclick="sceneGo('graphics')"><div class="sc-icon">🎨</div><div class="sc-t">画面美化</div><div class="sc-d">星空、舰船与界面升级</div></div>
+    <div class="scene-card" onclick="sceneGo('events')"><div class="sc-icon">📖</div><div class="sc-t">剧情事件</div><div class="sc-d">新事件与新故事</div></div>
+    <div class="scene-card" onclick="sceneGo('gameplay')"><div class="sc-icon">🧩</div><div class="sc-t">玩法扩展</div><div class="sc-d">机制与内容深度扩展</div></div>
+  </div>
   <div class="stats" id="stats"></div>
   <div id="toolbar" style="display:none">
     <div class="tag-bar" id="tagbar"></div>
@@ -245,6 +261,7 @@ footer { position: relative; z-index: 1; text-align: center; color: #4a5468; fon
       <button class="dlc-btn" onclick="openLocPanel()">🌐 汉化包</button>
       <button class="dlc-btn" onclick="openLocalPanel()">📁 本地 MOD</button>
       <button class="dlc-btn" onclick="openTrendPanel()">📈 热度趋势</button>
+      <button class="dlc-btn" onclick="copyList()">📋 复制清单</button>
       <button class="back-btn" style="margin-bottom:0" onclick="clearFilters()">清除筛选</button>
     </div>
     <div id="dlcPanel" class="dlc-panel" style="display:none"></div>
@@ -272,7 +289,14 @@ let currentTitle = '🔥 订阅量 Top';
 
 async function api(path) {
   const r = await fetch(path);
-  return r.json();
+  let d = null;
+  try { d = await r.json(); } catch (e) { throw new Error('服务返回异常'); }
+  if (!r.ok) throw new Error((d && d.error) ? d.error : ('请求失败 (' + r.status + ')'));
+  return d;
+}
+
+function contentError(msg) {
+  $('content').innerHTML = `<div class="status-warn">⚠ ${esc(msg)}</div>`;
 }
 
 function esc(s) {
@@ -298,7 +322,8 @@ function statusBadge(s) {
 }
 function versionBadge(v) {
   if (!v) return '';
-  const isNew = v.includes('4.4') || v.includes('4.3') || v.includes('4.2') || v.includes('4.1') || v.includes('4.0');
+  const m = String(v).match(/(\d+)\.\d/);
+  const isNew = m && parseInt(m[1], 10) === currentMajor;
   return `<span class="version-badge ${isNew ? 'new' : 'old'}" title="${esc(v)}">${esc(v)}</span>`;
 }
 function statusWarn(s) {
@@ -311,25 +336,33 @@ function scorePill(sc) {
   return `<span class="score-pill ${cls}">⭐ ${sc.toFixed(1)}</span>`;
 }
 
+let currentMajor = 4;   // 当前大版本（由 /versions 接口刷新，出 5.x 后自动跟随）
+let tagZhMap = {};      // 英文标签 → 中文名（loadTags 时填充）
 async function loadStats() {
-  const s = await api('/api/' + GAME + '/stats');
-  $('stats').innerHTML = `
-    <div class="stat"><div class="num">${s.total}</div><div class="label">已收录 Mod</div></div>
-    <div class="stat"><div class="num">${fmt(s.subs)}</div><div class="label">累计订阅</div></div>
-    <div class="stat"><div class="num">${s.translated}</div><div class="label">已翻译</div></div>`;
+  try {
+    const s = await api('/api/' + GAME + '/stats');
+    $('stats').innerHTML = `
+      <div class="stat"><div class="num">${s.total}</div><div class="label">已收录 Mod</div></div>
+      <div class="stat"><div class="num">${fmt(s.subs)}</div><div class="label">累计订阅</div></div>
+      <div class="stat"><div class="num">${s.translated}</div><div class="label">已翻译</div></div>`;
+  } catch (e) { $('stats').innerHTML = `<div class="status-warn">⚠ ${esc(e.message)}</div>`; }
 }
 
 async function loadTags() {
-  const r = await api('/api/' + GAME + '/categories');
-  // 按数量取前 14 个分类；有中文映射时直接显示中文（更清爽）
-  const cats = r.categories.filter(c => c.tag && c.tag.trim());
-  const top = cats.slice(0, 14);
-  $('tagbar').innerHTML = top.map(c => {
-    const label = (c.tag_zh && c.tag_zh !== c.tag)
-      ? `${esc(c.tag_zh)}` : esc(c.tag);
-    const tip = (c.tag_zh && c.tag_zh !== c.tag) ? ` title="${esc(c.tag)}"` : '';
-    return `<span class="tag-chip" data-tag="${esc(c.tag)}"${tip} onclick="toggleTag('${esc(c.tag)}')">${label} (${c.count})</span>`;
-  }).join('');
+  try {
+    const r = await api('/api/' + GAME + '/categories');
+    // 按数量取前 14 个分类；有中文映射时直接显示中文（更清爽）
+    const cats = r.categories.filter(c => c.tag && c.tag.trim());
+    tagZhMap = {};
+    cats.forEach(c => { tagZhMap[c.tag] = (c.tag_zh && c.tag_zh !== c.tag) ? c.tag_zh : c.tag; });
+    const top = cats.slice(0, 14);
+    $('tagbar').innerHTML = top.map(c => {
+      const label = (c.tag_zh && c.tag_zh !== c.tag)
+        ? `${esc(c.tag_zh)}` : esc(c.tag);
+      const tip = (c.tag_zh && c.tag_zh !== c.tag) ? ` title="${esc(c.tag)}"` : '';
+      return `<span class="tag-chip" data-tag="${esc(c.tag)}"${tip} onclick="toggleTag('${esc(c.tag)}')">${label} (${c.count})</span>`;
+    }).join('');
+  } catch (e) { /* 标签栏加载失败不阻塞主列表 */ }
 }
 
 let versionLabels = {};   // 版本号 → 展示名（来自 /versions 接口）
@@ -349,9 +382,30 @@ async function loadVersions() {
     });
     if (has3) html += '<option value="3.x">3.x（旧版）</option>';
     $('versionsel').innerHTML = html;
+    // 当前大版本 = 列表里最高的大版本号（版本徽章绿/灰判断随数据走）
+    const top = vs.find(v => /^\d+\.\d+$/.test(v.v));
+    if (top) currentMajor = parseInt(top.v, 10);
   } catch (e) { /* 接口异常时保留下拉仅剩"全部版本" */ }
 }
 
+// 场景卡：按目的一键筛选（预设过滤组合，数据驱动，无人工挑选）
+const SCENES = {
+  beginner: { version: '4.x', tag: null },
+  graphics: { version: '',    tag: 'Graphics' },
+  events:   { version: '',    tag: 'Events' },
+  gameplay: { version: '',    tag: 'Gameplay' },
+};
+function sceneGo(key) {
+  const s = SCENES[key];
+  if (!s) return;
+  $('toolbar').style.display = 'block';
+  activeTag = s.tag || null;
+  document.querySelectorAll('.tag-chip').forEach(el =>
+    el.classList.toggle('active', el.dataset.tag === activeTag));
+  $('versionsel').value = s.version || '';
+  applyFilters();
+  window.scrollTo({ top: 220, behavior: 'smooth' });
+}
 function toggleTag(tag) {
   if (activeTag === tag) { activeTag = null; }
   else { activeTag = tag; }
@@ -372,11 +426,14 @@ async function applyFilters() {
                (tag ? '&tag=' + encodeURIComponent(tag) : '') +
                (version ? '&version=' + encodeURIComponent(version) : '');
   $('content').innerHTML = '<div class="loading">正在加载...</div>';
-  const r = await api(path);
+  let r;
+  try { r = await api(path); }
+  catch (e) { allResults = []; contentError(e.message); return; }
   allResults = r.results;
   curPage = 1;
   const vLabel = version ? (versionLabels[version] || version) : '';
-  currentTitle = kw ? `“${kw}” 的搜索结果` : (tag ? `分类：${tag}` : (vLabel ? `版本：${vLabel}` : '全部 Mod'));
+  const tLabel = tag ? (tagZhMap[tag] || tag) : '';
+  currentTitle = kw ? `“${kw}” 的搜索结果` : (tLabel ? `分类：${tLabel}` : (vLabel ? `版本：${vLabel}` : '全部 Mod'));
   renderPaged();
 }
 
@@ -405,11 +462,12 @@ function renderList(rows, title) {
   }
   let html = `<div class="list-title">${esc(title)}</div>`;
   rows.forEach(m => {
+    const sid = String(m.id == null ? '' : m.id).replace(/[^0-9]/g, '');  // Steam ID 只允许数字
     const thumb = m.preview
       ? `<div class="thumb"><img src="${esc(m.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>`
       : `<div class="thumb"><span class="noimg">无预览图</span></div>`;
     html += `
-    <div class="mod-card" onclick="showDetail('${m.id}')">
+    <div class="mod-card" onclick="showDetail('${sid}')">
       ${thumb}
       <div class="body">
         <div class="top">
@@ -417,7 +475,7 @@ function renderList(rows, title) {
           <div class="subs">🛰 ${fmt(m.subs)} 订阅${scorePill(m.score)}</div>
         </div>
         ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
-        <div class="id">Steam ID: ${m.id}${m.tags_zh ? ' · ' + esc(m.tags_zh) : (m.tags ? ' · ' + esc(m.tags) : '')}</div>
+        <div class="id">Steam ID: ${sid}${m.tags_zh ? ' · ' + esc(m.tags_zh) : (m.tags ? ' · ' + esc(m.tags) : '')}</div>
       </div>
     </div>`;
   });
@@ -524,7 +582,7 @@ async function openLocPanel() {
             <div class="subs">🛰 ${fmt(l.mod_subs)} 订阅</div>
           </div>
           <div class="summary">
-            对应 MOD：<span style="color:#9fc0ff;cursor:pointer" onclick="showDetail('${esc(l.mod_steam_id)}')">${esc(l.mod_title || l.mod_steam_id)}</span>
+            对应 MOD：<span style="color:#9fc0ff;cursor:pointer" onclick="showDetail('${String(l.mod_steam_id || '').replace(/[^0-9]/g, '')}')">${esc(l.mod_title || l.mod_steam_id)}</span>
             &nbsp;·&nbsp; 作者：${esc(l.author || '-')}
             &nbsp;·&nbsp; 目标版本：<span style="color:#e8edf8">${esc(l.target_version || '*')}</span>
           </div>
@@ -582,7 +640,7 @@ async function openLocalPanel() {
           </div>
           <div class="summary">
             版本：${esc(m.version || '-')} · 大小：${m.size_mb ? m.size_mb.toFixed(1) + ' MB' : '-'}
-            ${m.steam_id ? ` · Steam ID：<span style="color:#9fc0ff;cursor:pointer" onclick="showDetail('${esc(m.steam_id)}')">${esc(m.steam_id)}</span>` : ''}
+            ${m.steam_id ? ` · Steam ID：<span style="color:#9fc0ff;cursor:pointer" onclick="showDetail('${String(m.steam_id).replace(/[^0-9]/g, '')}')">${esc(m.steam_id)}</span>` : ''}
           </div>
           <div class="id">
             ${kb ? '<span style="color:#c0dd97">知识库中已收录，可查看中文介绍与评分</span>'
@@ -660,8 +718,11 @@ async function openTrendPanel() {
 async function showDetail(id) {
   $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
   $('pager').style.display = 'none';
-  const d = await api('/api/' + GAME + '/mod?id=' + id);
+  let d;
+  try { d = await api('/api/' + GAME + '/mod?id=' + encodeURIComponent(id)); }
+  catch (e) { contentError(e.message); return; }
   if (d.error) { $('content').innerHTML = '<div class="loading">未找到该 Mod</div>'; return; }
+  const sid = String(d.id == null ? '' : d.id).replace(/[^0-9]/g, '');
   let html = `
     <button class="back-btn" onclick="backToList()">← 返回列表</button>
     <div class="detail">
@@ -678,7 +739,7 @@ async function showDetail(id) {
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>
         ${d.version ? `<div class="meta-item"><div class="k">版本兼容</div><div class="v">${esc(d.version)}</div></div>` : ''}
         <div class="meta-item"><div class="k">标签</div><div class="v">${esc(d.tags_zh || d.tags || '-')}</div></div>
-        <div class="meta-item"><div class="k">Steam ID</div><div class="v">${d.id}</div></div>
+        <div class="meta-item"><div class="k">Steam ID</div><div class="v">${sid}</div></div>
       </div>`;
   if (d.summary) html += `<h3>📝 简介</h3><div class="summary-text">${esc(d.summary)}</div>`;
   if (d.features && d.features.length) {
@@ -740,21 +801,34 @@ async function showDetail(id) {
   if (d.description) html += `<h3>📄 详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
   if (d.reviews) html += `<h3>💬 玩家评价</h3><div class="desc-text">${esc(d.reviews)}</div>`;
   html += `<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-    <a class="link" style="margin-top:0" href="${d.url}" target="_blank">🔗 在 Steam 查看原文 ↗</a>
-    <a class="link" style="margin-top:0" href="steam://url/CommunityFilePage/${d.id}" target="_blank">📥 打开 Steam 订阅页</a>
-    <a class="link" style="margin-top:0;cursor:pointer" onclick="copyId('${d.id}')">📋 复制 Mod ID</a>
+    <a class="link" style="margin-top:0" href="${esc(d.url)}" target="_blank" rel="noopener">🔗 在 Steam 查看原文 ↗</a>
+    <a class="link" style="margin-top:0" href="steam://url/CommunityFilePage/${sid}" target="_blank">📥 打开 Steam 订阅页</a>
+    <a class="link" style="margin-top:0;cursor:pointer" onclick="copyId('${sid}')">📋 复制 Mod ID</a>
   </div></div>`;
   $('content').innerHTML = html;
 }
 
+function toast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(60,110,220,.9);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:99';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
+}
+
 function copyId(id) {
-  navigator.clipboard.writeText(id).then(() => {
-    const t = document.createElement('div');
-    t.textContent = '✓ 已复制 ID: ' + id;
-    t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(60,110,220,.9);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:99';
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 1800);
-  });
+  navigator.clipboard.writeText(id)
+    .then(() => toast('✓ 已复制 ID: ' + id))
+    .catch(() => toast('复制失败，请手动复制'));
+}
+
+function copyList() {
+  if (!allResults.length) { toast('当前列表为空'); return; }
+  const lines = allResults.map(m =>
+    `${m.title} | https://steamcommunity.com/sharedfiles/filedetails/?id=${String(m.id).replace(/[^0-9]/g, '')}`);
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(() => toast(`✓ 已复制 ${lines.length} 个 MOD 清单（含 Steam 链接）`))
+    .catch(() => toast('复制失败，请手动复制'));
 }
 
 function backToList() {
@@ -765,12 +839,14 @@ function backToList() {
 async function loadTop() {
   $('content').innerHTML = '<div class="loading">正在加载全部 Mod 列表...</div>';
   $('toolbar').style.display = 'block';
-  // n=0 表示返回全部（后端已支持），让用户可以翻完所有 Mod
-  const r = await api('/api/' + GAME + '/top?n=0');
-  allResults = r.results;
-  curPage = 1;
-  currentTitle = '🔥 全部 Mod（按订阅量排序）';
-  renderPaged();
+  try {
+    // n=0 表示返回全部（后端已支持），让用户可以翻完所有 Mod
+    const r = await api('/api/' + GAME + '/top?n=0');
+    allResults = r.results;
+    curPage = 1;
+    currentTitle = '🔥 全部 Mod（按订阅量排序）';
+    renderPaged();
+  } catch (e) { allResults = []; contentError(e.message); }
 }
 
 

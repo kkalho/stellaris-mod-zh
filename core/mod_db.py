@@ -17,6 +17,27 @@ from typing import Any, Dict, List, Optional
 from core.game_config import GameConfig
 
 
+def calc_score(subs, fav) -> float:
+    """综合评分启发式（订阅量 + 收藏率），0-10 分。
+
+    唯一实现：web 服务与导入脚本统一引用，改参数只改这里。
+    """
+    try:
+        subs = int(subs or 0)
+        fav = int(fav or 0)
+        if subs <= 0:
+            return 0.0
+        ratio = fav / subs
+        s = 4.0 + (min(ratio, 0.15) / 0.15) * 5.5
+        if subs >= 100000:
+            s += 0.5
+        elif subs >= 50000:
+            s += 0.3
+        return round(min(s, 10.0), 1)
+    except Exception:
+        return 0.0
+
+
 class ModDB:
     """MOD 主库访问（游戏隔离）"""
 
