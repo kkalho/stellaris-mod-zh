@@ -154,6 +154,11 @@ main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding
 }
 .version-badge.new { background: rgba(84,180,120,.18); color: #9fd8b4; border: 1px solid rgba(84,180,120,.4); }
 .version-badge.old { background: rgba(140,150,170,.15); color: #aab3c5; border: 1px solid rgba(140,150,170,.35); }
+/* P6 活跃徽章：作者最近是否有动作（绿=180天内更新 / 琥珀=较久 / 灰=久未更新） */
+.act-badge { display:inline-block; padding:1px 7px; margin-left:6px; font-size:11px; border-radius:2px; vertical-align:1px; }
+.act-badge.active { background: rgba(84,180,120,.16); color:#9fd8b4; border:1px solid rgba(84,180,120,.4); }
+.act-badge.slow { background: rgba(186,117,23,.14); color:#e5b65e; border:1px solid rgba(186,117,23,.4); }
+.act-badge.stale { background: rgba(140,150,170,.12); color:#aab3c5; border:1px solid rgba(140,150,170,.35); }
 .status-warn {
   background: rgba(226,75,74,.1); border: 1px solid rgba(226,75,74,.35);
   border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
@@ -521,6 +526,7 @@ body[data-view="game"] .launcher { display: none !important; }
       <button class="dlc-btn" style="margin-left:auto" onclick="openDlcPanel()">🧩 DLC 检测</button>
       <button class="dlc-btn" onclick="openCcPanel()">⚔ 冲突检测</button>
       <button class="dlc-btn" onclick="openPicksPanel()">🌟 新手推荐</button>
+      <button class="dlc-btn" onclick="openGemsPanel()">💎 遗珠榜</button>
       <button class="dlc-btn" onclick="openLocPanel()">🌐 汉化包</button>
       <button class="dlc-btn" onclick="openLocalPanel()">📁 本地 MOD</button>
       <button class="dlc-btn" onclick="openTrendPanel()">📈 热度趋势</button>
@@ -532,6 +538,7 @@ body[data-view="game"] .launcher { display: none !important; }
     <div id="localPanel" class="dlc-panel" style="display:none"></div>
     <div id="trendPanel" class="dlc-panel" style="display:none"></div>
     <div id="picksPanel" class="dlc-panel" style="display:none"></div>
+    <div id="gemsPanel" class="dlc-panel" style="display:none"></div>
     <div id="ccPanel" class="dlc-panel" style="display:none"></div>
   </div>
   <div id="content"><div class="loading">正在加载热门 Mod 列表...</div></div>
@@ -619,6 +626,13 @@ function versionRisk(d) {
     : { label: `旧版（${vtext} 时期）· 机制类可能不兼容`, cls: 'status-badge deprecated' };
 }
 // 中文支持判断（玩家第一问）：汉化包 > 自带中文（Translation 标签）> 未知
+function actBadge(act) {
+  if (!act || !act.lvl) return '';
+  const days = act.days || 0;
+  if (act.lvl === 'active') return `<span class="act-badge active" title="最近一次更新距今 ${days} 天">活跃</span>`;
+  if (act.lvl === 'slow') return `<span class="act-badge slow" title="最近一次更新距今 ${days} 天">较久未更</span>`;
+  return `<span class="act-badge stale" title="最近一次更新距今约 ${Math.round(days / 30)} 个月">久未更新</span>`;
+}
 function zhSupport(d) {
   if (d.localizations && d.localizations.length) return { label: '📦 有汉化包', cls: 'zh-ok' };
   if (/translation|汉化|中文/i.test(String(d.tags || ''))) return { label: '✓ 自带中文', cls: 'zh-ok' };
@@ -819,7 +833,7 @@ function renderList(rows, title) {
       ${thumb}
       <div class="body">
         <div class="top">
-          <div class="name">${esc(m.title)}${statusBadge(m.status)}${versionBadge(m.version)}${zhBadge}</div>
+          <div class="name">${esc(m.title)}${statusBadge(m.status)}${versionBadge(m.version)}${zhBadge}${actBadge(m.act)}</div>
           <div class="subs">🛰 ${fmt(m.subs)} 订阅${scorePill(m.score)}</div>
         </div>
         ${m.summary ? `<div class="summary">${esc(m.summary)}</div>` : ''}
@@ -846,11 +860,52 @@ function clearFilters() {
   applyFilters();
 }
 
+// ==================== 遗珠榜（P5）：高收藏率 × 低订阅 = 大概率曝光不足 ====================
+let gemsCache = null;
+async function openGemsPanel() {
+  const panel = $('gemsPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'ccPanel'].forEach(id => $(id).style.display = 'none');
+  panel.style.display = 'block';
+  panel.innerHTML = '<div class="loading">正在遴选遗珠...</div>';
+  try {
+    if (!gemsCache) {
+      const d = await api('/api/' + GAME + '/gems');
+      gemsCache = d;
+    }
+    const g = gemsCache;
+    if (!(g.gems || []).length) {
+      panel.innerHTML = `<h3>💎 遗珠榜</h3><div style="color:#8a93a8;font-size:13px">当前库内暂无满足条件的遗珠。</div>
+        <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('gemsPanel').style.display='none'">关闭</button>`;
+      return;
+    }
+    const rows = g.gems.map((k, i) => `
+      <div class="mod-card" onclick="showDetail('${String(k.id == null ? '' : k.id).replace(/[^0-9]/g, '')}')">
+        ${k.preview ? `<div class="thumb"><img src="${esc(k.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>` : '<div class="thumb"><span class="noimg">无预览图</span></div>'}
+        <div class="body" style="min-width:0">
+          <div class="top">
+            <div class="name">${i + 1}. ${esc(k.title)}${versionBadge(k.version)}${actBadge(k.act)}</div>
+            <div class="subs">🛰 ${fmt(k.subs)} 订阅${scorePill(k.score)}</div>
+          </div>
+          ${k.summary ? `<div class="summary">${esc(k.summary)}</div>` : ''}
+          <div class="id" style="color:#9fc0ff">💡 收藏率 ${(k.ratio * 100).toFixed(0)}%（${fmt(k.favs)} 人收藏）— 玩过的人认可度远超其曝光量</div>
+        </div>
+      </div>`).join('');
+    panel.innerHTML = `
+      <h3>💎 遗珠榜</h3>
+      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">按收藏率（收藏/订阅）自动遴选：收藏是玩过之后的主动认可，收藏率显著高于大盘而订阅量进不了头部，大概率是曝光不足而非质量不足。入选条件：订阅 300~3 万、收藏率 ≥ 15%、近 18 个月仍有更新。纯数据计算，无人工编辑。</div>
+      ${rows}
+      <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('gemsPanel').style.display='none'">关闭</button>`;
+  } catch (e) {
+    panel.innerHTML = `<div class="status-warn">加载遗珠榜失败：${esc(e.message)}</div>`;
+  }
+}
+
 let picksCache = null;
 async function openPicksPanel() {
   const panel = $('picksPanel');
   if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel'].forEach(id => $(id).style.display = 'none');
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'ccPanel', 'gemsPanel'].forEach(id => $(id).style.display = 'none');
   panel.style.display = 'block';
   panel.innerHTML = '<div class="loading">正在加载新手推荐...</div>';
   try {
@@ -894,7 +949,7 @@ async function openPicksPanel() {
 function openCcPanel() {
   const panel = $('ccPanel');
   if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel'].forEach(id => $(id).style.display = 'none');
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel'].forEach(id => $(id).style.display = 'none');
   panel.style.display = 'block';
   panel.innerHTML = `
     <h3>⚔ 我的清单冲突检测</h3>
@@ -1160,6 +1215,7 @@ async function showDetail(id, push = true) {
   listScrollY = window.scrollY;   // 记住列表位置，返回时恢复
   $('content').innerHTML = '<div class="loading">正在加载详情...</div>';
   $('pager').style.display = 'none';
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel'].forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
   let d;
   try { d = await api('/api/' + GAME + '/mod?id=' + encodeURIComponent(id)); }
   catch (e) { contentError(e.message); return; }
@@ -1178,6 +1234,7 @@ async function showDetail(id, push = true) {
         <div class="meta-item"><div class="k">收藏率</div><div class="v">${d.like_ratio ? d.like_ratio + '%' : '-'}</div></div>
         <div class="meta-item"><div class="k">作者</div><div class="v">${/^\d{15,}$/.test(String(d.author || '')) ? `<a style="color:#6fa8ff;text-decoration:none" href="https://steamcommunity.com/profiles/${esc(d.author)}" target="_blank" rel="noopener">作者主页 ↗</a>` : (esc(d.author) || '-')}</div></div>
         <div class="meta-item"><div class="k">中文支持</div><div class="v"><span class="status-badge ${zh.cls}" style="margin:0">${zh.label}</span></div></div>
+        ${d.act && d.act.lvl ? `<div class="meta-item"><div class="k">更新状态</div><div class="v">${actBadge(d.act)}</div></div>` : ''}
         ${versionRisk(d) ? `<div class="meta-item" style="grid-column:1/-1"><div class="k">旧版风险提示</div><div class="v"><span class="status-badge ${versionRisk(d).cls}" style="margin:0">${versionRisk(d).label}</span></div></div>` : ''}
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">收藏数</div><div class="v">${fmt(d.fav)}</div></div>
@@ -1674,7 +1731,8 @@ function enterGame(g, opts) {
   document.body.dataset.theme = g;
   document.body.dataset.view = 'game';
   $('gamesel').value = g;
-  dlcCache = null; locCache = null; localCache = null; trendCache = null; picksCache = null;
+  dlcCache = null; locCache = null; localCache = null; trendCache = null; picksCache = null; gemsCache = null;
+  ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'picksPanel', 'gemsPanel', 'ccPanel'].forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
   $('versionsel').value = '';
   $('kw').value = '';          // 换星域必须重置搜索态，否则上一游戏的筛选残留
   activeTag = null;

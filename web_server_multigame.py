@@ -14,6 +14,7 @@ API（带游戏上下文）:
     GET /api/<game>/categories  → 标签分类
     GET /api/<game>/versions    → 版本筛选选项（从数据生成，附代号/计数）
     GET /api/<game>/picks       → 新手精选推荐（beginner_picks.json + 库内联表）
+    GET /api/<game>/gems        → 遗珠榜（收藏率显著高于大盘的低订阅 MOD，纯计算）
     GET /api/<game>/conflict-check?ids= → 清单冲突/缺失依赖检测（P7）
     GET /api/<game>/local       → 本地 MOD 列表
     GET /api/<game>/localizations → 汉化包数据库
@@ -151,6 +152,7 @@ def search(game_id, keyword, limit=60, sort="subs", tag=None, version=None, db=N
             "status": d.get("status"),
             "version": d.get("version") or "",
             "score": calc_score(d.get("subscriptions"), d.get("favorites")),
+            "act": activity_of(d.get("time_updated")),
         })
     return results
 
@@ -208,6 +210,7 @@ def get_detail(game_id, steam_id, db=None):
         "updated": updated,
         "preview": m.get("preview_url") or "",
         "score": calc_score(m.get("subscriptions"), m.get("favorites")),
+        "act": activity_of(m.get("time_updated")),
         "like_ratio": round((m.get("favorites") or 0) / (m.get("subscriptions") or 1) * 100, 1)
                       if m.get("subscriptions") else 0,
         "status": m.get("status"),
@@ -309,6 +312,60 @@ def get_picks(game_id, db=None):
             "source_url": p.get("source_url", ""),
         })
     return {"note": data.get("note", ""), "picks": out}
+
+
+def activity_of(ts):
+    """P6 活跃徽章：按最近一次更新距今天数分三档。
+    只陈述「作者最近有没有动作」，不推断兼容性（那是 versionRisk 的职责）。"""
+    ts = int(ts or 0)
+    if not ts:
+        return None
+    days = max(0, int((time.time() - ts) / 86400))
+    if days <= 180:
+        return {"lvl": "active", "days": days}
+    if days <= 540:
+        return {"lvl": "slow", "days": days}
+    return {"lvl": "stale", "days": days}
+
+
+def get_gems(game_id, db=None):
+    """P5 遗珠榜：纯库内数据计算，无人工编辑。
+    遴选逻辑——收藏是玩家玩过之后的主动认可，收藏率（收藏/订阅）显著高于
+    大盘而订阅量进不了头部，大概率是曝光不足而非质量不足。
+    条件：300 < 订阅 < 30000，收藏率 ≥ 15%，近 18 个月仍有更新（排除弃坑）。"""
+    if db is None:
+        db = get_db(game_id)
+    conn = db.conn
+    cutoff = int(time.time()) - 540 * 86400
+    rows = conn.execute("""
+        SELECT m.*, COALESCE(tsum.zh_text, '') as summary,
+               COALESCE(ttitle.zh_text, m.title_en) as display_title
+        FROM mods m
+        LEFT JOIN translations tsum ON tsum.mod_id = m.id AND tsum.field = 'summary'
+        LEFT JOIN translations ttitle ON ttitle.mod_id = m.id AND ttitle.field = 'title'
+        WHERE m.game_id=? AND m.subscriptions > 300 AND m.subscriptions < 30000
+              AND m.favorites * 1.0 / m.subscriptions >= 0.15
+              AND m.time_updated > ?
+        ORDER BY m.favorites DESC LIMIT 24
+    """, (game_id, cutoff)).fetchall()
+    gems = []
+    for r in rows:
+        d = dict(r)
+        subs = max(d.get("subscriptions") or 0, 1)
+        ratio = (d.get("favorites") or 0) * 1.0 / subs
+        gems.append({
+            "id": d.get("steam_id"),
+            "title": d.get("display_title") or d.get("title_en") or d.get("title"),
+            "summary": d.get("summary") or "",
+            "subs": d.get("subscriptions") or 0,
+            "favs": d.get("favorites") or 0,
+            "ratio": round(ratio, 3),
+            "version": d.get("version") or "",
+            "preview": d.get("preview_url") or "",
+            "act": activity_of(d.get("time_updated")),
+            "score": calc_score(d.get("subscriptions"), d.get("favorites")),
+        })
+    return {"count": len(gems), "gems": gems}
 
 
 def _norm_name(t: str) -> str:
@@ -617,6 +674,8 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json(get_versions(game_id, db))
                 elif api_name == "picks":
                     self._send_json(get_picks(game_id, db))
+                elif api_name == "gems":
+                    self._send_json(get_gems(game_id, db))
                 elif api_name == "conflict-check":
                     ids = q.get("ids", [""])[0].split(",")
                     self._send_json(conflict_check(game_id, ids, db))
