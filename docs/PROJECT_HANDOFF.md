@@ -2,6 +2,10 @@
 
 > **本文档是自包含交接说明书**——新会话/另一 AI 仅凭本文即可完整接手项目。
 > 最后更新：2026-08-30（git `62ff11b`，实测数据核对）
+> **2026-08-30 维护轮**：坑 #1 根因已修复（`upsert_mod` 改部分更新）；新增
+> `rebuild_all.py` 收敛流水线 / `verify_db.py` 数据体检 / `fetch_batch.py` 参数化抓取 /
+> `export_trend.py` 趋势备份；服务端加限流与 `/versions` 接口；`build_db.py`、
+> `update_all.py` 已加防呆（见 §10）。
 
 ---
 
@@ -133,11 +137,11 @@
 
 ## 7. 群星扩容标准流程（每批 50 个，约 10 分钟）
 
-**已跑到 #577，下一批 #578-627。已有 fetch_batch15/16 脚本可改 rank 生成。**
+**已跑到 #577，下一批 #578-627。用参数化的 `fetch_batch.py`（不要再复制 batch 脚本）。**
 
 ```bash
-# 1) 抓详情（改脚本里的 rank 范围，如 578-627）
-python scripts/fetch_batch16.py                  # → 追加到 data/details.jsonl
+# 1) 抓详情（参数化，无需改代码）
+python scripts/fetch_batch.py --start 578 --end 627      # → 追加到 data/details.jsonl
 #  ⚠️ 等抓取完成：wc -l data/details.jsonl 两次一致再继续
 
 # 2) 增量入库（不动已有数据，upsert）
@@ -150,10 +154,13 @@ python scripts/import_new_batch.py 578 627
 # 4) 导入翻译
 python scripts/import_stellaris_translations.py translations/batchN_zh.json
 
-# 5) 重跑标注脚本（数据库重建后字段会丢，必须重跑）
+# 5) 重跑标注脚本（或直接跑第 5.5 步一键收敛，代替 5~6 全部步骤）
 python scripts/detect_stellaris_versions.py      # 版本兼容标注
 python scripts/detect_stellaris_dlcs.py          # DLC 依赖标注
 python scripts/rebuild_pinyin_idx.py             # 拼音索引（含中文译名拼音）
+
+# 5.5) 推荐替代 5~6：python scripts/rebuild_all.py
+#      （收敛式流水线：元数据/翻译/口碑导入 + 标注 + 拼音 + 快照 + 体检，全幂等）
 
 # 6) 趋势快照
 python scripts/snapshot_trend.py --game stellaris
@@ -199,6 +206,7 @@ tccli tat RunCommand --region ap-shanghai --Content "$B64" \
 3. 大文件（如 4.1MB 的 details.jsonl）**不要用 curl 拉**，会截断（实测只传下 474KB）
 
 **每日自动更新**：服务器 crontab `0 4 * * *` 跑 `core.cli update --game stellaris --force`（Steam 同步订阅量 + 趋势快照）。云端已积累 6 天连续快照。
+**趋势备份（推荐加到同一 cron）**：cron 追加 `python scripts/export_trend.py`，把 trend 表导出成 `data/stellaris/trend_export.json`；需要回传本地时用 TAT 执行 `gzip -k trend_export.json && base64 trend_export.json.gz`（gzip 后约 20-40KB，满足 TAT 64KB 输出上限）。
 
 ## 9. 常用命令速查
 
@@ -209,11 +217,23 @@ python web_server_multigame.py 8080 --no-browser [--host 0.0.0.0]
 # 数据更新（Steam 真实同步 + 趋势快照）
 python -m core.cli update --game stellaris --force --stale-days 1
 
-# 重跑标注（数据库重建后必做）
+# ⭐ 数据体检（一条命令验健康度；接手/改库后先跑这个）
+python scripts/verify_db.py                # 退出码 1 = 有「标注归零」类问题
+
+# ⭐ 收敛式重建（字段归零/漏导入/改坏库的万能修复，全幂等）
+python scripts/rebuild_all.py              # --dry-run 只看步骤
+
+# 重跑单项标注（一般用 rebuild_all 即可，单项脚本用于快速修补）
 python scripts/detect_stellaris_versions.py
 python scripts/detect_stellaris_dlcs.py
 python scripts/rebuild_pinyin_idx.py
 python scripts/snapshot_trend.py --game stellaris
+
+# 抓取（参数化，替代 fetch_batch9~16）
+python scripts/fetch_batch.py --start 578 --end 627 [--dry-run]
+
+# 趋势导出（云端备份用）
+python scripts/export_trend.py
 
 # 翻译导入
 python scripts/import_stellaris_translations.py translations/batchN_zh.json   # 群星
@@ -252,7 +272,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 
 ## 10. 关键技术坑（血泪教训，勿重蹈）
 
-1. **并行会话重建清数据**（⚠️ 最高频）：`build_db.py` 全量重建会清 `version` / `optional_dlcs` 等字段。**每次发现字段归零，重跑 `detect_stellaris_versions.py` + `detect_stellaris_dlcs.py` 即可恢复**（2026-08-30 就踩了一次）。
+1. **并行会话重建清数据**（⚠️ 曾最高频，2026-08-30 已根治）：根因是 `ModDB.upsert_mod` 更新已有 MOD 时会把未提供的字段整体清空，任何「重建+重灌」链路（`update_all.py` → `build_db.py` → 迁移）都会触发。**已修复三道防线**：① `upsert_mod` 改为部分更新（未提供的字段保持原值，单测覆盖）；② `build_db.py` 必须显式 `--force` 才肯重建、`update_all.py` 已硬停用；③ 新增 `scripts/verify_db.py` 一条命令体检（字段归零立即报出）。**若体检仍报归零（如旧库或新场景），跑 `python scripts/rebuild_all.py` 即可收敛恢复**，或手动重跑 `detect_stellaris_versions.py` + `detect_stellaris_dlcs.py`。
 2. **gh-proxy 缓存旧版**：反复拉取都拿到旧文件。解决：改用 **jsDelivr CDN**；或在脚本里校验文件字节数，小于预期就重试。
 3. **大文件 curl 截断**：服务器拉 4.1MB 的 `details.jsonl` 只传下 474KB，导致 JSON 解析失败、导入 0 条。解决：数据库变更导出成小 JSON 存档直插，别拉大文件。
 4. **云端缺目录**：`curl -o translations/deep/xxx.json` 若目录不存在会静默失败。脚本里先 `mkdir -p`。
@@ -280,14 +300,16 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 
 | 路径 | 说明 |
 |---|---|
-| `web_server_multigame.py` | HTTP 服务（多游戏 API，9 个路由） |
-| `web/index_multigame.html` | 前端单文件（761 行，纯 JS） |
-| `core/` | 功能层：DLC 检测/汉化包/本地扫描/口碑/updater/steam_fetch/cli |
-| `games/{stellaris,ck3,hoi4}/config/game.py` | 游戏配置（TAG_ZH 标签映射、DLC 清单、本地目录） |
-| `scripts/` | 抓取（fetch_*）、导入（import_*）、标注（detect_* / rebuild_pinyin_idx / snapshot_trend） |
+| `web_server_multigame.py` | HTTP 服务（多游戏 API，10 个路由；含限流/错误脱敏） |
+| `web/index_multigame.html` | 前端单文件（纯 JS；版本下拉从 `/versions` 接口动态生成） |
+| `core/` | 功能层：DLC 检测/汉化包/本地扫描/口碑/updater/steam_fetch/cli（`mod_db.upsert_mod` 已改部分更新） |
+| `games/{stellaris,ck3,hoi4}/config/game.py` | 游戏配置（TAG_ZH 标签映射、VERSION_NAMES 版本代号、DLC 清单、本地目录） |
+| `scripts/` | **rebuild_all（收敛重建）/ verify_db（数据体检）/ fetch_batch（参数化抓取）/ export_trend（趋势备份）**；抓取 fetch_batch9~16（旧，已由 fetch_batch.py 取代）、导入（import_*）、标注（detect_* / rebuild_pinyin_idx / snapshot_trend） |
 | `translations/` | 翻译存档（batchN_zh.json + deep/ 深度精做存档） |
 | `data/` | details.jsonl / workshop_top1000.json / progress.json / <game>/mods.db |
 | `docs/` | PROJECT_HANDOFF.md（本文）、MULTI_GAME_ARCHITECTURE.md |
+
+**已停用/防呆脚本**：`update_all.py`（硬停用，指路 rebuild_all）；`build_db.py`（需 `--force`，面向旧库）。
 
 **群星翻译批次**：batch2/8/9（#1-277）· batch10（#278-327）· batch11（#328-377）· batch12（#378-427）· batch13（#428-477）· batch14（#478-527）· batch15/16（进行中）
 **深度精做存档**：`translations/deep/deep_old_batch{0-3}`（原库段 171 个补译）· `deep_batch{10,12,13}`（扩容段）· `deep_new50`（50 个精做升级）· `deep_new50_mods`（数据库行存档）· `deep_trend`（趋势存档）
@@ -295,8 +317,8 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 ## 13. 接手检查清单（新 AI 开工前必做）
 
 1. `cd D:/Projects/walong/stellaris-mod-zh && git log --oneline -5` —— 确认最新提交
-2. 检查版本/DLC 标注是否为 0（是则重跑 detect_* 脚本，见坑 #1）
+2. `python scripts/verify_db.py` —— 数据体检（退出码 0 = 健康；报归零先跑 `rebuild_all.py`）
 3. `curl http://127.0.0.1:8080/api/stellaris/stats` —— 本地服务是否正常（未启动则起服务）
 4. `curl http://150.158.24.195:8080/api/stellaris/stats` —— 云端公网是否可达
 5. 读 `data/progress.json` —— 确认扩容进度（下一批起点）
-6. **改任何数据后**：重跑标注脚本 → 本地验证 → git 提交 → TAT 云端同步 → 公网复验
+6. **改任何数据后**：跑 `python scripts/verify_db.py` 确认健康 → git 提交 → TAT 云端同步 → 公网复验
