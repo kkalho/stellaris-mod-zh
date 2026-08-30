@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-30 23:54",
-  "db_total": 777,
-  "db_translated": 777,
+  "updated_at": "2026-08-31 01:54",
+  "db_total": 827,
+  "db_translated": 827,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    777
+    827
   ],
-  "translated_rank_count": 777,
-  "next_batch_start_rank": 778,
+  "translated_rank_count": 827,
+  "next_batch_start_rank": 828,
   "next_batch_size": 50,
-  "remaining": 243,
+  "remaining": 193,
   "next_batch_preview": [
     {
-      "rank": 778,
-      "id": "3108330591",
-      "title": "MC驻群星汉化"
+      "rank": 828,
+      "id": "2938897848",
+      "title": "Endless Space 2: Cravers Shipset"
     },
     {
-      "rank": 779,
-      "id": "2252156569",
-      "title": "Real Space - Planetary Exploration"
+      "rank": 829,
+      "id": "2218870708",
+      "title": "Honkai 3rd：The Galaxy（崩坏三：银河）"
     },
     {
-      "rank": 780,
-      "id": "2813707242",
-      "title": "stellaris Galaxy Command ships"
+      "rank": 830,
+      "id": "1593221761",
+      "title": "Encourage Growth Permanently [3.0]"
     },
     {
-      "rank": 781,
-      "id": "1313065097",
-      "title": "Gods and Guardians (2.0/2.1)"
+      "rank": 831,
+      "id": "803452214",
+      "title": "Tiny Spaceport Modules"
     },
     {
-      "rank": 782,
-      "id": "932345488",
-      "title": "A Galaxy at War: The Galactic Empire Legacy Version 1.9"
+      "rank": 832,
+      "id": "2461266066",
+      "title": "Warhammer 40K animated portraits"
     }
   ]
 }
