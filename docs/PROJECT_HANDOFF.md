@@ -272,6 +272,13 @@ tccli tat RunCommand --region ap-shanghai --Content "$B64" \
   --InstanceIds '["lhins-ca3ol8ju"]' --CommandType SHELL --Timeout 300
 ```
 
+> ⚠️ **tccli 调用方式（坑，2026-08-31）**：tccli 装在本机**系统 Python 3.15**（`C:\Users\wangf\AppData\Local\Programs\Python\Python315\python.exe`），不是隔离 venv。且其 `tccli.exe` 启动器在 Git Bash/沙箱里被拦（`Permission denied`），`python -m tccli` 又因无 `__main__.py` 失败。**正确姿势**：写 3 行 wrapper 调 `tccli.main:main`（见 `scripts/tccli_wrap.py`），或直接用 `scripts/tat_sync.py`（读 cloud_sync_fix.sh → base64 → RunCommand → `--poll-inv` 轮询）。即：
+> ```bash
+> SYS_PY="/c/Users/wangf/AppData/Local/Programs/Python/Python315/python.exe"
+> "$SYS_PY" scripts/tat_sync.py               # 执行同步
+> "$SYS_PY" scripts/tat_sync.py --poll-inv inv-xxx   # 轮询结果
+> ```
+
 **数据库不同步 git（.gitignore）**，云端更新方式（按推荐顺序）：
 1. ⭐ **全量行存档（现役机制，2026-08-30 起实测跑通）**：
    - 本地 `python scripts/export_cloud_sync.py` → git 提交推送（data/stellaris/mods_full_sync.json）
