@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-31 01:54",
-  "db_total": 827,
-  "db_translated": 827,
+  "updated_at": "2026-08-31 21:07",
+  "db_total": 877,
+  "db_translated": 877,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    827
+    877
   ],
-  "translated_rank_count": 827,
-  "next_batch_start_rank": 828,
+  "translated_rank_count": 877,
+  "next_batch_start_rank": 878,
   "next_batch_size": 50,
-  "remaining": 193,
+  "remaining": 143,
   "next_batch_preview": [
     {
-      "rank": 828,
-      "id": "2938897848",
-      "title": "Endless Space 2: Cravers Shipset"
+      "rank": 878,
+      "id": "2662722782",
+      "title": "Portrait Trigger Pack - Core"
     },
     {
-      "rank": 829,
-      "id": "2218870708",
-      "title": "Honkai 3rd：The Galaxy（崩坏三：银河）"
+      "rank": 879,
+      "id": "1261144072",
+      "title": "KUROGANE - Downscaled Ships patch"
     },
     {
-      "rank": 830,
-      "id": "1593221761",
-      "title": "Encourage Growth Permanently [3.0]"
+      "rank": 880,
+      "id": "2273568769",
+      "title": "AI-Player Exclusive Archaeology & Astral Rifts"
     },
     {
-      "rank": 831,
-      "id": "803452214",
-      "title": "Tiny Spaceport Modules"
+      "rank": 881,
+      "id": "2932557948",
+      "title": "Endless Space 2: Horatio Shipset"
     },
     {
-      "rank": 832,
-      "id": "2461266066",
-      "title": "Warhammer 40K animated portraits"
+      "rank": 882,
+      "id": "1728214912",
+      "title": "Abandon Colony"
     }
   ]
 }
