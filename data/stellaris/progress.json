@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-31 21:07",
-  "db_total": 877,
-  "db_translated": 877,
+  "updated_at": "2026-08-31 21:16",
+  "db_total": 927,
+  "db_translated": 927,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    877
+    927
   ],
-  "translated_rank_count": 877,
-  "next_batch_start_rank": 878,
+  "translated_rank_count": 927,
+  "next_batch_start_rank": 928,
   "next_batch_size": 50,
-  "remaining": 143,
+  "remaining": 93,
   "next_batch_preview": [
     {
-      "rank": 878,
-      "id": "2662722782",
-      "title": "Portrait Trigger Pack - Core"
+      "rank": 928,
+      "id": "1290047689",
+      "title": "Simple Leader Skill Icons"
     },
     {
-      "rank": 879,
-      "id": "1261144072",
-      "title": "KUROGANE - Downscaled Ships patch"
+      "rank": 929,
+      "id": "1534545104",
+      "title": "Fallen Empires Expanded 2"
     },
     {
-      "rank": 880,
-      "id": "2273568769",
-      "title": "AI-Player Exclusive Archaeology & Astral Rifts"
+      "rank": 930,
+      "id": "2097903490",
+      "title": "Propaganda and Espionage"
     },
     {
-      "rank": 881,
-      "id": "2932557948",
-      "title": "Endless Space 2: Horatio Shipset"
+      "rank": 931,
+      "id": "1148241123",
+      "title": "StarCraft - Protoss (2.5)"
     },
     {
-      "rank": 882,
-      "id": "1728214912",
-      "title": "Abandon Colony"
+      "rank": 932,
+      "id": "1707957948",
+      "title": "More Civic Points"
     }
   ]
 }
