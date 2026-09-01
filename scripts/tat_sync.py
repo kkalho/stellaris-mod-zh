@@ -11,9 +11,9 @@ REGION = "ap-shanghai"
 INSTANCE = "lhins-ca3ol8ju"
 
 
-def run_command():
+def run_command(script="cloud_sync_fix.sh"):
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sh_path = os.path.join(here, "cloud_sync_fix.sh")
+    sh_path = os.path.join(here, script)
     with open(sh_path, "rb") as f:
         content = f.read().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
     b64 = base64.b64encode(content).decode()
@@ -44,4 +44,7 @@ if __name__ == "__main__":
     if "--poll-inv" in sys.argv:
         inv_id = sys.argv[sys.argv.index("--poll-inv") + 1]
         sys.exit(describe(inv_id))
-    sys.exit(run_command())
+    script = "cloud_sync_fix.sh"
+    if "--script" in sys.argv:
+        script = sys.argv[sys.argv.index("--script") + 1]
+    sys.exit(run_command(script))
