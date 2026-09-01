@@ -17,6 +17,8 @@ import games.ck3.config.game  # noqa: F401  触发注册
 from core.game_config import get_game
 from core.mod_db import ModDB
 
+import validate_translations  # 同目录：导入前的数据真实性门禁
+
 
 def import_file(db: ModDB, path: str):
     with open(path, encoding="utf-8") as f:
@@ -48,14 +50,30 @@ def import_file(db: ModDB, path: str):
 def main():
     cfg = get_game("ck3", BASE_DIR)
     db = ModDB(cfg)
-    files = sys.argv[1:]
+    args = sys.argv[1:]
+    no_check = "--no-check" in args
+    files = [a for a in args if not a.startswith("--")]
     if not files:
         files = [os.path.join(BASE_DIR, "translations", f)
                  for f in os.listdir(os.path.join(BASE_DIR, "translations"))
                  if f.endswith(".json") and "ck3" in f]
+    blocked = 0
     for f in files:
-        if os.path.exists(f):
-            import_file(db, f)
+        if not os.path.exists(f):
+            continue
+        if not no_check:
+            report = validate_translations.validate_file(f)
+            if not report["ok"]:
+                blocked += 1
+                print(f"❌ 拒绝导入（编造词/结构错误命中）: {f}")
+                for h in report["hits"]:
+                    print(f"    [{h['field']}] sid={h['steam_id']} 「{h['word']}」 …{h['context']}…")
+                for e in report["errors"]:
+                    print(f"    ✗ {e}")
+                continue
+        import_file(db, f)
+    if blocked:
+        print(f"⚠️ 共 {blocked} 个文件因校验未通过被跳过（确认无误可用 --no-check 强制导入）")
     n = db.conn.execute("SELECT COUNT(DISTINCT mod_id) FROM translations").fetchone()[0]
     trans_mods = db.conn.execute(
         "SELECT COUNT(*) FROM mods WHERE game_id='ck3' AND translated=1").fetchone()[0]
