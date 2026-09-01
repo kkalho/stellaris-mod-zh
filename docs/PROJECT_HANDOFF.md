@@ -1,7 +1,7 @@
 # 项目说明书：Paradox 中文 MOD 查询工具（stellaris-mod-zh）
 
 > **本文档是自包含交接说明书**——新会话/另一 AI 仅凭本文即可完整接手项目。
-> 最后更新：2026-08-31（维护轮 8 后全面刷新，实测数据核对）
+> 最后更新：2026-09-02（维护轮 9 后全面刷新，实测数据核对）
 > **⚠️ 新接手必读顺序：§13 接手检查清单 → §14 工作纪律与防漏规范 → §5 待办（当前任务在 §5.1）。
 > 本项目历次事故（漏翻译 import、旧存档混入、类型想当然）全部源于跳步/漏验，§14 是针对性纪律。**
 > **维护轮 1**：坑 #1 根因已修复（`upsert_mod` 改部分更新）；新增 `rebuild_all.py` 收敛流水线 /
@@ -36,6 +36,22 @@
 > 对齐；新增 window.GALAXY_INFO 测试钩子）；④运维（同步模板 bak 只留 3 份；键盘快捷键
 > `/` 聚焦搜索、Esc 关面板/返回列表）。注意：本机 Pillow 与 Python 3.15 不兼容，资产生成用
 > py -3.14 跑 scripts/gen_share_assets.py；web_server 起服务前先 python -m py_compile 自检。
+> **维护轮 9（2026-09-01~02，reviews 数据真实专项，全链路闭环）**：①**编造评价清理**——Steam
+> 工坊无星级/无投票数，848 个 MOD 的「5 星好评/X 次投票/官方数据显示/标杆/头部」编造 reviews
+> 全部重写为客观「订阅 X、收藏 Y」（cleanup_fabricated_reviews.py，details.jsonl 真实数据）；
+> 含 15 个 MOD 深度字段张冠李戴修复（deep_batch12_extra 生成时 steam_id↔内容错位）。
+> ②**作者自述补全**——723 个 MOD 追加「这是做什么的 MOD」简介（export_review_tasks.py 分批
+> → 15 子智能体提炼 → merge_review_enrich.py 合并；727 条 0 编造）。③**质量门禁**——
+> validate_translations.py 分字段词表扫描（退出码 0/1），集成 stellaris+ck3 两个 import
+> 脚本与 21:00 自动化任务 prompt（含编造词铁律清单）。④**云端三段同步**——编造清理 import
+> → 全量行存档 apply（827→927→977）→ 翻译 import，公网逐段复验通过；batch23（#928-977）
+> 由并行自动化会话产出（reviews 格式已正确），补齐 version/DLC 标注后 977 全量上云。
+> ⑤新工具入库：validate_translations / cleanup_fabricated_reviews / export_review_tasks /
+> merge_review_enrich / export_translations / tat_sync.py（--script 参数）。⑥坑：词表防误伤
+> （星系/星舰/星团/「5000星规模」→星级限定评分语境；「投票会议」是游戏机制→裸「投票」改
+> 「投票数」；description 里「喜欢请好评收藏」合法→好评只在 reviews 拦）；**tccli.exe 在
+> Git Bash 被沙箱拦截**→用系统 Python 3.15 调 `tccli.main:main` wrapper 或 scripts/tat_sync.py
+> （tccli 装在 `...\Python315\python.exe`，`python -m tccli` 无 `__main__.py` 不可用）。
 > **协作注意**：存在并行 AI 会话同时扩容与操作云端（journal 中非本会话的重启记录为证）。
 > 云端同步前建议先查最近 TAT 调用；本地 8099 测试服务用完即关，避免误导用户。
 
@@ -46,21 +62,21 @@
 **1. 干了什么？**
 一个面向 Paradox 游戏（群星 / CK3 / HOI4）的**中文 MOD 知识库与网页查询工具**：抓取 Steam 创意工坊公开数据 → 整理成结构化知识库（翻译/玩法/评价/DLC/版本/兼容性/汉化包/社区口碑）→ 提供网页查询（中英文+拼音搜索、版本筛选、MOD 详情、DLC 缺失检测等）→ 已部署到腾讯云公网。
 
-**2. 干到哪了？（2026-08-30 实测快照）**
+**2. 干到哪了？（2026-09-02 实测快照，本地 = 云端 = 公网三者一致）**
 
 | 游戏 | MOD 数 | 已翻译 | 六字段覆盖 | 说明 |
 |---|---|---|---|---|
-| **群星** | **827**（目标 1020） | 827/827 | **100%** ✅ | batch17-20（#628-827）已完成，下一批 #828 |
+| **群星** | **977**（目标 1020） | 977/977 | **100%** ✅ | batch23（#928-977）已完成，下一批 #978（剩 43） |
 | CK3 | 300 | 300/300 | Top30 完整 | 版本标注 300/300 ✅（1.13-1.19，Wiki 核实） |
 | HOI4 | 0 | - | - | 空框架，未抓取 |
 
-群星**六字段**（title / summary / description / gameplay / reviews / features）**100% 全覆盖**，每个 MOD 详情页都有：中文标题+简介+详细介绍+具体玩法+玩家评价+特色列表。
+群星**六字段**（title / summary / description / gameplay / reviews / features）**100% 全覆盖**。**reviews 已全库客观化 + 自述补全**（2026-09-01 维护轮 9）：848 个 MOD 的编造评价（5 星好评/X 次投票/官方数据显示/标杆/头部等）全部重写为「订阅 X、收藏 Y」+ 作者自述，723 个再补一句「这是做什么的 MOD」简介；并建立 `validate_translations.py` 导入门禁（导入前拦截编造词，退出码 0/1），已接入全部导入入口与每日 21:00 自动化任务。
 
 | 其他数据 | 群星现状 |
 |---|---|
-| 版本兼容标注 | 群星 827/827（显式 + 推断双轨）；CK3 300/300（1.13-1.19，Wiki 核实） |
-| DLC 依赖标注 | 149 个（英文+中文描述双轨检测，均标"可选"级） |
-| 订阅热度趋势 | 827/827（云端持续每日快照） |
+| 版本兼容标注 | 群星 977/977（显式 + 推断双轨）；CK3 300/300（1.13-1.19，Wiki 核实） |
+| DLC 依赖标注 | 167 个（英文+中文描述双轨检测，均标"可选"级） |
+| 订阅热度趋势 | 977/977（云端持续每日快照） |
 | 汉化包 | 9 条（鸽组等，含目标版本） |
 | 兼容性矩阵 | 158 条（mine_compat 描述挖掘 + 手工种子合并；冲突/依赖/最佳搭配/补丁） |
 | 社区口碑 | 6 条（贴吧/B站/NGA，附来源 URL） |
@@ -68,7 +84,7 @@
 | 玩家体验 P1-P8 | P1/P2/P5/P6/P7 ✅ 已上线（P3/P4 基础已建；P8 待做）——详见 ROADMAP |
 
 **3. 要干什么？**
-① **【当前任务】老批次 reviews 回检**（用户已点名，方案见 §5）② 群星继续扩容到 Top 1020（剩余 193 个 ≈ 4 批，batch21 从 #828 起）③ HOI4 抓取 ④ CK3 专属界面与云同步泛化 ⑤ P8 清单分享页 ⑥ 社区口碑扩充
+① **群星继续扩容到 Top 1020**（剩 43 个 ≈ 1 批，batch24 从 #978 起；每日 21:00 自动化任务会自动跑，网络被墙时如实报告下次续抓）② HOI4 抓取 ③ CK3 专属界面与云同步泛化 ④ P8 清单分享页 ⑤ 社区口碑扩充。reviews 回检 + 编造清理 + 自述补全已全部完成（见 §5.1）。
 
 **4. 用什么干？**
 `Python 3.15.0a8（本地，2026-08-31 起）/ 3.11.6（云端）+ SQLite + 无框架纯 JS 前端`；数据源 `Steam 官方 API（GetPublishedFileDetails，无需 Key）+ 创意工坊页面内嵌 JSON`；代码托管 `GitHub（kkalho/stellaris-mod-zh，master）`；云端 `腾讯云轻量服务器 + TAT 自动化助手（免 SSH 远程执行）+ tccli CLI`；服务器下载 GitHub 用 **jsDelivr CDN + gh-proxy 双源轮换**；浏览器验证用 **browser-use skill**（见 §6）。
@@ -168,26 +184,24 @@
 
 | 优先级 | 事项 | 说明 |
 |---|---|---|
-| **P0** | **老批次 reviews 回检 + 翻译质量排查**（用户已点名，**接手先做这个**） | 见下方专项小节 |
-| **P1** | **群星扩容** | 已到 827，下一批 batch21 从 #828 起（剩 193 个 ≈ 4 批），流程全自动，见 §7 |
+| **P0** | ~~老批次 reviews 回检 + 翻译质量排查~~ **✅ 已完成（2026-09-01 维护轮 9）** | 结果见 §5.1；后续由 `validate_translations.py` 门禁长期守护 |
+| **P1** | **群星扩容** | 已到 977，下一批 batch24 从 #978 起（剩 43 个 ≈ 1 批）；每日 21:00 自动化任务自动跑，见 §7 |
 | **P2** | "第一局推荐"人工评测 | 需 WebSearch/社区核实后扩充，禁止编造 |
 | **P3** | CK3 专属界面 + 云同步泛化 | 版本链已完成；界面与多游戏云同步见 ROADMAP |
 | **P3** | HOI4 抓取 | 复用 CK3 脚本链改 app_id（394360）；启动页已有"建设中"占位 |
 | P4 | P8 清单分享页 | URL 编码 ID 列表 → 打开即清单总览；分享元数据已就位 |
 
-### 5.1 专项：老批次 reviews 回检（用户 2026-08-31 点名的当前任务）
+### 5.1 专项：老批次 reviews 回检（✅ 已完成，2026-09-01 维护轮 9）
 
-**问题**：batch2/8/9（榜单 #1-277，2026-08 早批）的 reviews 字段存在「官方数据显示 5 星好评」「广受好评」等**超出作者自述**的表述——违反数据真实原则第 3 条（reviews 只概括作者自述，禁止编造社区评价）。用户同时要求**顺带排查翻译质量问题**。
+**结果**（全链路闭环：源文件 → 本地库 → 云端 → 公网四层一致，提交 `5dafffc`/`fc15c2d`/`1afe20f`）：
 
-**推荐执行方案**（上一个会话已规划未执行）：
-1. **扫描定位**：写一次性脚本查 `translations` 表 reviews 字段违规模式（`官方数据显示|5 星好评|五星好评|广受好评|深受欢迎|好评如潮|玩家普遍`等正则），同时收集翻译质量信号（机翻腔「的的」、超长句、字段空缺、features 只有英文等），输出问题清单带 steam_id
-2. **子智能体改写**：按 50 条/组拆分，派子智能体（并发上限 2）对照 `data/details.jsonl` 原文重写——只概括作者自述，删除编造的评价性表述；翻译问题一并修
-3. **本地导入**：`python scripts/import_stellaris_translations.py translations/review_fix_batch{N}.json`（upsert 幂等）
-4. **验证**：`python scripts/verify_db.py` + 浏览器抽验 + `python -m pytest tests -q`
-5. **同步云端**：git 推送后 TAT 拉固定 SHA 翻译 JSON → 云端跑同一 import 脚本 → 重启 → 公网复验（reviews 不在 mods 表，**不需要** 行存档 apply）
-6. **收尾**：扫描脚本可留作 `scripts/scan_review_quality.py` 纳入工具链，或用后即删
+1. **P0 张冠李戴（15 MOD）**：gameplay/reviews/features 三深度字段曾整体错配到另 15 个 MOD（子智能体生成 deep_batch12_extra.json 时 steam_id↔内容错位），已从 details.jsonl 英文原文重做修复。
+2. **P1 编造评价清理（848 MOD）**：Steam 工坊**无星级评分、无投票数**（details.jsonl 只有 subscriptions/favorited），旧 reviews 里「5 星好评」「X 次投票」「官方数据显示」及「标杆/头部/经典之作」等拔高词全部为编造。`scripts/cleanup_fabricated_reviews.py` 批量重写为客观「订阅 X、收藏 Y」（details.jsonl 真实数据），31 个源文件 999 处。
+3. **P1 作者自述补全（723 MOD）**：15 个子智能体分批从中文 description 提炼「这是做什么的 MOD」简介（`export_review_tasks.py` 分批 → `merge_review_enrich.py` 合并追加），727 条 0 编造（4 条 description 无法提炼保留原样）。
+4. **质量门禁建立**：`scripts/validate_translations.py` 分字段词表扫描（全局硬阻断=官方数据显示/X星好评/X次投票；reviews 专属=好评/差评/投票数/票数/好评如潮+拔高词），退出码 0/1；已集成 stellaris + ck3 两个 import 脚本（命中即拒绝，`--no-check` 跳过）+ 每日 21:00 自动化任务 prompt。
+5. **云端同步**：编造清理（748 条）→ 全量行存档 apply（827→927→977）→ 翻译 import，公网复验锚点 MOD 全部通过。
 
-**注意**：改写时保留作者自述的真实内容（如作者自己说「我的 MOD 与 X 不兼容」必须保留）；只是删掉无出处的社区评价腔。新批次（batch16-20）由子智能体按铁律精做，质量已达标，回检重点是 #1-277。
+**注意**：词表迭代中修正过误伤——「星」字正则限定评分语境（避免误杀"星系/星舰/星团/5000星规模"）、裸「投票」→「投票数」（"投票会议"是群星游戏机制）、「好评/差评/投票」只在 reviews 字段拦截（description 里"喜欢请好评收藏"合法）。**改词表前先跑全量扫描抽查上下文**。
 
 ## 6. 工具链（用什么干——全部实测可用）
 
@@ -203,6 +217,11 @@
 | **WebSearch** | 社区口碑/汉化包核实 | 交叉验证，禁止编造 |
 | **本地 Python** | 开发/抓取环境 | `python` = **Python 3.15.0a8**（2026-08-31 起系统默认；truststore / pypinyin / requests 已装）。⚠️ **Pillow 在 3.15 不可用**（unknown slot ID），资产生成用 `py -3.14`（已装 Pillow）跑 `scripts/gen_share_assets.py`；⚠️ Python 版 Playwright 在 3.15 下 greenlet DLL 损坏，浏览器测试不要用它 |
 | **browser-use skill** | 浏览器端到端验证（主力） | `mcp__node_repl__js` + control-browser skill，IAB 后端。实测要点：`playwright.evaluate` 传**表达式字符串**（传 `() =>` 箭头函数会静默返回 `{}`）；页面内 `const` 变量在隔离环境不可见，用 `window.GALAXY_INFO()` 等暴露的钩子；`cua.keypress` 键名用字面量 `"/"`、`"Escape"`（不是 "Slash"）；按钮与面板标题重名时用 `getByRole("button", { name })` 消歧 |
+| **validate_translations.py（翻译质量门禁）** | 导入前拦截编造评价（2026-09-01 新增） | `python scripts/validate_translations.py [文件...]`（默认扫 translations/ 全部，退出码 0/1）；`--db` 做 steam_id 关联校验；`--dump OUT` 导出命中清单。已集成到 import_stellaris/import_ck3 两个脚本（命中即拒绝）与 21:00 自动化任务 |
+| **cleanup_fabricated_reviews.py** | 批量把编造 reviews 重写为客观「订阅 X、收藏 Y」 | `--dry-run` 预览；数据源 details.jsonl 真实 subscriptions/favorited；自动生成 fix 存档（按 sid 去重） |
+| **export_review_tasks.py / merge_review_enrich.py** | reviews 自述补全流水线（导出任务 → 子智能体提炼 → 合并写回） | 子智能体规则见 2026-09-01 维护记录；merge 会跳过 translations/fix/（防改历史存档） |
+| **export_translations.py** | 导出六字段翻译全量存档（与 export_cloud_sync.py 配对） | 输出 data/stellaris/translations_full_sync.json(+.gz)；**新批次上云必须 mods apply + 翻译 import 两步** |
+| **tat_sync.py** | TAT 推送封装（读脚本 → base64 → RunCommand → 轮询） | `python scripts/tat_sync.py --script cloud_sync_xxx.sh` 执行；`--poll-inv inv-xxx` 轮询；需用系统 Python 3.15 跑（tccli 装在那），见 §8 tccli 坑 |
 | **Mimosa 安全钩子** | （约束，不是工具）写代码必须走 Write/Edit | 见 §10 坑 #16——Bash 直接写源码/安全配置会被 PreToolUse 拦截；SQL 必须参数绑定 |
 
 ## 7. 群星扩容标准流程（每批 50 个，约 10 分钟）
@@ -415,8 +434,8 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 2. `python scripts/verify_db.py` —— 数据体检（退出码 0 = 健康；报归零先跑 `rebuild_all.py`）
 3. `python -m pytest tests -q` —— 9 用例应全绿
 4. `curl http://127.0.0.1:8080/api/stellaris/stats` 与 `curl http://150.158.24.195:8080/api/stellaris/stats` —— 本地/云端均应为 total=827；本地测试服务惯例跑 8099（`python web_server_multigame.py 8099`，**用户浏览器标签可能开着它，别乱关**）
-5. 读 `data/stellaris/progress.json` —— 确认扩容进度（当前 827/1020，下一批 #828）
-6. 读 §5.1 —— **当前任务是老批次 reviews 回检 + 翻译质量排查**（用户已点名，方案已写好）
+5. 读 `data/stellaris/progress.json` —— 确认扩容进度（当前 977/1020，下一批 #978，剩 43）
+6. 读 §5 待办 —— reviews 回检/编造清理/自述补全已全部完成（§5.1）；**当前主线 = 继续扩容**（自动化任务每日 21:00 自动跑，接手重点是监督其产出：batch 文件 validate 0 命中 → import → 标注 → 上云）；新增翻译文件导入前**必须过 validate_translations.py 门禁**
 7. **改任何数据后**：`verify_db.py` → git 提交推送 → CI 绿 → TAT 云端同步（§8，注意两步）→ 公网复验
 8. 浏览器验证用 **browser-use skill**（§6 有实测要点）；改前端后记得本地服务要重启才生效（py 文件同样）
 9. 有并行 AI 会话的可能——推代码前先 `git pull --rebase`，云同步前先查最近 TAT 调用记录
@@ -444,6 +463,8 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 - [ ] fetch_batch 抓满 50：两次 `wc -l data/details.jsonl` 一致
 - [ ] import_new_batch 输出「新增 50」（跳过数有解释）
 - [ ] 翻译 50/50，ID 与清单一一对应（合并分片后用 `python -c` assert 一遍）
+- [ ] **翻译质量门禁 0 命中**：`python scripts/validate_translations.py translations/batchN_zh.json` 退出码 0（命中编造词重写后再导）
+- [ ] 标注补齐：detect_stellaris_versions / detect_stellaris_dlcs（或 rebuild_all）——漏标注的典型信号是 verify_db 里 version < total（batch23 漏过一次）
 - [ ] 导入后本地 stats translated +50
 - [ ] rebuild_all 全绿 + verify_db 健康 + pytest 9 用例绿
 - [ ] git 推送 + CI success
