@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-08-31 21:16",
-  "db_total": 927,
-  "db_translated": 927,
+  "updated_at": "2026-09-02 00:17",
+  "db_total": 977,
+  "db_translated": 977,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    927
+    977
   ],
-  "translated_rank_count": 927,
-  "next_batch_start_rank": 928,
+  "translated_rank_count": 977,
+  "next_batch_start_rank": 978,
   "next_batch_size": 50,
-  "remaining": 93,
+  "remaining": 43,
   "next_batch_preview": [
     {
-      "rank": 928,
-      "id": "1290047689",
-      "title": "Simple Leader Skill Icons"
+      "rank": 978,
+      "id": "2573906846",
+      "title": "Ruler Level System"
     },
     {
-      "rank": 929,
-      "id": "1534545104",
-      "title": "Fallen Empires Expanded 2"
+      "rank": 979,
+      "id": "1587874171",
+      "title": "Extra Buildings"
     },
     {
-      "rank": 930,
-      "id": "2097903490",
-      "title": "Propaganda and Espionage"
+      "rank": 980,
+      "id": "683756022",
+      "title": "Totalitarian Human Portraits"
     },
     {
-      "rank": 931,
-      "id": "1148241123",
-      "title": "StarCraft - Protoss (2.5)"
+      "rank": 981,
+      "id": "1900832246",
+      "title": "No Megastructure Limits"
     },
     {
-      "rank": 932,
-      "id": "1707957948",
-      "title": "More Civic Points"
+      "rank": 982,
+      "id": "2002751329",
+      "title": "Sensor Expansion"
     }
   ]
 }
