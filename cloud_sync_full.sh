@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 cd /opt/stellaris-mod-zh
-SHA=3aab00e91749c24c817ca26ff5c1fd06b8229a40
+SHA=1afe20f9751210f451d235179ba361ded476bfbf
 JSDEL="https://cdn.jsdelivr.net/gh/kkalho/stellaris-mod-zh@$SHA"
 GHPROXY="https://gh-proxy.com/https://github.com/kkalho/stellaris-mod-zh/raw/$SHA"
 
@@ -21,13 +21,13 @@ fetch() {
 
 mkdir -p data/stellaris
 echo "=== fetch 存档 (.gz) ==="
-fetch data/stellaris/mods_full_sync.json.gz 1100000
-fetch data/stellaris/translations_full_sync.json.gz 500000
+fetch data/stellaris/mods_full_sync.json.gz 1200000
+fetch data/stellaris/translations_full_sync.json.gz 520000
 
 echo "=== 解压 + 校验 count（python 解压，防 busybox gunzip 方言）==="
 python3 - <<'EOF'
 import gzip, json
-for name, expect in [('mods_full_sync', 927), ('translations_full_sync', 927)]:
+for name, expect in [('mods_full_sync', 977), ('translations_full_sync', 977)]:
     gz = f'data/stellaris/{name}.json.gz'
     raw = gzip.open(gz, 'rb').read()
     open(f'data/stellaris/{name}.json', 'wb').write(raw)
