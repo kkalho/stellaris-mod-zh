@@ -32,9 +32,13 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
-# 六字段（与 import_stellaris_translations.py 保持一致）
-SIX_FIELDS = ["title_zh", "summary_zh", "description_zh", "gameplay_zh",
-              "reviews_zh", "features_zh"]
+# 六个逻辑字段。翻译存档有两种命名：主 batch 用 `xxx_zh`，deep 目录用裸 `xxx`；
+# 取值时两者都兼容。reviews 字段应用最严的 reviews 专属词表。
+LOGICAL_FIELDS = ["title", "summary", "description", "gameplay", "reviews", "features"]
+
+# 非翻译文件标志（用于跳过混入 translations/ 的趋势数据 / MOD 详情）
+_TREND_KEYS = {"date", "subs"}
+_DETAIL_KEYS = {"game_id", "title_en", "fetched_at", "score", "like_ratio", "subscriptions"}
 
 # ---------------------------------------------------------------------------
 # 编造词表
@@ -73,18 +77,21 @@ def _flatten(txt) -> str:
 
 
 def scan_entry(t: dict) -> list[dict]:
-    """扫描单条翻译，返回命中列表（每条含 field/word/context）。"""
+    """扫描单条翻译，返回命中列表（每条含 field/word/context）。
+
+    字段名兼容两种命名：`xxx_zh`（主 batch）与裸 `xxx`（deep 目录）。
+    """
     hits = []
     sid = str(t.get("steam_id", ""))
-    for field in SIX_FIELDS:
-        text = _flatten(t.get(field))
+    for field in LOGICAL_FIELDS:
+        text = _flatten(t.get(field + "_zh") or t.get(field))
         if not text:
             continue
         # 全局词表：所有字段
         for m in _GLOBAL_RE.finditer(text):
             hits.append(_mk_hit(sid, field, m, text))
         # reviews 专属词表
-        if field == "reviews_zh":
+        if field == "reviews":
             for m in _REVIEWS_RE.finditer(text):
                 hits.append(_mk_hit(sid, field, m, text))
     return hits
@@ -113,6 +120,14 @@ def validate_file(path: str, db=None) -> dict:
         res["ok"] = False
         res["errors"].append("顶层缺少 translations 列表")
         return res
+
+    # 跳过非翻译文件：趋势数据（date/subs）、MOD 详情（game_id/title_en 等）
+    if trs and isinstance(trs[0], dict):
+        keys = set(trs[0].keys())
+        if _TREND_KEYS <= keys or _DETAIL_KEYS & keys:
+            res["skipped"] = True
+            res["note"] = "非翻译文件（趋势/MOD 详情），跳过"
+            return res
 
     res["entries"] = len(trs)
     seen_sid = {}
@@ -171,6 +186,8 @@ def print_report(reports: list[dict]):
     total_warn = sum(len(r["warnings"]) for r in reports)
     print(f"\n===== 翻译质量校验：{len(reports)} 个文件 =====")
     for r in reports:
+        if r.get("skipped"):
+            continue
         mark = "✅" if r["ok"] else "🔴"
         if r["hits"]:
             print(f"\n{mark} {r['file']}  ({r['entries']} 条，命中 {len(r['hits'])} 处)")
