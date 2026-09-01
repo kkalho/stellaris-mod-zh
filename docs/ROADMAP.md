@@ -10,6 +10,7 @@
 - 数据舰桥启动页 + 银河星图 + 主题系统（青/金/钢灰）已上线公网；遗珠 24 颗以金色菱形脉冲星标上星图
 - 信任包（数据说明面板/数据更新格/报告勘误）与分享包（og 标签/favicon/og_card）已上线
 - 工程设施齐备：CI（重建+体检）、Uptime 拨测、verify_db、export/apply 云同步、TAT 通道
+- **翻译腐化防御体系 P0 已建**（2026-09-02）：mods 表新增 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段，977 个 MOD 全部建立描述 SHA256 基线；`detect_stale_translations.py` 三维度检测（内容 hash 变化=确定腐化 / time_updated 较新=疑似 / 已重抓无变化=可自动刷新），退出码 0/1 可集成自动化；P1=集成到每日 sync_subscriptions 自动标记，P2=增量重译流水线
 
 ## 短期（随接下来 2-3 批扩容完成）
 
@@ -59,6 +60,7 @@
 ## 已知数据/工程债
 
 - ~~老批次 reviews 表述问题~~ ✅ 已解决（维护轮 9：848 条重写 + 门禁防复发）
+- ~~翻译腐化无检测机制~~ ✅ P0 已解决（2026-09-02：基线迁移 + 检测脚本）；P1 待做=集成到每日 sync_subscriptions 自动标记 stale；P2 待做=增量重译流水线（导出差异→子智能体重译→更新基线）
 - `details.jsonl` 30 行历史重复（无害，导入按 ID 去重）
 - CK3 云端落后本地一个版本链（短期待办 #2 解决）
 - `D:\Projects\temp\stellaris-mod-zh-deploy\` 旧副本待清理（确认无用后删除）

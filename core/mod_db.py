@@ -70,7 +70,10 @@ class ModDB:
         status        TEXT,                   -- deprecated/outdated/abandoned
         pinyin_idx    TEXT,                   -- 拼音搜索索引
         translated    INTEGER DEFAULT 0,
-        fetched_at    TEXT
+        fetched_at    TEXT,
+        desc_hash_baseline TEXT,           -- 翻译确认时 description_clean 的 SHA256（原文锚点）
+        translation_confirmed_at TEXT,     -- 翻译最后一次与原文对齐的日期
+        translation_stale INTEGER DEFAULT 0  -- 0=正常，1=原文已变化翻译待更新
     );
     CREATE TABLE IF NOT EXISTS translations (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -161,6 +164,9 @@ class ModDB:
             "status": data.get("status", ""),
             "translated": 1 if data.get("translated") else 0,
             "fetched_at": now,
+            "desc_hash_baseline": data.get("desc_hash_baseline"),
+            "translation_confirmed_at": data.get("translation_confirmed_at"),
+            "translation_stale": int(data.get("translation_stale", 0) or 0),
         }
         if mod_id:
             # 只更新 data 中显式提供的字段；fetched_at 是写入时间戳，总是刷新

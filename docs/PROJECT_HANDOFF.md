@@ -143,6 +143,10 @@
 | `score` / `like_ratio` | 综合评分（订阅+收藏启发式）/ 好评率 | 577 |
 | `subscriptions` / `favorites` | 订阅量 / 收藏数（Steam 同步） | 577 |
 | `tags` | Steam 原始标签（逗号分隔，已配 188 条中文映射） | 577 |
+| `fetched_at` | 本站抓取日期（YYYY-MM-DD 字符串，非时间戳——坑 #16） | 977 |
+| `desc_hash_baseline` | 翻译确认时 `description_clean` 的 SHA256（原文锚点，腐化检测用） | 977 |
+| `translation_confirmed_at` | 翻译最后一次与原文对齐的日期（YYYY-MM-DD） | 977 |
+| `translation_stale` | 0=正常，1=原文已变化翻译待更新（`detect_stale_translations.py --mark-stale` 写入） | 0 |
 
 **translations 表结构**：`(id, mod_id, field, zh_text, quality, updated_at)`，`field` 取值即上表六个翻译字段。
 **trend 表结构**：`(steam_id, date, subs)`，每日一行，主键 `(steam_id, date)`。
@@ -218,6 +222,8 @@
 | **本地 Python** | 开发/抓取环境 | `python` = **Python 3.15.0a8**（2026-08-31 起系统默认；truststore / pypinyin / requests 已装）。⚠️ **Pillow 在 3.15 不可用**（unknown slot ID），资产生成用 `py -3.14`（已装 Pillow）跑 `scripts/gen_share_assets.py`；⚠️ Python 版 Playwright 在 3.15 下 greenlet DLL 损坏，浏览器测试不要用它 |
 | **browser-use skill** | 浏览器端到端验证（主力） | `mcp__node_repl__js` + control-browser skill，IAB 后端。实测要点：`playwright.evaluate` 传**表达式字符串**（传 `() =>` 箭头函数会静默返回 `{}`）；页面内 `const` 变量在隔离环境不可见，用 `window.GALAXY_INFO()` 等暴露的钩子；`cua.keypress` 键名用字面量 `"/"`、`"Escape"`（不是 "Slash"）；按钮与面板标题重名时用 `getByRole("button", { name })` 消歧 |
 | **validate_translations.py（翻译质量门禁）** | 导入前拦截编造评价（2026-09-01 新增） | `python scripts/validate_translations.py [文件...]`（默认扫 translations/ 全部，退出码 0/1）；`--db` 做 steam_id 关联校验；`--dump OUT` 导出命中清单。已集成到 import_stellaris/import_ck3 两个脚本（命中即拒绝）与 21:00 自动化任务 |
+| **detect_stale_translations.py** | 翻译腐化检测（2026-09-02 新增） | `python scripts/detect_stale_translations.py [--game G] [--json] [--mark-stale] [--auto-refresh]`；三维度检测：内容 hash 变化（确定腐化）/ time_updated 较新（疑似）/ 已重抓无变化（可自动刷新 confirmed_at）；退出码 0=无腐化，1=有腐化；基线由 `migrate_translation_baseline.py` 建立 |
+| **migrate_translation_baseline.py** | 翻译腐化基线迁移（2026-09-02 新增） | `python scripts/migrate_translation_baseline.py [--game G] [--dry-run]`；为 mods 表加 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段，对已翻译 MOD 计算当前描述 SHA256 作为基线；自动备份数据库 |
 | **cleanup_fabricated_reviews.py** | 批量把编造 reviews 重写为客观「订阅 X、收藏 Y」 | `--dry-run` 预览；数据源 details.jsonl 真实 subscriptions/favorited；自动生成 fix 存档（按 sid 去重） |
 | **export_review_tasks.py / merge_review_enrich.py** | reviews 自述补全流水线（导出任务 → 子智能体提炼 → 合并写回） | 子智能体规则见 2026-09-01 维护记录；merge 会跳过 translations/fix/（防改历史存档） |
 | **export_translations.py** | 导出六字段翻译全量存档（与 export_cloud_sync.py 配对） | 输出 data/stellaris/translations_full_sync.json(+.gz)；**新批次上云必须 mods apply + 翻译 import 两步** |
@@ -343,6 +349,11 @@ python scripts/fetch_batch.py --start 828 --end 877 [--dry-run]
 # 趋势导出（云端备份用）
 python scripts/export_trend.py
 
+# 翻译腐化检测
+python scripts/detect_stale_translations.py                              # 文本报告（退出码 0/1）
+python scripts/detect_stale_translations.py --json --mark-stale         # JSON 输出 + 写入 stale 标记
+python scripts/detect_stale_translations.py --auto-refresh              # 自动刷新"重抓无变化"的 confirmed_at
+
 # 翻译导入
 python scripts/import_stellaris_translations.py translations/batchN_zh.json   # 群星
 python scripts/import_ck3_translations.py translations/ck3_batchN_zh.json     # CK3
@@ -416,7 +427,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 | `web/favicon.svg`、`web/og_card.png` | 分享资产（og_card 1200×630 自绘；改版重生成用 `py -3.14 scripts/gen_share_assets.py`） |
 | `core/` | 功能层：DLC 检测/汉化包/本地扫描/口碑/updater/steam_fetch/cli（`mod_db.upsert_mod` 已改部分更新；`calc_score` 唯一实现在此） |
 | `games/{stellaris,ck3,hoi4}/config/game.py` | 游戏配置（TAG_ZH 标签映射、VERSION_NAMES 版本代号、DLC 清单、本地目录） |
-| `scripts/` | **见 scripts/README.md（工具分工总览）**：rebuild_all（收敛重建，含 mine_compat 兼容挖掘 4.5 步）/ verify_db（体检）/ fetch_batch（参数化抓取）/ export_trend / export_cloud_sync（自动现压 .gz）+ apply_cloud_sync（云端全量同步对）/ import_new_batch（含 progress.json 自动更新）/ mine_compat（兼容挖掘）/ gen_share_assets（分享图，py -3.14 跑）；CK3 工具链（P3 用） |
+| `scripts/` | **见 scripts/README.md（工具分工总览）**：migrate_translation_baseline（翻译腐化基线迁移）/ detect_stale_translations（腐化检测）/ rebuild_all（收敛重建，含 mine_compat 兼容挖掘 4.5 步）/ verify_db（体检）/ fetch_batch（参数化抓取）/ export_trend / export_cloud_sync（自动现压 .gz）+ apply_cloud_sync（云端全量同步对）/ import_new_batch（含 progress.json 自动更新）/ mine_compat（兼容挖掘）/ gen_share_assets（分享图，py -3.14 跑）；CK3 工具链（P3 用） |
 | `translations/` | 翻译存档（batchN_zh.json + deep/ 深度精做存档 + compat_top15 手工种子） |
 | `data/` | details.jsonl / workshop_top1000.json / <game>/mods.db / stellaris/progress.json / stellaris/mods_full_sync.json(.gz) |
 | `docs/` | PROJECT_HANDOFF.md（本文）、ROADMAP.md（路线图）、MULTI_GAME_ARCHITECTURE.md |
