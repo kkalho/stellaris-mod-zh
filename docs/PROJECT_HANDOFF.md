@@ -57,6 +57,11 @@
 > 顺修门禁误伤：HARD_REVIEWS「好评」加负向断言放行「👍 好评：」标准标签（编造形态仍拦），
 > 新增 tests/test_validate_gate.py 3 用例。排查结论：此前文档所载「每日 21:00 自动化任务」查无实据
 > （自动化注册表为空、9-02 后两日无自动提交），已从文档清除；如其他会话真建有此任务应取消（已收官）。
+> **维护轮 11（2026-09-04，本轮）**：CK3 云同步泛化（ROADMAP 短期#2）——export/apply 加
+> `--game`（默认 stellaris 兼容旧用法），空库跳过导出；CK3 首份全量存档（300 行，版本标注
+> 300/300）+ 6 个翻译 JSON 上公网（r16/r16b），公网 CK3 版本下拉 1.19×137 等生效、
+> /api/ck3/* 与本地一致。新坑入档：同步清单必须包含被改的脚本自身（r16 漏拉新版 apply
+> 致 ck3 apply 空转一轮）。
 > **协作注意**：存在并行 AI 会话同时扩容与操作云端（journal 中非本会话的重启记录为证）。
 > 云端同步前建议先查最近 TAT 调用；本地 8099 测试服务用完即关，避免误导用户。
 
@@ -319,7 +324,7 @@ tccli tat RunCommand --region ap-shanghai --Content "$B64" \
 4. **curl 必须带 `-m` 超时 + gh-proxy 回退**（r12 教训，2026-08-30）：jsDelivr 偶发连接挂起（0 字节收满 40s），无 `-m` 的 curl 会把整段 TAT 拖到 300s TIMEOUT 且输出全丢；r12b 改为 `curl -m 40` + jsDelivr→gh-proxy→jsDelivr 轮换后一次成功（gh-proxy 用固定 SHA 无缓存坑）。模板 `scripts/cloud_sync_example.sh` 已更新，新脚本直接照抄其 fetch()
 5. **新批次上云 = 存档 apply + 翻译 import 两步缺一不可**（r13 教训，2026-08-30）：`apply_cloud_sync.py` 只写 mods 表，六字段在 translations 表——漏 import 会得到「详情页无中文」的静默残缺。另两个坑：① `export_cloud_sync.py` 当时手工压 .gz，旧 gz 混进 git 导致云端解出 777 行旧存档（现已改为导出时现压，永远一致）；② 同步脚本要 `set -e` + 解压后用 python 校验存档 `count≥预期` 再 apply（busybox gunzip 方言不可靠，r13 的 `gunzip -kf` 静默失败，靠 sanity check 拦下脏写）
 6. **min-byte 阈值留足余量**（r14 教训，2026-08-31）：字节数门槛写成 32000 而文件实际 31977 B → 三源全部「too small」FAIL（sanity gate 正确工作，但门槛本身要 `实际大小 × 0.9` 左右，宁小勿大——它的职责是拦截断，不是精确匹配）
-7. **只改翻译/代码时的轻量同步**：不必走全量行存档——TAT 拉「改动的文件 + 固定 SHA」→ 云端跑对应 import/重启即可（r12b 代码同步、r13d 翻译补同步两次实测）。全量存档 apply 仅在 mods 表数据变化时需要
+7. **只改翻译/代码时的轻量同步**：不必走全量行存档——TAT 拉「改动的文件 + 固定 SHA」→ 云端跑对应 import/重启即可（r12b 代码同步、r13d 翻译补同步两次实测）。全量存档 apply 仅在 mods 表数据变化时需要。**⚠️ 同步清单必须包含本次改动的脚本自身**（r16 教训 2026-09-04：给 apply 加了 `--game` 参数，TAT 清单却只拉了存档没拉新脚本 → 云端旧版 apply 忽略 `--game` 误用 stellaris 存档，ck3 版本标注没生效、versions 接口空白；r16b 补拉脚本重跑才修正）。下发前把「本次 git 提交改了哪些文件」与 fetch 清单逐一对一遍
 
 **每日自动更新**：服务器 crontab `0 4 * * *` 跑 `core.cli update --game stellaris --force`（Steam 同步订阅量 + 趋势快照）。云端已积累 6 天连续快照。
 **趋势备份（推荐加到同一 cron）**：cron 追加 `python scripts/export_trend.py`，把 trend 表导出成 `data/stellaris/trend_export.json`；需要回传本地时用 TAT 执行 `gzip -k trend_export.json && base64 trend_export.json.gz`（gzip 后约 20-40KB，满足 TAT 64KB 输出上限）。
