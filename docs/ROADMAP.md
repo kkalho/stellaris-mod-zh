@@ -3,20 +3,20 @@
 > 更新：2026-09-02 · 配合 `PROJECT_HANDOFF.md` 使用——交接文档回答"怎么做"，本文回答"接下来做什么"。
 > 原则：**数据真实优先于功能**；每批扩容必须过 `rebuild_all` + `verify_db`（CI 已兜底）；不破"单文件、无构建"底线。
 
-## 现状基线（2026-09-02）
+## 现状基线（2026-09-04）
 
-- 群星 **977**/1020（batch23 完成，下一批 #978，剩 43），六字段 100%；CK3 300（版本链 1.13-1.19 已建）；HOI4 空框架
-- **reviews 全库客观化 + 723 个补作者自述**（维护轮 9）；`validate_translations.py` 导入门禁已接入全部导入入口与每日 21:00 自动化任务
+- 群星 **1020**/1020 ✅ **收官**（batch24 完成，维护轮 10），六字段 100%；CK3 300（版本链 1.13-1.19 已建）；HOI4 空框架
+- **reviews 全库客观化 + 723 个补作者自述**（维护轮 9）；`validate_translations.py` 导入门禁已接入全部导入入口（「👍 好评：」标签前缀已放行，编造形态仍拦，回归测试 tests/test_validate_gate.py）
 - 数据舰桥启动页 + 银河星图 + 主题系统（青/金/钢灰）已上线公网；遗珠 24 颗以金色菱形脉冲星标上星图
 - 信任包（数据说明面板/数据更新格/报告勘误）与分享包（og 标签/favicon/og_card）已上线
 - 工程设施齐备：CI（重建+体检）、Uptime 拨测、verify_db、export/apply 云同步、TAT 通道
-- **翻译腐化防御体系 P0 已建**（2026-09-02）：mods 表新增 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段，977 个 MOD 全部建立描述 SHA256 基线；`detect_stale_translations.py` 三维度检测（内容 hash 变化=确定腐化 / time_updated 较新=疑似 / 已重抓无变化=可自动刷新），退出码 0/1 可集成自动化；P1=集成到每日 sync_subscriptions 自动标记，P2=增量重译流水线
+- **翻译腐化防御体系 P0 已建**（2026-09-02）：mods 表新增 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段，1020 个 MOD 全部建立描述 SHA256 基线（batch24 导入时同步建立）；`detect_stale_translations.py` 三维度检测（内容 hash 变化=确定腐化 / time_updated 较新=疑似 / 已重抓无变化=可自动刷新），退出码 0/1 可集成自动化；P1=集成到每日 sync_subscriptions 自动标记，P2=增量重译流水线
 
 ## 短期（随接下来 2-3 批扩容完成）
 
 | # | 事项 | 说明 |
 |---|---|---|
-| 1 | **扩容至 1020** | 剩余 43 个 ≈ 1 批（batch24 从 #978 起）。单批节奏：抓取 3min + 3 子智能体翻译 ~25min + 收敛/推送/云同步 15min（云同步记得存档 apply + 翻译 import 两步；**翻译导入前必过 validate 门禁**，版本/DLC 标注别漏） |
+| 1 | ~~扩容至 1020~~ **✅ 已收官（维护轮 10，2026-09-04）** | batch24（#978-1020，43 个）完成；后续新入榜 MOD 用 `fetch_batch.py --start 1021` 增补即可，无批次压力 |
 | 2 | **CK3 云同步泛化** | export_cloud_sync / apply_cloud_sync 从群星专用扩为多游戏（--game + 静态路径表），一次 TAT 同步全部游戏；当前 CK3 版本标注仅本地生效 |
 | 3 | ~~老批次 reviews 质量回检~~ **✅ 已完成（维护轮 9，2026-09-01）** | 848 条编造 reviews 已全部重写为客观「订阅 X、收藏 Y」+ 作者自述；`validate_translations.py` 门禁拦截复发 |
 | 4 | 前端小项 | 详情页全屏视图（隐藏首页家具）、SVG 图标替换 emoji、galaxy 配色随主题微调 |
