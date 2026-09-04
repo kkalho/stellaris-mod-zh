@@ -1,0 +1,132 @@
+{
+  "game": "stellaris",
+  "source": "Steam 原文核实 + AI 翻译（第 24 批：榜单 978-1020，子智能体 C/3 组并行精做）",
+  "translations": [
+    {
+      "steam_id": "1395190521",
+      "title_zh": "精简侧边栏 2.1（Tiny Outliner 2.1）",
+      "summary_zh": "将侧边栏中民用舰队、运输船、观察哨等条目缩小显示的界面精简 MOD，并修复原版报错刷日志导致的卡顿。",
+      "description_zh": "• 原版由 folk 开发；本作为其分支（fork），作者称与 folk 是同事，分支目的是修复 2.0 版本向 error.log 持续刷报错造成卡顿的问题\n• 缩小侧边栏中的下列条目：民用舰队（科研/工程船）、运输船（陆军）、观察哨、已失效的警报、派系（主要是整理显示而非变小）、地球化改造、扇区、船坞/恒星基地\n• 有意不改动行星与军事舰队——作者认为许多人希望这些保持较大显示\n• 兼容 1080/1440 系列 UI 附加 MOD、folk 的 Tiny Planets (In Outliner) 以及大多数其他附加 MOD\n• 会把侧边栏窗口移到屏幕右上角，效果类似 DrMaple 的 UI Overhaul 1080p MOD",
+      "gameplay_zh": "订阅启用即可生效；适合搭配 1080/1440 等 UI 附加 MOD 使用；本 MOD 不会缩小行星与军事舰队，需要那些保持原样是作者的设计意图。",
+      "reviews_zh": "👍 好评：作者自述此分支解决了原版报错刷日志造成的卡顿，并兼容多种 UI 附加 MOD。\n⚠️ 注意：为 2018 年更新的老版本 MOD，在新版本游戏中的表现需自行验证；作者声明 folk 与其为同事关系，分支行为已获默许。",
+      "features_zh": ["界面优化", "侧边栏精简", "兼容1080p UI", "实用工具", "分支修复"]
+    },
+    {
+      "steam_id": "3292155860",
+      "title_zh": "UI Overhaul Dynamic 多合一兼容补丁（UI Overhaul Dynamic + Multi-Patcher）",
+      "summary_zh": "让 UI Overhaul Dynamic 与基构工程、灵能物种扩展、SpeedDial 互相兼容的一站式整合补丁，适配 4.4 版本。",
+      "description_zh": "• 适配游戏 4.4 版本\n• 为 UI Overhaul Dynamic、Gigastructural Engineering（基构工程）、Psionic Species Expansion（灵能物种扩展）与 SpeedDial 四个 MOD 之间的兼容补丁\n• 作者指定的加载顺序：Gigastructural Engineering → Psionic Species Expansion → UI Overhaul Dynamic → UI Overhaul Dynamic + SpeedDial → UI Overhaul Dynamic + Gigastructural Engineering → 本补丁\n• 各被兼容 MOD 均为可选，本补丁运行不强制要求它们；只有同时运行基构工程时才需要 UOD+Giga 那一项补丁",
+      "gameplay_zh": "订阅后按作者给出的顺序排列加载（各兼容 MOD 在前、本补丁最后）；不装基构工程时可省略 UOD+Giga 补丁；Giga、PSE、SpeedDial 都不是必需组件，按自己实际使用的组合搭配即可。",
+      "reviews_zh": "👍 好评：页面明确标注适配 4.4，为常用 UI MOD 与大型建筑类 MOD 提供统一兼容方案，页面显示订阅数超过 1.4 万。\n⚠️ 注意：需要严格按指定顺序加载多个 MOD，顺序错乱可能导致界面异常；仅在与对应 MOD 同用时才有意义。",
+      "features_zh": ["兼容补丁", "UI界面", "基构工程联动", "加载顺序说明", "4.4版本适配"]
+    },
+    {
+      "steam_id": "1383580181",
+      "title_zh": "行星背景替换包（Backgrounds+ Planetview）",
+      "summary_zh": "替换巨构、原版栖息地、恒星基地等界面背景图的美术 MOD，素材由多位艺术家创作、QUENTOPOLIS 转换。",
+      "description_zh": "• 已更新并适配 Stellaris 3.4「Cepheus」更新\n• 替换巨构建筑、原版栖息地、恒星基地等对象的背景图\n• 全部图片与美术作品由多位艺术家创作、经 QUENTOPOLIS 转换用于 Stellaris；作者声明不以任何形式拥有这些图片的创作署名权\n• 作者说明本 MOD 完全兼容铁人模式与成就获取\n• 页面附更多作品展示站 quentopolis.com 与 Ko-fi 赞助链接，并请喜欢的玩家评分收藏",
+      "gameplay_zh": "订阅启用即生效；铁人模式与成就模式可正常使用；若想浏览或下载原图可访问作者主页 quentopolis.com，支持作者可通过 Ko-fi。",
+      "reviews_zh": "👍 好评：作者自述已适配 3.4 版本且成就兼容，素材为多位艺术家的作品转换而来。\n⚠️ 注意：图片版权归各原艺术家所有，作者明确声明不占创作署名；后续游戏版本适配情况需另行确认。",
+      "features_zh": ["背景替换", "美术美化", "成就兼容", "巨构界面", "栖息地图"]
+    },
+    {
+      "steam_id": "2796246549",
+      "title_zh": "原始文明行星命名（Proper Names for Primitive Planets）",
+      "summary_zh": "让自然生成的原始文明行星改用命名表中的真实名字，取代「恒星名-编号」式通用命名的沉浸感小 MOD。",
+      "description_zh": "• 针对原始世界没有独立名字、只显示「恒星名-行星编号」的细节问题，作者认为这有些出戏——没有哪个物种会给自己母星起编号\n• 所有自然生成的原始世界将改用原始文明命名表中的独特名字\n• 不影响游戏开始后才出现的原始文明，也不影响 Gigastructural Engineering 的自定义原始文明\n• 拥有原始文明的「Sol III」始终更名为「Earth」\n• 灵感来自 u/SuperGeek29 的 Reddit 帖子（页面附链接）；作者预计除非 Paradox 大改脚本，否则与未来版本都能兼容",
+      "gameplay_zh": "订阅即生效，无需额外设置；新开局星系中自然生成的原始世界会获得独立名字；不影响开局后新出现的原始文明，与基构工程的自定义原始文明互不干扰。",
+      "reviews_zh": "👍 好评：改动小而专注，作者预计对后续游戏版本兼容性良好。\n⚠️ 注意：仅覆盖开局自然生成的原始文明；「Sol III」会被固定改名为「Earth」，属于设计而非可选项。",
+      "features_zh": ["沉浸感", "原始文明", "命名修复", "轻度改动", "开局生成"]
+    },
+    {
+      "steam_id": "1315558378",
+      "title_zh": "原版物种二态性合集（Vanilla Dimorphism）",
+      "summary_zh": "将工坊多个物种二态性头像 MOD 打包整合的合集，为猫、狐、龙等物种新增画像变体，功劳归各原作者。",
+      "description_zh": "• 将创意工坊多个二态性（dimorphism）MOD 合并为一个下载；全部功劳归各原作者，作者请大家去收藏原 MOD\n• 收录 silfae 的猫、狐、马、疣猪、猴、水獭、松鼠、羊驼、牛、寄生真菌等头像 MOD（页面附各原 MOD 链接）\n• 另收录 Rivershaw 的虚空哺乳动物头像、NullPointer 的龙头像，以及 shredtilldeth 的龙头像修复",
+      "gameplay_zh": "订阅本合集即可一次获得全部整合内容，无需逐个订阅原 MOD；作者建议前往各原 MOD 页面点赞支持原作者。",
+      "reviews_zh": "👍 好评：一站式整合多位作者的物种二态头像资源，作者逐条注明出处并附原 MOD 链接。\n⚠️ 注意：本 MOD 为整合转载性质，署名与功劳归各原作者；各原 MOD 后续更新不一定同步到本合集。",
+      "features_zh": ["物种头像", "二态性", "合集整合", "美术资源", "注明出处"]
+    },
+    {
+      "steam_id": "2012803646",
+      "title_zh": "电影化美学玩法（Aesthetic Cinematic Gameplay / ACG）",
+      "summary_zh": "融合沉浸式电影化画面、性能优化、新内容与平衡进程调整的大型综合 overhaul MOD，对加载顺序要求严格。",
+      "description_zh": "• 适配 Stellaris 3.14.*，明确不兼容 4.* 版本与 BioGenesis DLC；不兼容旧存档、不兼容成就\n• 建立在四大支柱上：沉浸式电影化画面、更好的性能、新内容、更好的平衡与进程\n• 画面更真实且附带显著性能优化；只新增 AI 能正确使用的内容；注重平衡流畅的游戏进程，不加入明显超模的东西\n• 加载顺序要求：1) UIOD（必需）→ 2) UIOD Extended Topbar（必需）→ 3) 其他 MOD（不要放在 ACG 之下）→ 4) ACG（必需）→ 5-7) ACG Return of the Ancients、ACG Icons UI Addition、ACG Revert 系列（均可选）\n• 作者警告：ACG 是大型 overhaul，不要当普通美化 MOD 随意混搭；按说明与兼容列表使用可获得极好体验，无视则可能体验极差\n• 建议尽量精简与 ACG 同用的其他 MOD；观看太空战斗时用慢速更能体现电影化效果\n• 提供 FAQ/附加补丁、兼容列表、BUG 反馈、建议等讨论区链接及更新日志、Discord 群\n• 作者自述投入 3000+ 小时（含前作 ACG），MOD 含 270+ 文件夹、10000+ 文件；声明本作离不开社区反馈与其他 MOD 作者的贡献；附 PayPal 与 Ko-fi 赞助链接",
+      "gameplay_zh": "必须同时启用 UIOD 与 UIOD Extended Topbar 并严格按作者给出的顺序加载；只搭配兼容列表中列出的 MOD，尽量少用其他 MOD；遇到问题先查 FAQ 与 BUG 反馈讨论区；不兼容成就与旧存档，开始新档前请确认游戏版本为 3.14.*。",
+      "reviews_zh": "👍 好评：作者自述多年持续打磨、兼顾画面与性能，配套提供详尽的 FAQ、兼容列表与 BUG 反馈渠道。\n⚠️ 注意：仅适配 3.14.*，不兼容 4.* 与 BioGenesis DLC；旧存档与成就均不兼容；与大量 MOD 混搭易出问题，加载顺序要求严格。",
+      "features_zh": ["大型overhaul", "电影化画面", "性能优化", "平衡调整", "加载顺序敏感", "3.14适配"]
+    },
+    {
+      "steam_id": "2887758432",
+      "title_zh": "猎户座之主：地球舰队套装（Master of Orion: Terran Shipset）",
+      "summary_zh": "引入 Master of Orion 风格 Terran 汗国两套完整舰模的舰船套装，徽记随帝国旗帜配色，巨构除外。",
+      "description_zh": "• 开头为背景设定文案：可汗的铁腕统治使人类存续，Terran 汗国自母星 Alpha Ceti 出发争夺银河中的地位\n• 主要内容：两套覆盖全部舰船等级的完整舰模——TerranA 与 TerranB\n• 徽记（decals）随帝国旗帜配色；包含全部恒星基地阶段与空间站，巨构除外\n• FAQ：部分模型保留原版，因为 Master of Orion 的太空玩法模型数量有限，找不到替代的模型暂无法替换，找到方案后会更新；目前没有为 NSC/Downscaled ships 等 MOD 出适配的计划，但欢迎他人制作补丁\n• 作者提示舰模看起来眼熟是正常的：Terran 汗国在 Master of Orion 中本就使用人族舰模的深色版本，并无专属舰模\n• 版权致谢 Nimble Giant Entertainment（Master of Orion 开发商）；缩略图由 ArjenW 制作\n• 作者声明 MOD 出于爱好制作、永不设付费墙，欢迎通过 Ko-fi 捐助",
+      "gameplay_zh": "订阅后创建帝国时选择对应舰船套装即可使用；恒星基地与空间站模型齐备，巨构部分保留原版；如需 NSC 或缩小舰船等 MOD 的适配，目前需自行寻找第三方补丁。",
+      "reviews_zh": "👍 好评：一次提供两套覆盖全部舰种的完整舰模，徽记可随旗帜配色；作者声明永不付费墙。\n⚠️ 注意：部分模型保留原版；暂无 NSC/Downscaled ships 适配计划；舰模素材源自 Master of Orion，版权归 Nimble Giant Entertainment。",
+      "features_zh": ["舰船套装", "Master of Orion", "双套舰模", "基地模型", "徽记配色"]
+    },
+    {
+      "steam_id": "3251543091",
+      "title_zh": "妖精帝国舰船套装 2.0（Fairy Empire Shipset 2.0）",
+      "summary_zh": "取材自《家园2：重制版》Fiari 帝国舰模的舰船套装，让玩家在星海中指挥妖精帝国的舰队。",
+      "description_zh": "• 基于 Homeworld 2 Remastered（家园2：重制版）的 Fiari Empire 舰船 MOD，可让玩家指挥 Fiari 帝国的舰队征战星空\n• 页面提供单独的 NSC 补丁链接（指向另一兼容补丁 MOD）",
+      "gameplay_zh": "订阅主体 MOD 即可使用该舰船套装；若同时使用 NSC 类舰船扩展 MOD，请按页面链接一并订阅作者提供的 NSC 补丁。",
+      "reviews_zh": "👍 好评：舰模出自《家园2：重制版》的 Fiari 帝国风格，并提供现成的 NSC 兼容补丁。\n⚠️ 注意：页面描述较为简短，未列出详细舰船清单与具体游戏版本适配信息。",
+      "features_zh": ["舰船套装", "家园2风格", "NSC补丁", "妖精帝国", "模型移植"]
+    },
+    {
+      "steam_id": "1383923905",
+      "title_zh": "[已停更] Plentiful Traditions 额外槽位（plentiful traditions extra slots）",
+      "summary_zh": "为 Plentiful Traditions 传统 MOD 修复第 22 个飞升天赋不显示的问题，并额外增加两行共 42 个天赋槽位。",
+      "description_zh": "• 针对 SI Abominus 的 Plentiful tradition（2.3.3 版本）制作的非官方修复+附加 MOD\n• 修复第 22 个飞升天赋（ascension perk）不出现的问题\n• 额外增加两行（共 42 个）飞升天赋槽位\n• 作者声明这是其制作的第一个 MOD，希望能长期可用\n• 仅可与 plentiful traditions 搭配使用；原作者为 SI Abominus，全部功劳归他",
+      "gameplay_zh": "必须与 Plentiful Traditions 同用，单独使用无效；使用后可获得修复与扩充后的飞升天赋槽位；标题已标注停更（discontinued），新版游戏的适配情况未知。",
+      "reviews_zh": "👍 好评：修复了原 MOD 第 22 个天赋缺失的问题并把槽位扩到 42 个，作者明确注明功劳归属原作者。\n⚠️ 注意：标题已标注停更；仅针对 plentiful traditions 2.3.3 版本制作，且不可与其他传统 MOD 同用。",
+      "features_zh": ["飞升槽位", "修复补丁", "传统扩展", "非官方修复", "已停更"]
+    },
+    {
+      "steam_id": "1172077353",
+      "title_zh": "二态性：真菌寄生体头像（Dimorphism - Fungoid Parasite Portraits）",
+      "summary_zh": "silfae 制作的轻度美术 MOD，为原版真菌寄生体物种头像添加二态性变体，几乎不与其他 MOD 冲突。",
+      "description_zh": "• 为原版真菌寄生体（fungoid parasite）物种新增头像，增加种类多样性\n• 作者称这是纯图形微调且改动很小，几乎不与任何 MOD 冲突；但若其他 MOD 删除或修改了同一组头像，本 MOD 可能失效\n• 页面附作者其他 MOD 链接及 Patreon、Ko-fi 支持链接",
+      "gameplay_zh": "订阅即生效，无需额外设置；选择真菌寄生体头像的帝国将看到新增的二态画像；与改动同一头像组的 MOD 同用时可能被覆盖而失效。",
+      "reviews_zh": "👍 好评：作者自述为轻度纯图形改动、兼容面广。\n⚠️ 注意：与其他删除或修改同一组真菌寄生体头像的 MOD 同用可能不生效。",
+      "features_zh": ["物种头像", "二态性", "真菌类", "轻度改动", "兼容性好"]
+    },
+    {
+      "steam_id": "2621564981",
+      "title_zh": "去除思潮生成偏向（No Ethics Spawn Bias）",
+      "summary_zh": "均衡随机 AI 帝国的思潮出现权重，减少开局被好战帝国包围概率的小型平衡 MOD，适配 4.4。",
+      "description_zh": "• 页面标注当前版本 2026/6/22 发布、适配 4.4；附作者 Discord 服务器与个人网站链接\n• 让随机生成 AI 帝国的思潮出现得更均匀，降低像原版那样被敌对帝国包围的概率（运气差仍可能发生，只是概率更低）\n• 与任何修改原版思潮的 MOD 不兼容，尤其是修改 00_ethics.txt 的 MOD\n• 致谢 Eris 的 Ethics Bias Begone 为原始实现；作者因该 MOD 已过时而自行调整并上传，方便他人使用\n• 原理说明：00_ethics.txt 中各思潮有生成权重，原版军国主义权重（狂热 250/普通 150）偏高，亲外（100/66）与和平主义（33/66）偏低；本 MOD 将所有思潮统一为狂热 150/普通 100，同时保留狂热变体权重略高的原设计\n• 作者澄清：开发者已说明并不存在「AI 帝国针对玩家思潮生成」的代码，只是好战人格更常见，造成了 AI 敌视玩家的误解\n• 页面附作者其他 MOD：Basic Ordinary Origins、Cybrxkhan 命名表合集、More AI Personalities",
+      "gameplay_zh": "订阅即生效，新开局星系的 AI 帝国思潮分布会更均衡；不要与修改原版思潮的 MOD 同用；想自行微调的玩家可按作者说明修改 00_ethics.txt 中的权重数值。",
+      "reviews_zh": "👍 好评：作者公开具体权重数值与工作原理，注明灵感来源与原作者，态度透明。\n⚠️ 注意：与修改 00_ethics.txt 的思潮类 MOD 冲突；均衡只是概率层面的，仍可能开局被敌对帝国包围。",
+      "features_zh": ["平衡调整", "思潮权重", "银河生成", "小型MOD", "4.4适配"]
+    },
+    {
+      "steam_id": "3103861276",
+      "title_zh": "领袖：不，我不要负面特质！",
+      "summary_zh": "自带简中说明的小 MOD，提供两个法令：将领袖负面特质上限压至 -5，或直接移除全部领袖负面特质。",
+      "description_zh": "• 非常简单的小 MOD，包含两个法令：可将领袖负面特质上限 -5，或移除全部领袖的负面特质\n• 注：移除负面特质对 MOD 添加的特质无效\n• 作者自述制作背景：联机玩死灵物种军国独裁时，统治者二十年内变成「鸽派II」，+25% 造舰费用与 +25% 造舰时间的 debuff 加上短寿命差点让其在早期边界争端中被 AI 击败；玩 MOD 种族时又频繁跳负面特质、被迫手输控制台代码到「断手」，于是做了这个 MOD\n• 作者对法令文案的调侃：若在现实中让所有领导、军官和科学家全都不贪不污不腐败、连个人作风都矫正，除非尤里暗中操作否则难如登天\n• 页面另附英文说明，内容与中文一致",
+      "gameplay_zh": "订阅后在法令界面启用对应法令即可：一个将领袖负面特质上限压至 -5，另一个移除全部领袖负面特质；对第三方 MOD 添加的特质不生效；适合联机或游玩 MOD 种族时代替手输控制台代码。",
+      "reviews_zh": "👍 好评：作者以亲身联机经历说明痛点，用法令替代控制台代码，自带简中与英文双语说明。\n⚠️ 注意：仅作用于领袖负面特质，且对 MOD 添加的特质无效；作者自述定位就是简单小 MOD，没有复杂功能。",
+      "features_zh": ["领袖特质", "法令", "简中MOD", "负面特质移除", "轻度便利"]
+    },
+    {
+      "steam_id": "1959586530",
+      "title_zh": "EVE Online：失落星系——纯舰船包（Eve Online - Lost Galaxy - Ships Only）",
+      "summary_zh": "将 EVE Online 四大种族舰船移植为 Stellaris 舰模的纯舰船包，适配 3.7.4 并兼容 NSC3。",
+      "description_zh": "• EVE Online 主题 Stellaris MOD 的纯舰船部分（Ships Only），页面标注适配 Stellaris 3.7.4\n• 包含 Amarr（艾玛）、Caldari（加达里）、Gallente（盖伦特）、Minmatar（米玛塔尔）四族舰船\n• 兼容 NSC3\n• 附社区 Discord 链接与该系列其他 MOD 的链接\n• 版权声明：EVE Online © CCP Games；本 MOD 依据 CCP 的「开发者许可协议」使用 EVE Online 素材制作，未经 CCP 认可，不代表 CCP 或官方相关人员的观点，不构成对官方虚构宇宙叙事的贡献",
+      "gameplay_zh": "订阅后创建帝国时选择对应 EVE 种族舰模即可；使用 NSC3 可直接兼容；本包仅含舰模，如需事件、星系等完整内容需另寻该系列的其他 MOD。",
+      "reviews_zh": "👍 好评：一次提供 EVE 四族舰模并兼容 NSC3，作者附 Discord 社群与规范的版权声明。\n⚠️ 注意：页面标注适配 3.7.4，更新游戏版本后需自行验证；素材依据 CCP 开发者许可协议使用、未经 CCP 背书，属非官方作品。",
+      "features_zh": ["舰船套装", "EVE Online", "四族舰模", "NSC3兼容", "版权声明"]
+    },
+    {
+      "steam_id": "3193493385",
+      "title_zh": "灰风模组自用（与小灰见面的N种方式）",
+      "summary_zh": "围绕 L 星团纳米生命「灰风」的同人增强 MOD：立绘美化、战舰/巨像/主宰变形、专属遗珍与纳米工厂等玩法。",
+      "description_zh": "• 作者声明：仅供个人游玩或学习、非商用，禁止他人将此模组用作商业用途；请不要与任何其他 MOD 同时使用；遇 BUG 请尽可能详细描述触发环境\n• 使用多位灰风同人画师的作品（EnderAnswer、白雨秋纥、塩漬け魚、earth aeolian、EagerLLier 等），指挥官/科学官动态立绘与女仆装动态立绘来自页面指定的两个 Steam MOD；致谢百度贴吧 @jcsy_小熊喵 技术指导；介绍视频见 B 站链接\n• 主要内容：灰风立绘美化；灰风可作为指挥官或科学官（思潮固定为平等主义），且可成为帝国统治者\n• 灰风战舰形态强化并带立绘，可变形为巨像与主宰；陆军战体形态强化并带立绘；作为指挥官时可生产纳米战体分身陆军部队\n• 接触事件前置异常的扫描概率提升至 60%，可在灰蛊风暴结局之外的任意 L 星门结局被扫描到（作者称异常已设为 AI 无法扫描、仅玩家可扫，但标注未测试、效果未知）；灰蛊风暴结局事件已编写完毕，其余两种 L 星门结局的交流机会列为未来更新内容\n• 灰风专属遗珍：可在星系恒星重力井外修建 L 星门、生产纳米战舰、在星球上修建可用矿物生产其他资源的纳米工厂，并获得三个纳米武器研究选项\n• 灰风可按所在位置变身战舰或陆军战体形态，也可变形为 L 星门——注意他人也能通过该门；不要在已有 L 星门的星系命令其变身（无论按钮是否亮起）；灰风不在银河系内时，首都星系不能有 L 星门\n• 初次接触事件配有额外图片与立绘；作者建议不知如何配置时使用 MOD 自带的自设国「共产星际」",
+      "gameplay_zh": "单独使用、不要与其他任何 MOD 同装；正常推进 L 星门流程（灰蛊风暴结局除外）扫描前置异常遇见灰风，扫描概率已提升至 60%；变身 L 星门时避免在已有 L 星门的星系操作，并留意首都星系限制；新手可按作者建议直接使用 MOD 自带的自设国「共产星际」开局；遇 BUG 请向作者详细描述触发环境。",
+      "reviews_zh": "👍 好评：作者列出 11 条详细功能清单，逐一注明素材画师并附 B 站介绍视频，还提供可直接使用的自设国。\n⚠️ 注意：作者要求不要与其他 MOD 同时使用；部分机制（如 AI 无法扫描异常）作者自述未经测试、效果未知；明确禁止商用。",
+      "features_zh": ["灰风同人", "领袖立绘", "巨像变身", "专属遗珍", "纳米工厂", "禁商用"]
+    }
+  ]
+}

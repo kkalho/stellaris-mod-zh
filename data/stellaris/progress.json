@@ -1,41 +1,15 @@
 {
-  "updated_at": "2026-09-02 00:17",
-  "db_total": 977,
-  "db_translated": 977,
+  "updated_at": "2026-09-04 10:12",
+  "db_total": 1020,
+  "db_translated": 1020,
   "workshop_top_total": 1020,
   "translated_rank_range": [
     1,
-    977
+    1020
   ],
-  "translated_rank_count": 977,
-  "next_batch_start_rank": 978,
+  "translated_rank_count": 1020,
+  "next_batch_start_rank": null,
   "next_batch_size": 50,
-  "remaining": 43,
-  "next_batch_preview": [
-    {
-      "rank": 978,
-      "id": "2573906846",
-      "title": "Ruler Level System"
-    },
-    {
-      "rank": 979,
-      "id": "1587874171",
-      "title": "Extra Buildings"
-    },
-    {
-      "rank": 980,
-      "id": "683756022",
-      "title": "Totalitarian Human Portraits"
-    },
-    {
-      "rank": 981,
-      "id": "1900832246",
-      "title": "No Megastructure Limits"
-    },
-    {
-      "rank": 982,
-      "id": "2002751329",
-      "title": "Sensor Expansion"
-    }
-  ]
+  "remaining": 0,
+  "next_batch_preview": []
 }
