@@ -10,7 +10,8 @@
 - 数据舰桥启动页 + 银河星图 + 主题系统（青/金/钢灰）已上线公网；遗珠 24 颗以金色菱形脉冲星标上星图
 - 信任包（数据说明面板/数据更新格/报告勘误）与分享包（og 标签/favicon/og_card）已上线
 - 工程设施齐备：CI（重建+体检）、Uptime 拨测、verify_db、export/apply 云同步、TAT 通道
-- **翻译腐化防御体系 P0 已建**（2026-09-02）：mods 表新增 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段，1020 个 MOD 全部建立描述 SHA256 基线（batch24 导入时同步建立）；`detect_stale_translations.py` 三维度检测（内容 hash 变化=确定腐化 / time_updated 较新=疑似 / 已重抓无变化=可自动刷新），退出码 0/1 可集成自动化；P1=集成到每日 sync_subscriptions 自动标记，P2=增量重译流水线
+- **翻译腐化防御体系 P0 已建**（2026-09-02）：mods 表新增 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段，1020 个 MOD 全部建立描述 SHA256 基线（batch24 导入时同步建立）；`detect_stale_translations.py` 三维度检测（内容 hash 变化=确定腐化 / time_updated 较新=疑似 / 已重抓无变化=可自动刷新），退出码 0/1 可集成自动化
+- **腐化防御 P1 已上线**（2026-09-04 维护轮 12）：云端 crontab 三连——04:00 Steam 重抓 → 04:30 `detect_stale_translations --mark-stale` 自动标记 → 04:40 `export_trend` 趋势导出备份；检测/迁移/趋势三脚本已上云，云端 stellaris 1020/1020、ck3 295/300 建基线（ck3 缺 5 个=原始描述为空，天然无原文可比，非缺陷）；本地 ck3 基线同步补齐。剩余 P2=增量重译流水线
 
 ## 短期（随接下来 2-3 批扩容完成）
 
