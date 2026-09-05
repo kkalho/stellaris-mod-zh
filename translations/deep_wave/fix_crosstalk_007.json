@@ -1,0 +1,15 @@
+{
+ "game": "stellaris",
+ "source": "wave7 串扰修复（按各自 description_clean/reviews 原文重写，只带需修字段）：707297106 gameplay+features 错挂邻条 872596925；1836457943 summary+features 与原文相悖（原模组为移除银河地图仅玩星团小空域，非生成海量恒星）",
+ "translations": [
+  {
+   "steam_id": "707297106",
+   "features_zh": ["独特星系必刷", "星系生成权重", "利维坦飞地联动", "需新开局生效", "3.6 时期作品"]
+  },
+  {
+   "steam_id": "1836457943",
+   "summary_zh": "Real Space 子模组：作者认为数百恒星的银河不足以展现玩法，彻底移除银河地图，让玩家只在一片撕裂星团的小空域中游玩（共 5 个星团）。",
+   "features_zh": ["移除银河地图", "星团小空域", "黑色星空天穹", "依赖 Real Space", "实验性玩法"]
+  }
+ ]
+}
