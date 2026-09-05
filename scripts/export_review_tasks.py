@@ -18,6 +18,7 @@ import os
 import re
 import sqlite3
 import sys
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
@@ -84,8 +85,7 @@ def main():
     for i in range(n_batch):
         chunk = tasks[i * args.batch:(i + 1) * args.batch]
         p = os.path.join(outdir, f"batch_{i + 1:02d}.json")
-        with open(p, "w", encoding="utf-8") as f:
-            json.dump(chunk, f, ensure_ascii=False, indent=2)
+        Path(p).write_text(json.dumps(chunk, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"  batch_{i + 1:02d}.json: {len(chunk)} 条")
 
     print(f"\n共 {len(tasks)} 个 MOD 待提炼，分成 {n_batch} 批（每批 {args.batch} 条）")

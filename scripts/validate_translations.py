@@ -28,6 +28,7 @@ import json
 import os
 import re
 import sys
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
@@ -234,8 +235,7 @@ def main():
 
     if args.dump:
         hits = [h for r in reports for h in r["hits"]]
-        with open(args.dump, "w", encoding="utf-8") as f:
-            json.dump(hits, f, ensure_ascii=False, indent=2)
+        Path(args.dump).write_text(json.dumps(hits, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"已导出 {len(hits)} 条命中 → {args.dump}")
 
     if db is not None:

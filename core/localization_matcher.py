@@ -31,6 +31,7 @@ import json
 import os
 import re
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from core.game_config import GameConfig
@@ -56,8 +57,8 @@ class LocalizationMatcher:
         return {"localizations": []}
 
     def _save(self):
-        with open(self.game.localization_path, "w", encoding="utf-8") as f:
-            json.dump(self._data, f, ensure_ascii=False, indent=2)
+        Path(self.game.localization_path).write_text(
+            json.dumps(self._data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def all(self) -> List[Dict[str, Any]]:
         return self._data.get("localizations", [])

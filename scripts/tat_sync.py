@@ -4,6 +4,7 @@
 默认动作: 读取 cloud_sync_fix.sh -> base64 -> RunCommand -> 打印 InvocationId。
 """
 import sys, base64, json, os, time
+from pathlib import Path
 
 from tccli.main import main
 
@@ -13,9 +14,11 @@ INSTANCE = "lhins-ca3ol8ju"
 
 def run_command(script="cloud_sync_fix.sh"):
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sh_path = os.path.join(here, script)
-    with open(sh_path, "rb") as f:
-        content = f.read().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    root = Path(here).resolve()
+    sh_path = (root / script).resolve()
+    if not sh_path.is_relative_to(root):
+        raise SystemExit(f"拒绝越界路径: {script}")
+    content = sh_path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
     b64 = base64.b64encode(content).decode()
     args = [
         "tccli", "tat", "RunCommand",

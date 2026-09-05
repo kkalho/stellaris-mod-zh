@@ -21,6 +21,7 @@ import json
 import os
 import re
 import sys
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
@@ -130,8 +131,7 @@ def process_file(path: str, fix_map: dict, details: dict, dry_run: bool) -> list
             changed = True
 
     if changed and not dry_run:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+        Path(path).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     return records
 
 
@@ -174,8 +174,7 @@ def main():
             dedup.setdefault(t["steam_id"], t["reviews_zh"])
         payload["translations"] = [{"steam_id": k, "reviews_zh": v}
                                    for k, v in dedup.items()]
-        with open(out, "w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=False, indent=2)
+        Path(out).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"fix 存档已生成: {out}（去重后 {len(dedup)} 条）")
 
 

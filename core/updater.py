@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import os
 import time
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 
@@ -51,8 +52,8 @@ class DataUpdater:
 
     def _save_state(self):
         os.makedirs(self.game.data_dir, exist_ok=True)
-        with open(self.state_file, "w", encoding="utf-8") as f:
-            json.dump(self.state, f, ensure_ascii=False, indent=2)
+        Path(self.state_file).write_text(
+            json.dumps(self.state, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # ------------------------------------------------------------------
     # 任务注册

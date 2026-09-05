@@ -50,8 +50,8 @@ def desc_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def column_exists(conn: sqlite3.Connection, table: str, col: str) -> bool:
-    cur = conn.execute(f"PRAGMA table_info({table})")
+def column_exists(conn: sqlite3.Connection, col: str) -> bool:
+    cur = conn.execute("PRAGMA table_info(mods)")
     return any(r[1] == col for r in cur.fetchall())
 
 
@@ -71,7 +71,7 @@ def migrate(game_id: str, dry_run: bool = False) -> dict:
         "SELECT COUNT(*) FROM mods WHERE game_id=? AND translated=1", (game_id,)).fetchone()[0]
 
     # 2. 检查已有字段
-    existing = {col for col, _ in NEW_COLUMNS if column_exists(conn, "mods", col)}
+    existing = {col for col, _ in NEW_COLUMNS if column_exists(conn, col)}
     missing = [(col, typ) for col, typ in NEW_COLUMNS if col not in existing]
 
     print(f"=== 翻译基线迁移：{game_id} ===")
@@ -92,9 +92,16 @@ def migrate(game_id: str, dry_run: bool = False) -> dict:
     shutil.copy2(db_path, backup_path)
     print(f"\n  已备份: {backup_path}")
 
-    # 4. 添加缺失字段
+    # 4. 添加缺失字段（列名白名单分支，SQL 全字面量）
     for col, typ in missing:
-        conn.execute(f"ALTER TABLE mods ADD COLUMN {col} {typ}")
+        if col == "desc_hash_baseline":
+            conn.execute("ALTER TABLE mods ADD COLUMN desc_hash_baseline TEXT")
+        elif col == "translation_confirmed_at":
+            conn.execute("ALTER TABLE mods ADD COLUMN translation_confirmed_at TEXT")
+        elif col == "translation_stale":
+            conn.execute("ALTER TABLE mods ADD COLUMN translation_stale INTEGER DEFAULT 0")
+        else:
+            raise ValueError(f"未知列，拒绝动态建列: {col} {typ}")
         print(f"  已添加字段: {col} ({typ})")
     conn.commit()
 

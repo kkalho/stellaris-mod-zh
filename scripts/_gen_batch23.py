@@ -4,6 +4,7 @@
 reviews_zh 规范：订阅 X、收藏 Y + 客观描述，不含任何评价/拔高词
 """
 import json, os
+from pathlib import Path
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -418,6 +419,5 @@ out = {
 
 assert len(T) == 50, f"条目数错误: {len(T)}"
 p = os.path.join(BASE, "translations", "batch23_zh.json")
-with open(p, "w", encoding="utf-8") as f:
-    json.dump(out, f, ensure_ascii=False, indent=1)
+Path(p).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
 print(f"已生成 {p}，共 {len(T)} 条")

@@ -18,6 +18,7 @@ import os
 import shutil
 import sys
 import time
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
@@ -68,8 +69,7 @@ def main():
         "translations": translations,
     }
     src = os.path.join(cfg.data_dir, "translations_full_sync.json")
-    with open(src, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+    Path(src).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # 同步生成 .gz 副本（从刚导出的明文现压，保证一致）
     with open(src, "rb") as fin, gzip.open(src + ".gz", "wb", compresslevel=9) as fout:

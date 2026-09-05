@@ -10,6 +10,7 @@
 import sys, io, json, time, re, os, argparse
 import requests
 import urllib3
+from pathlib import Path
 
 urllib3.disable_warnings()
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -93,10 +94,10 @@ def main():
         print(f"第 {page} 页完成，累计 {len(all_mods)} 条", flush=True)
         time.sleep(args.sleep)
 
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump({"appid": APPID, "fetched_at": time.strftime("%Y-%m-%d %H:%M"),
-                   "source": "steamcommunity.com/workshop/browse (totaluniquesubscribers)",
-                   "total": len(all_mods), "mods": all_mods}, f, ensure_ascii=False, indent=1)
+    Path(out_path).write_text(json.dumps({"appid": APPID, "fetched_at": time.strftime("%Y-%m-%d %H:%M"),
+                              "source": "steamcommunity.com/workshop/browse (totaluniquesubscribers)",
+                              "total": len(all_mods), "mods": all_mods}, ensure_ascii=False, indent=1),
+                              encoding="utf-8")
     print(f"\n完成！共 {len(all_mods)} 条，已保存到 {out_path}")
 
 

@@ -146,27 +146,27 @@ def detect(game_id: str, mark_stale: bool = False,
     written = {"mark_stale": 0, "refresh": 0}
     if mark_stale and content_stale:
         ids = [e["steam_id"] for e in content_stale]
-        conn.execute(f"""
+        conn.execute("""
             UPDATE mods SET translation_stale=1
-            WHERE game_id=? AND steam_id IN ({','.join('?' * len(ids))})
-        """, [game_id] + ids)
+            WHERE game_id=? AND steam_id IN (SELECT value FROM json_each(?))
+        """, [game_id, json.dumps(ids)])
         # 清除非腐化的 stale 标记
         all_stale_ids = set(ids)
         conn.execute("""
             UPDATE mods SET translation_stale=0
             WHERE game_id=? AND translation_stale=1
-              AND steam_id NOT IN ({})
-        """.format(','.join('?' * len(all_stale_ids))), [game_id] + list(all_stale_ids))
+              AND steam_id NOT IN (SELECT value FROM json_each(?))
+        """, [game_id, json.dumps(sorted(all_stale_ids))])
         conn.commit()
         written["mark_stale"] = len(content_stale)
 
     if auto_refresh and refreshable:
         today = time.strftime("%Y-%m-%d")
         ids = [e["steam_id"] for e in refreshable]
-        conn.execute(f"""
+        conn.execute("""
             UPDATE mods SET translation_confirmed_at=?
-            WHERE game_id=? AND steam_id IN ({','.join('?' * len(ids))})
-        """, [today, game_id] + ids)
+            WHERE game_id=? AND steam_id IN (SELECT value FROM json_each(?))
+        """, [today, game_id, json.dumps(ids)])
         conn.commit()
         written["refresh"] = len(refreshable)
 

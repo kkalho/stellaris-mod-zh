@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 # ---------------------------------------------------------------------------
@@ -129,9 +130,8 @@ class GameConfig:
 
     def save_json(self, filename: str, data: Any) -> None:
         """保存 JSON 到 data/<game>/<filename>"""
-        path = os.path.join(self.data_dir, filename)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+        path = Path(self.data_dir, filename)
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def load_json(self, filename: str, default: Any = None) -> Any:
         """从 data/<game>/<filename> 读取 JSON"""

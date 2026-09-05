@@ -16,6 +16,7 @@ import json
 import os
 import re
 import sys
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
@@ -31,7 +32,7 @@ def load_narr_map() -> dict[str, str]:
     m = {}
     outdir = os.path.join(BASE_DIR, "data", "stellaris", "review_tasks")
     for fp in sorted(glob.glob(os.path.join(outdir, "batch_*_out.json"))):
-        d = json.load(open(fp, encoding="utf-8"))
+        d = json.load(Path(fp).read_text(encoding="utf-8"))
         for t in d:
             sid = str(t.get("steam_id"))
             narr = (t.get("narr") or "").strip()
@@ -63,7 +64,7 @@ def main():
         if os.path.join("translations", "fix") in fp.replace("\\", "/"):
             continue
         try:
-            data = json.load(open(fp, encoding="utf-8"))
+            data = json.load(Path(fp).read_text(encoding="utf-8"))
         except Exception:
             continue
         is_dict = isinstance(data, dict)
@@ -98,8 +99,7 @@ def main():
         if changed:
             touched += 1
             if not args.dry_run:
-                with open(fp, "w", encoding="utf-8") as f:
-                    json.dump(data, f, ensure_ascii=False, indent=2)
+                Path(fp).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"追加 {len(records)} 条（涉及 {touched} 个文件）")
     if args.dry_run:
@@ -115,8 +115,7 @@ def main():
         payload = {"game": "stellaris",
                    "translations": [{"steam_id": k, "reviews_zh": v}
                                     for k, v in dedup.items()]}
-        with open(out, "w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=False, indent=2)
+        Path(out).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"fix 存档已生成: {out}（{len(dedup)} 条）")
 
 
