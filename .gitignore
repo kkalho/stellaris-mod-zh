@@ -18,3 +18,9 @@ data/**/*.bak*
 # 趋势导出产物（export_trend.py 生成，派生数据不入库）
 data/**/trend_export.json
 data/**/trend_export.json.gz
+
+# 工坊快照版构建产物（export_workshop_snapshot.py 生成，重跑即得）
+dist/
+
+# 本机安全工具状态
+.mimosa/
