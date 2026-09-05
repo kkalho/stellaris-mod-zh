@@ -1,0 +1,14 @@
+{
+  "game": "stellaris",
+  "source": "串扰修正包 2（wave4 核查：星垒扩展/Starnet NSC3 的 features 错挂相邻条目数据，按各自原文重写）",
+  "translations": [
+    {
+      "steam_id": "3250900527",
+      "features_zh": ["星垒系统大改重制版", "支持原版/NSC/ACOT 三环境", "适配群星 4.x", "含原作者署名致谢"]
+    },
+    {
+      "steam_id": "1720760712",
+      "features_zh": ["Starnet AI 的 NSC3 适配补丁", "锁定 3.12 版本", "兼容 Startech 分支", "需 NSC3 与 Starnet 前置"]
+    }
+  ]
+}
