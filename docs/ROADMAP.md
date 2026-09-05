@@ -52,7 +52,9 @@
 - **反馈通道**：页面"报错/补充信息"入口 → GitHub Issues 模板（需登录门槛考量）
 - **PWA/数据快照**：离线可查，弱网友好
 - **更多游戏**（EU4/VIC3）：`games/` 注册制架构已就绪，按需求推进
-- **Steam 发表（2026-09-05 规划，详见对话纪要）**：三阶段——①社区发布（GitHub Releases 离线包 + 贴吧/NGA/B站 专栏）→ ②桌面客户端打包（Tauri/WebView2 壳 + 本地数据包 + 可选在线模式）→ ③Steam Direct 上架（$100/应用，免费软件，自绘商店素材）；合规要点：数据来自 Steam 公开 API + AI 翻译需显著标注、不使用任何游戏本体素材、客户端默认本地数据（2C/1.9G 云端扛不住商店级流量）
+- **Steam 发表（2026-09-05 规划，详见对话纪要）**：三阶段——①**创意工坊先行**（零成本零审核：发布「离线快照版」单 HTML，翻译数据 gzip+base64 内嵌约 1MB，浏览器 DecompressionStream 解压，预览图走 Steam 图床；描述注明「工具书非游戏内 MOD，订阅后在订阅目录打开 HTML」；steamcmd workshop_build_item 可脚本化重传=订阅者自动收更新）→ ②桌面客户端（Tauri/WebView2 壳 + 本地数据包 + 可选在线模式）→ ③Steam Direct 上架（$100/应用，免费软件，自绘商店素材）；合规要点：数据来自 Steam 公开 API + AI 翻译需显著标注、不使用任何游戏本体素材、客户端默认本地数据（2C/1.9G 云端扛不住商店级流量）
+- **自动更新设计**（2026-09-05）：创意工坊版=steamcmd 每周自动重传（本地脚本：重导快照→steamcmd workshop_build_item），Steam 客户端自动推送订阅者；网页版=服务端常新（已有）；HTML 内嵌 data_version（exported_at），页面「检查更新」按钮 ping jsDelivr 固定路径 version.json；未来桌面客户端走 GitHub Releases API
+- **用户评论设计**（2026-09-05）：两阶段——①GitHub 桥（零后端）：详情页「写评论」→ 预填 Issue/Discussion 模板（mod id 自动携带），Actions 定时任务拉取 `label:review` 的条目写入 community 表（表已存在、含来源 URL 字段），天然防刷（需 GitHub 账号）；②网页版嵌 Giscus（GitHub Discussions 登录后即时评论，免费）；创意工坊版只读+链接在线版（工坊页面自带的评论区是天然反馈渠道）
 
 ## 协作与运维注意（2026-08-30 新增）
 
