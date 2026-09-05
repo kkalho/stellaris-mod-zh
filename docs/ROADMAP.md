@@ -1,11 +1,14 @@
 # 项目路线图（ROADMAP）
 
-> 更新：2026-09-02 · 配合 `PROJECT_HANDOFF.md` 使用——交接文档回答"怎么做"，本文回答"接下来做什么"。
+> 更新：2026-09-05 · 配合 `PROJECT_HANDOFF.md` 使用——交接文档回答"怎么做"，本文回答"接下来做什么"。
 > 原则：**数据真实优先于功能**；每批扩容必须过 `rebuild_all` + `verify_db`（CI 已兜底）；不破"单文件、无构建"底线。
 
-## 现状基线（2026-09-04）
+## 现状基线（2026-09-05）
 
 - 群星 **1020**/1020 ✅ **收官**（batch24 完成，维护轮 10），六字段 100%；CK3 300（版本链 1.13-1.19 已建）；HOI4 空框架
+- **深度精做进行中**（维护轮 13 启动）：wave1-6（#1-300）已上公网，gameplay 薄 562→262、desc 薄 140→36；剩 #301-584 ≈ 6 批
+- **工坊离线快照版已建成待发布**（维护轮 14）：`export_workshop_snapshot.py` 生成单 HTML（1020 MOD=1288KB），发布套件 `docs/WORKSHOP_PUBLISH.md` 就绪，**待用户 Steam 账号执行 steamcmd 首发**；宣传计划 `docs/PROMOTION.md` 已定
+- 本地主仓库迁至 `C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/`（D 盘旧副本冻结待删）
 - **reviews 全库客观化 + 723 个补作者自述**（维护轮 9）；`validate_translations.py` 导入门禁已接入全部导入入口（「👍 好评：」标签前缀已放行，编造形态仍拦，回归测试 tests/test_validate_gate.py）
 - 数据舰桥启动页 + 银河星图 + 主题系统（青/金/钢灰）已上线公网；遗珠 24 颗以金色菱形脉冲星标上星图
 - 信任包（数据说明面板/数据更新格/报告勘误）与分享包（og 标签/favicon/og_card）已上线
@@ -18,7 +21,7 @@
 | # | 事项 | 说明 |
 |---|---|---|
 | 1 | ~~扩容至 1020~~ **✅ 已收官（维护轮 10，2026-09-04）** | batch24（#978-1020，43 个）完成；后续新入榜 MOD 用 `fetch_batch.py --start 1021` 增补即可，无批次压力 |
-| 1.5 | **深度精做补洼地** | 进行中（维护轮 13）：584 个薄字段 MOD（gameplay<100字），**wave1-5 已上公网（562→312）**，剩 #251-584 ≈ 7 批；流水线与串扰治理（已修 7 处）见 HANDOFF §5.2 |
+| 1.5 | **深度精做补洼地** | 进行中（维护轮 13）：584 个薄字段 MOD（gameplay<100字），**wave1-6 已上公网（562→262）**，剩 #301-584 ≈ 6 批（下一批 wave7 = `--start 301`）；流水线与串扰治理（已修 10 处）见 HANDOFF §5.2 |
 | 2 | ~~CK3 云同步泛化~~ **✅ 已完成（维护轮 11，2026-09-04）** | export/apply 加 `--game`（默认 stellaris 兼容），空库跳过导出；CK3 首份全量存档（300 行，版本标注 300/300）已上公网（r16/r16b，1.19×137 等下拉生效）。⚠️ 教训：同步清单必须包含被改的脚本自身（详见 HANDOFF §8 第 7 条） |
 | 3 | ~~老批次 reviews 质量回检~~ **✅ 已完成（维护轮 9，2026-09-01）** | 848 条编造 reviews 已全部重写为客观「订阅 X、收藏 Y」+ 作者自述；`validate_translations.py` 门禁拦截复发 |
 | 4 | 前端小项 | 详情页全屏视图（隐藏首页家具）、SVG 图标替换 emoji、galaxy 配色随主题微调 |
@@ -52,7 +55,7 @@
 - **反馈通道**：页面"报错/补充信息"入口 → GitHub Issues 模板（需登录门槛考量）
 - **PWA/数据快照**：离线可查，弱网友好
 - **更多游戏**（EU4/VIC3）：`games/` 注册制架构已就绪，按需求推进
-- **Steam 发表（2026-09-05 规划，详见对话纪要）**：三阶段——①**创意工坊先行**（零成本零审核：发布「离线快照版」单 HTML，翻译数据 gzip+base64 内嵌约 1MB，浏览器 DecompressionStream 解压，预览图走 Steam 图床；描述注明「工具书非游戏内 MOD，订阅后在订阅目录打开 HTML」；steamcmd workshop_build_item 可脚本化重传=订阅者自动收更新）→ ②桌面客户端（Tauri/WebView2 壳 + 本地数据包 + 可选在线模式）→ ③Steam Direct 上架（$100/应用，免费软件，自绘商店素材）；合规要点：数据来自 Steam 公开 API + AI 翻译需显著标注、不使用任何游戏本体素材、客户端默认本地数据（2C/1.9G 云端扛不住商店级流量）
+- **Steam 发表（2026-09-05 规划；第①步工具链已建成，维护轮 14）**：三阶段——①**创意工坊先行**（✅ 构建侧就绪：`export_workshop_snapshot.py` 实测全量 1020 MOD=1288KB 单 HTML（估算 1MB 成立），发布套件 `docs/WORKSHOP_PUBLISH.md` 含 steamcmd 全流程/vdf 模板/DoD，宣传计划 `docs/PROMOTION.md`；**剩余动作=用户提供 Steam 账号执行 steamcmd 首发+登记物品 ID**）→ ②桌面客户端（Tauri/WebView2 壳 + 本地数据包 + 可选在线模式）→ ③Steam Direct 上架（$100/应用，免费软件，自绘商店素材）；合规要点：数据来自 Steam 公开 API + AI 翻译需显著标注、不使用任何游戏本体素材、客户端默认本地数据（2C/1.9G 云端扛不住商店级流量）
 - **自动更新设计**（2026-09-05）：创意工坊版=steamcmd 每周自动重传（本地脚本：重导快照→steamcmd workshop_build_item），Steam 客户端自动推送订阅者；网页版=服务端常新（已有）；HTML 内嵌 data_version（exported_at），页面「检查更新」按钮 ping jsDelivr 固定路径 version.json；未来桌面客户端走 GitHub Releases API
 - **用户评论设计**（2026-09-05）：两阶段——①GitHub 桥（零后端）：详情页「写评论」→ 预填 Issue/Discussion 模板（mod id 自动携带），Actions 定时任务拉取 `label:review` 的条目写入 community 表（表已存在、含来源 URL 字段），天然防刷（需 GitHub 账号）；②网页版嵌 Giscus（GitHub Discussions 登录后即时评论，免费）；创意工坊版只读+链接在线版（工坊页面自带的评论区是天然反馈渠道）
 

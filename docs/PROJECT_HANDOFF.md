@@ -84,6 +84,23 @@
 > 并行会话注意：wave3 曾被并行会话抢先完成一版（a3fdfb2），wave4 其基于坏任务包的产出已弃用重做。
 > **协作注意**：存在并行 AI 会话同时扩容与操作云端（journal 中非本会话的重启记录为证）。
 > 云端同步前建议先查最近 TAT 调用；本地 8099 测试服务用完即关，避免误导用户。
+> **维护轮 14（2026-09-05，本轮）**：①**工作区迁移**——本地主仓库从 `D:/Projects/walong/` 迁至
+> `C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/`（完整复制含 .git，新位置 verify_db/pytest
+> 实测通过；D 盘旧副本未删、冻结待用户处置——处置前禁止双克隆同时开工）。
+> ②**wave6 上公网**——#251-300 共 50 条（gameplay 薄 312→262、desc 薄 44→36），修复 3 处历史串扰
+> （1631985204 gameplay+features 错挂 776095610、3483853399 features「星际迷航风」应为星球大战灵感、
+> 1647628520 reviews 举例错挂 1414213153，fix_crosstalk_006.json）；A/B/C 三组自检全过零跳过。
+> ③**工坊离线快照版建成**——`scripts/export_workshop_snapshot.py`（单 HTML gzip+base64 内嵌 1020 MOD
+> =1288KB，浏览器 DecompressionStream 解压，搜索/筛选/详情/更新探针/勘误入口/AI 翻译标注；试水 50 条
+> 66KB、全量 1288KB，解压回读校验通过）；发布套件 `docs/WORKSHOP_PUBLISH.md`（steamcmd 全流程+vdf
+> 模板+DoD）；**发布需用户 Steam 账号与 2FA，属用户操作**；宣传计划 `docs/PROMOTION.md`。
+> ④**Mimosa 门禁收敛**（新工作区首次 commit 触发全项目扫描，拦下 19 处历史误报）——SQL 动态拼接改
+> `json_each(?)` 全参数化（detect_stale 三处）与字面量 DDL 白名单分支（migrate ALTER）；`open(变量,"w")`
+> 写文件统一改 `Path.write_text`/`read_text`（13 处）；tat_sync 加项目根包含校验；**行为等价**（pytest
+> 12 用例 + verify_db + detect_stale + save_json 往返全绿），复扫 findings=0，CI 绿，wave6 已 TAT 上云
+> 并公网复验。新坑入档：钩子在 commit/push 前扫**全项目**（不止暂存区）；`conn.execute(变量)` 即使来自
+> 白表字典也拦、只认**字面量 SQL**；`Path.write_text` 可过、`open(变量,"w")` 必拦；被拦的
+> `git add && git commit` 整条不执行（add 也没跑）——重试前先 `git status` 对账暂存区。
 
 ---
 
@@ -127,7 +144,7 @@
 
 | 项 | 值 |
 |---|---|
-| 本地仓库 | `D:/Projects/walong/stellaris-mod-zh/` |
+| 本地仓库 | `C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/`（2026-09-05 起；D 盘旧副本冻结待删，勿双开） |
 | GitHub | `https://github.com/kkalho/stellaris-mod-zh`（用户 kkalho，master 分支） |
 | 云端公网 | `http://150.158.24.195:8080`（2026-08-30 已与本地收敛，公网实测 577/577） |
 | 云端目录 | `/opt/stellaris-mod-zh`（systemd 服务 `stellaris-mod`） |
@@ -220,7 +237,7 @@
 |---|---|---|
 | **P0** | ~~老批次 reviews 回检 + 翻译质量排查~~ **✅ 已完成（2026-09-01 维护轮 9）** | 结果见 §5.1；后续由 `validate_translations.py` 门禁长期守护 |
 | **P1** | ~~群星扩容~~ **✅ 已收官（2026-09-04 维护轮 10）** | **1020/1020**，六字段 100%；创意工坊 Top 1020 全收录。后续新 MOD 靠趋势对比增补即可，无固定批次压力 |
-| **P1** | **深度精做补洼地（进行中，维护轮 13 启动）** | 目标 584 个薄字段 MOD（gameplay<100字 / desc<150字），流水线见 §5.2；**wave1-5（#1-250）已上公网**（gameplay 薄 562→312），剩 #251-584 ≈ 7 批 |
+| **P1** | **深度精做补洼地（进行中，维护轮 13 启动）** | 目标 584 个薄字段 MOD（gameplay<100字 / desc<150字），流水线见 §5.2；**wave1-6（#1-300）已上公网**（gameplay 薄 562→262），剩 #301-584 ≈ 6 批 |
 | **P2** | "第一局推荐"人工评测 | 需 WebSearch/社区核实后扩充，禁止编造 |
 | **P3** | CK3 专属界面 | 版本链与云同步均已完成；金色主题界面深化见 ROADMAP |
 | **P3** | HOI4 抓取 | 复用 CK3 脚本链改 app_id（394360）；启动页已有"建设中"占位 |
@@ -236,9 +253,9 @@
 3. 合并分片 → `import_stellaris_translations.py`（过门禁）→ verify_db + 复测厚度
 4. 提交推送 → TAT 只拉 merged JSON 导入（轻量路径，改 translations 表不碰 mods 表）
 
-**串扰治理**（累计发现 7 处，**已全部修复**）：症状=某 MOD 的 gameplay/features 字段是相邻条目的内容（历史子智能体错位）。检测法：任务包内**相邻条目 features 完全相同**即嫌疑 + 子智能体汇报上报。修复格式照 `fix_crosstalk_003/004/005.json`（按各自 description_clean 原文重写，只带需修字段——import 按字段条件更新）。已修：1616934635、2774388842、3250900527、1720760712、1316044027、910355834、2059474384。
+**串扰治理**（累计发现 10 处，**已全部修复**）：症状=某 MOD 的 gameplay/features 字段是相邻条目的内容（历史子智能体错位）。检测法：任务包内**相邻条目 features 完全相同**即嫌疑 + 子智能体汇报上报。修复格式照 `fix_crosstalk_003/004/005/006.json`（按各自 description_clean 原文重写，只带需修字段——import 按字段条件更新）。已修：1616934635、2774388842、3250900527、1720760712、1316044027、910355834、2059474384（维护轮 13）＋1631985204、3483853399、1647628520（wave6）。
 
-**当前进度**：wave1-5（#1-250）✅ 全部上公网（gameplay 薄 562→312、desc 薄 140→44）；**剩 #251-584 ≈ 7 批**（wave6-12），照上面流水线循环即可。
+**当前进度**：wave1-6（#1-300）✅ 全部上公网（gameplay 薄 562→262、desc 薄 140→36）；**剩 #301-584 ≈ 6 批**（wave7-12），照上面流水线循环即可（下一批 wave7 = `--start 301 --end 350`）。
 
 ### 5.1 专项：老批次 reviews 回检（✅ 已完成，2026-09-01 维护轮 9）
 
@@ -486,12 +503,12 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 
 ## 13. 接手检查清单（新 AI 开工前必做）
 
-1. `cd D:/Projects/walong/stellaris-mod-zh && git log --oneline -5` —— 确认最新提交（本文对应 7da7dba 之后）
+1. `cd "C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh" && git log --oneline -5` —— 确认最新提交（本文对应 d99b9e2 之后）
 2. `python scripts/verify_db.py` —— 数据体检（退出码 0 = 健康；报归零先跑 `rebuild_all.py`）
-3. `python -m pytest tests -q` —— 9 用例应全绿
-4. `curl http://127.0.0.1:8080/api/stellaris/stats` 与 `curl http://150.158.24.195:8080/api/stellaris/stats` —— 本地/云端均应为 total=827；本地测试服务惯例跑 8099（`python web_server_multigame.py 8099`，**用户浏览器标签可能开着它，别乱关**）
-5. 读 `data/stellaris/progress.json` —— 确认扩容进度（当前 977/1020，下一批 #978，剩 43）
-6. 读 §5 待办 —— reviews 回检/编造清理/自述补全已全部完成（§5.1）；**当前主线 = 继续扩容**（自动化任务每日 21:00 自动跑，接手重点是监督其产出：batch 文件 validate 0 命中 → import → 标注 → 上云）；新增翻译文件导入前**必须过 validate_translations.py 门禁**
+3. `python -m pytest tests -q` —— 12 用例应全绿（9 基础 + 3 门禁回归）
+4. `curl http://127.0.0.1:8080/api/stellaris/stats` 与 `curl http://150.158.24.195:8080/api/stellaris/stats` —— 本地/云端均应为 total=1020、translated=1020；本地测试服务惯例跑 8099（`python web_server_multigame.py 8099`，**用户浏览器标签可能开着它，别乱关**）
+5. 读 §5.2 当前进度 —— 扩容已收官（1020/1020）；当前主线 = 深度精做 wave7-12（下一批 #301-350），流水线照 §5.2 循环
+6. 读 §5 待办 —— reviews 回检/编造清理/自述补全已全部完成（§5.1）；新增翻译文件导入前**必须过 validate_translations.py 门禁**
 7. **改任何数据后**：`verify_db.py` → git 提交推送 → CI 绿 → TAT 云端同步（§8，注意两步）→ 公网复验
 8. 浏览器验证用 **browser-use skill**（§6 有实测要点）；改前端后记得本地服务要重启才生效（py 文件同样）
 9. 有并行 AI 会话的可能——推代码前先 `git pull --rebase`，云同步前先查最近 TAT 调用记录
