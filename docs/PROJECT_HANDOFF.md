@@ -101,6 +101,13 @@
 > 并公网复验。新坑入档：钩子在 commit/push 前扫**全项目**（不止暂存区）；`conn.execute(变量)` 即使来自
 > 白表字典也拦、只认**字面量 SQL**；`Path.write_text` 可过、`open(变量,"w")` 必拦；被拦的
 > `git add && git commit` 整条不执行（add 也没跑）——重试前先 `git status` 对账暂存区。
+> **维护轮 15（2026-09-05，本轮）**：**HTTPS+域名第一跳完成**——服务器装 nginx 1.29.8（systemd 自启），
+> `stellaris.conf` 把 80 反代到本机 8080，公网实测 **http://150.158.24.195/ 不带端口即可访问**（8080 保留
+> 兼容）；443 TLS 模板预置 `/etc/nginx/conf.d/stellaris-ssl.conf.disabled`（证书到位后 mv+改 server_name+
+> reload 即启用）。内存无压力（余 1.4G，nginx ~20MB）。**剩余是用户侧三步**：买/确认域名 → ICP 备案
+> （大陆服务器 80/443 硬性要求，免费约 1-2 周，期间 IP:80 照常可用）→ DNS A 记录指 150.158.24.195；
+> 证书路线与启用步骤、域名生效后的 **URL 迁移清单**（og:image/文档/uptime/快照 ONLINE_URL 等 6 处）
+> 见 `docs/DOMAIN_HTTPS.md`——下个会话接手时先读它。
 
 ---
 

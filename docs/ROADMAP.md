@@ -9,6 +9,7 @@
 - **深度精做进行中**（维护轮 13 启动）：wave1-6（#1-300）已上公网，gameplay 薄 562→262、desc 薄 140→36；剩 #301-584 ≈ 6 批
 - **工坊离线快照版已建成待发布**（维护轮 14）：`export_workshop_snapshot.py` 生成单 HTML（1020 MOD=1288KB），发布套件 `docs/WORKSHOP_PUBLISH.md` 就绪，**待用户 Steam 账号执行 steamcmd 首发**；宣传计划 `docs/PROMOTION.md` 已定
 - 本地主仓库迁至 `C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/`（D 盘旧副本冻结待删）
+- **HTTPS 第一跳已完成**（维护轮 15）：nginx 80 反代上线，**http://150.158.24.195/ 无端口可访问**，443 模板预置；待用户买域名+备案+DNS，runbook 见 `docs/DOMAIN_HTTPS.md`
 - **reviews 全库客观化 + 723 个补作者自述**（维护轮 9）；`validate_translations.py` 导入门禁已接入全部导入入口（「👍 好评：」标签前缀已放行，编造形态仍拦，回归测试 tests/test_validate_gate.py）
 - 数据舰桥启动页 + 银河星图 + 主题系统（青/金/钢灰）已上线公网；遗珠 24 颗以金色菱形脉冲星标上星图
 - 信任包（数据说明面板/数据更新格/报告勘误）与分享包（og 标签/favicon/og_card）已上线
