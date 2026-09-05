@@ -17,16 +17,16 @@
 2. **ICP 备案（大陆服务器硬性要求）**：域名指向大陆服务器开 80/443 必须备案，否则腾讯云会拦截 web 访问。控制台搜索「网站备案」→ 个人备案（免费，需身份证+服务器备案服务码，轻量服务器已购满足条件）→ 通常 1-2 周下发。**备案期间不影响现在用 IP:80 访问。**
 3. **DNS 解析**：备案通过后，域名解析添加 A 记录 `@` 和 `www` → `150.158.24.195`。
 
-## 2. 证书（两条路线，推荐 A）
+## 2. 证书（已定路线 B，2026-09-05 用户确认；已注册每 60 天自动到期检查）
 
-- **A. acme.sh 自动续期（推荐，一劳永逸）**：备案后 DNS 已生效时，在服务器执行 Let's Encrypt HTTP-01 签发，90 天有效期但 crontab 自动续：
+- **B. 腾讯云 SSL 免费证书（✅ 选定）**：控制台 → SSL 证书 → 申请免费 DV 证书（TrustAsia，**90 天有效期**，DNS 验证无需改服务器）→ 签发后下载 nginx 格式 → 上传 `/etc/nginx/certs/fullchain.pem + privkey.pem`（上传通道：GitHub Release 打包 + TAT 下载，或控制台 OrcaTerm 粘贴）。**每 90 天需手动换证**——已注册每 60 天的自动到期检查任务（工作区会话自动化，剩 <30 天会主动提醒并协助换证，见 §3）。
+- **A. acme.sh 自动续期（留作后续升级，当前不用）**：备案后 DNS 已生效时，在服务器执行 Let's Encrypt HTTP-01 签发，90 天有效期但 crontab 自动续：
   ```bash
   # 服务器上（GitHub 不通，走 jsDelivr 取脚本）
   curl -fsSL -m 40 -o /tmp/acme_sh.sh "https://cdn.jsdelivr.net/gh/acmesh-official/acme.sh@master/acme.sh"  # 备选: gh-proxy 前缀
   # 或本地下载 acme.sh 安装包后按 §8 打包上传
   ```
   ⚠️ 服务器对 GitHub 直连不通；若 jsDelivr 取脚本受阻，改走路线 B 或本地下载后经 GitHub Release + TAT 上传（见 HANDOFF §8 打包通道）。
-- **B. 腾讯云 SSL 免费证书（最快首发）**：控制台 → SSL 证书 → 申请免费 DV 证书（TrustAsia，**90 天有效期**，DNS 验证无需改服务器）→ 签发后下载 nginx 格式 → 上传 `/etc/nginx/certs/fullchain.pem + privkey.pem`（上传通道：GitHub Release 打包 + TAT 下载，或控制台 OrcaTerm 粘贴）。**每 90 天需手动换证**——到时候提醒 AI 执行 §3 即可。
 
 ## 3. 启用 HTTPS（证书文件就位后 5 分钟，TAT 一条命令可代劳）
 
