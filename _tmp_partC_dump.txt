@@ -1,0 +1,1088 @@
+================================================================================
+IDX steam_id: 1683228401
+TITLE_EN: Extra Events Unoffical fix
+TAGS: Events,Gameplay
+SUBS: 6016
+--- description_clean ---
+This "fix" is unauthorized by the author,may delete at any time when author request or original mod update.
+Don't use this mod and original mod at the same time!
+Because of no localization,Local Aliens Anomaly has been removed.
+
+Original describe:
+About The Mod
+
+Extra Events is a mod that adds 63 brand new top quality events to increase the fun you have on Stellaris and also helps keep the mid-late game interesting. Now translated in every language allowed by Stellaris!
+
+Extra Events 1.9.11 for Stellaris 2.0.*
+______________________________________________________________________________
+
+Some Events Included are:
+A Crazy Scientist
+A Mineral Monolith
+An Adventurers Last Words
+Exceptional Engineering
+The Space Nomads
+The Star Search Special Project
+The Serial Killer Storyline Event
+
+Everything Included:
+35 New Anomaly Events
+1 New Special Project Event Chain
+26 New Pop-Up Events
+1 New Unique Storyline Event
+Multistaged Events
+Multichoice Events
+Events that will effect your civlization
+Decisions that will help carve your empire
+Ethical decisions
+Ethic specific events
+Your decisions matter
+
+Languages:
+English - Done - Bürgermeister
+German - Mostly Done - NotGo0d / Sleya
+Russian - Done - 3ChiThai / Had / Lord_Assaultーさま
+French - Done - Dr.Stranglove
+Polish - Mostly Done - jsw22236
+Spanish - Done - Darh
+Portugese - Done - MENGO456
+Korean - Done - *Death* Crampus - Found here: http://steamcommunity.com/sharedfiles/filedetails/?id=1200587483
+
+Contributors
+Had, Infinite, Appareson, Sleya, NotGo0d, jsw22236, Lord_Assaultーさま, Dr.Stranglove, Darh, MENGO456, Kiyosan
+______________________________________________________________________________
+
+Latest Update
+
+
+Update 9.6 | 9/25/17
+
+[^] Updated mod to support 1.8 "Capek"
+[+] Added Spanish localization by Darh
+
+Update 9.7 | 10/22/17
+[+] Added Portugese localization by MENGO456
+[~] Changed the "Mutiny" event to give less Energy
+[~] Changed the "Extra Profit" event to be more rare
+
+Update 9.8 | 11/13/17
+[+] Korean localization by *Death* Crampus available
+
+Update 9.9 | 12/9/17
+[^] Updated mod to support 1.9 "Boulle"
+
+Update 9.10 | 2/22/18
+[^] Updated mod to support 2.0 "Cherryh"
+
+Update 9.11 | 2/26/18
+[!!] Fixed the Star Search event chain to no longer sometimes spawn hundreds of events. (Credit to Kiyosan)
+
+______________________________________________________________________________
+
+Thank you for the 600+ ratings, 36,000+ downloads and 1500+ favorites!
+
+
+!! Extra Events can be added/removed at any point in time without conflict !!
+--- title_zh_current ---
+额外事件非官方修复（Extra Events Unoffical fix）
+--- summary_zh_current ---
+针对 Extra Events 老版本的社区非官方修复，使其能在当前游戏版本运行，未经原作者授权。
+--- description_zh_current ---
+• 本修复未经原作者授权，若原作者要求或原 MOD 更新，随时可能下架；请勿与本 MOD 的原版同时使用。
+• 因缺少本地化文本，Local Aliens Anomaly 事件已被移除。
+• 原 MOD 简介：Extra Events 为群星添加 63 个全新高品质事件，增加游戏乐趣并让中后期保持趣味，支持群星允许的所有语言。
+• 原版内容包含：35 个新异常事件、1 个新特殊项目事件链、26 个新弹窗事件、1 个全新独特故事线事件、多阶段事件、多选项事件、影响文明的决策、伦理专属事件等。
+--- gameplay_zh_current ---
+替代原版 Extra Events 使用，修复其在当前版本下的兼容问题；切勿与原版同时启用。
+--- reviews_zh_current ---
+订阅 6016、收藏 965。本 MOD 是 Extra Events 的非官方修复版，为群星添加 63 个全新事件，增加中后期游戏趣味。
+--- features_zh_current ---
+["事件扩展", "非官方修复", "兼容补丁", "异常事件", "故事线"]
+================================================================================
+IDX steam_id: 3343044098
+TITLE_EN: Hydra's More Astral Actions
+TAGS: Gameplay
+SUBS: 16213
+--- description_clean ---
+Want to continue unlocking new astral actions after completing your 5th astral rift? Need even more stuff to spend your astral threads on? Well, fear not, I am here to remedy that problem!
+
+With this nifty mod you'll get 4 (6 with the Cosmic Storms DLC) new astral actions!
+
+Unleash a new storm type to devastate enemy and ally alike, or spruce up your gameplay with the ability to unlock an extra precursor chain! Works with modded precursors as well!*
+
+*Applies to precursors from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2916982793]Forgotten History, [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2951652477]More Precursors and [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3039922629]Unavoidable Changes.
+
+For suggestions or bug reports, please either make a discussion, comment or reach out to me on discord in the modding den discord server (#metals-more-mods) or in a private message.
+
+ Overwrites 
+This mod overwrites the discoveries_view.gui file, as well as GFX_storm_presence_icons and system_storm_alerts.dds
+
+ UI mods that work with this mod 
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3361978004]UltraLimit UI: Specimen and Astral Action by [url=https://steamcommunity.com/profiles/76561198995362894]Laquly 零者
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1623423360]UI Overhaul Dynamic by [url=https://steamcommunity.com/id/orrie]Orrie
+
+ Thanks To 
+[url=https://steamcommunity.com/id/TrueWolves]TrueWolves for coming up with Dimensional Knowledge and Temporal Terraforming, as well as the idea for Astral Storms.
+
+ Translations 
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3108330591]Simplified Chinese by [url=https://steamcommunity.com/profiles/76561198862821477]卡尔文迪斯梅特
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3513691177]French by [url=https://steamcommunity.com/profiles/76561199311073872]Stern
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3296726773]Russian by [url=https://steamcommunity.com/profiles/76561199027976891]NE_AsC
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3363611459]Polish by [url=https://steamcommunity.com/id/356795376253839]black mamba
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3498553777]Brazilian by [url=https://steamcommunity.com/id/loliveira103]Oliveira
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?edit=true&id=3577084907]Italian bu [url=https://steamcommunity.com/profiles/76561198054628236]Rahl81
+
+[url=https://discord.gg/8rE723wsSG]https://i.imgur.com/4Und3QN.png
+--- title_zh_current ---
+海德拉的更多星界行动
+--- summary_zh_current ---
+在完成第 5 个星界裂隙后解锁新的星界行动，共新增 4 个（含宇宙风暴 DLC 时 6 个）星界行动。
+--- description_zh_current ---
+• 想在第 5 个星界裂隙完成后继续解锁新的星界行动吗？需要更多消耗星界纤维的地方吗？这个 MOD 就是为此而生。
+• 新增 4 个（含 Cosmic Storms DLC 时为 6 个）全新星界行动。
+• 释放一种新的风暴类型来同时打击敌人与盟友，或解锁额外的先驱者（Precursor）事件链！支持 Forgotten History、More Precursors、Unavoidable Changes 等 MOD 的先驱者内容。
+• 覆盖文件：discoveries_view.gui、GFX_storm_presence_icons、system_storm_alerts.dds；与 UltraLimit UI、UI Overhaul Dynamic 等 UI MOD 兼容。
+--- gameplay_zh_current ---
+完成星界裂隙后，在星界行动界面即可使用新增行动；可通过新行动召唤风暴或解锁额外先驱者事件链。
+--- reviews_zh_current ---
+订阅 1.62 万、收藏 868。本 MOD 新增 4 个（含 Cosmic Storms DLC 时为 6 个）全新星界行动，可释放新风暴或解锁额外先驱者事件链。
+--- features_zh_current ---
+["星界行动", "星界纤维", "新风暴", "先驱者扩展", "游戏性"]
+================================================================================
+IDX steam_id: 900785559
+TITLE_EN: MegaStructures Placement (for 2.7.0)
+TAGS: Buildings,Gameplay
+SUBS: 6119
+--- description_clean ---
+Updated for 2.7.* with Megashipyard
+
+Annoyed that you can only build 1 Megastructure at a time or that they added the one dyson sphere/research hub limit? Trying to convert the Galaxy into nothing but Ringworlds and Dyson Spheres for your God-Emperor but don't want to wait for each one to finish?
+
+Well this is for you!
+
+Alters the game so the current Megastructures (Dyson Sphere, Array, Science Nexus and Ringworld)
+can be both built and upgraded all at the same time. Also adds the ability to build multiple per system.
+Still restricted in star types(ie no black holes)
+
+Features:
+Build Multiple Megastructures at a time
+Can build multiple of each type
+Build Multiple per system (ie Dyson Sphere and Ring World)
+Build Multiple Dyson spheres in Binary/Trinary Star Systems
+Build Dyson Spheres and Ring Worlds in systems with colonisable systems:
+Works with both un-colonised and colonised systems
+Ring Worlds demolish the planet completely (Don't expect any compensation if you use it on a good world)
+Dyson Spheres freeze the planet, removing any colony present
+there is no negative opinon if it is a non-colonised system, if it was then you will get a neg opinon bonus (like
+purging pops)
+Can't Do so in a Capital system, to do so move your Capital First (Can't have you "killing" the God-Emperor
+before he gets his new throne can we?)
+Ring Worlds won't freeze with Dyson Spheres nor do they affect Opinon, my lore is that they can heat
+themselves/ the Sphere transfers power
+
+Feel free to add and remove as per desired, only issue may be the opinon modifier given by building in colonised systems.
+
+
+Current Issues:
+-Dyson Sphere construction blocks Sensor Array and Ring world(as you need to select the sun to start building), Suggest you at least start them first before working on the Sphere if you plan on having them in the same system, doesnt need to be finished, just got to have the inital site down
+
+-Ring World still removes all planets from system, so if you want a Science Nexus in the system start it before finishing the Ring World Frame
+
+
+Updates and Future Stuff
+
+Latest:
+Can Build multiple Dyson Spheres in Binary and Trinary Systems
+
+Previous:
+Added files for other languages, still in english but should at least not show code_"" etc for those who play in other languages.
+
+UPDATE for 2.2.0:
+updated for version 2.0, included ability to build as many megastructures as u like (not restricted to 1 ie for the dyson sphere)
+
+UPDATE for 2.0.2:
+updated for version 2.0, included ability to build as many megastructures as u like (not restricted to 1 ie for the dyson sphere)
+
+UPDATE 10/04/17:
+Added ability to build Ring Worlds and Dyson Spheres in systems with colonisable worlds
+
+UPDATE 09/04/17:
+Added the ability to build multiple Megastructures per system
+
+
+Incompatibilities:
+Any thing that alters the Megastructures themselves, ie change how much they produce
+the files for these are as follows:
+00_ring_world
+01_dyson_sphere
+02_spy_orb
+03_think_tank
+
+compatibile with any new Megastructures
+
+For those with Compatibility issues try the version below:
+pretty much a catchall version that should override any changes mods make to megastructures
+try the Override version: https://steamcommunity.com/sharedfiles/filedetails/?id=1371347309
+You only need this version or that version, both have the same functionality.
+--- title_zh_current ---
+巨型结构同时建造（2.7.0 版）
+--- summary_zh_current ---
+允许同时建造与升级多个巨型结构、同类型多个、同一星系多个，戴森球与环世界不再互相排斥（适配 2.7.* 含巨型船坞）。
+--- description_zh_current ---
+• 厌倦了只能同时建造 1 个巨型结构，或者戴森球/科研枢纽只能各建一个的限制？想把整个银河变成环世界与戴森球组成的帝国？本 MOD 就是为你准备的。
+• 修改游戏机制：当前的巨型结构（戴森球、哨兵阵列、科研枢纽、环世界）可以同时建造与升级，并允许同一星系建造多个。
+• 仍然限制恒星类型（例如不能在黑洞建造）。
+• 特性：可同时建造多个巨型结构；每种类型可建多个；同一星系可建多个（如戴森球+环世界）；双星/三星系统可建多个戴森球；环世界会完全拆除行星，戴森球会冻结行星并移除殖民地；非殖民星系无外交惩罚，殖民星系会获得负面观感（类似净化人口）；不能在首都星系建造。
+--- gameplay_zh_current ---
+安装后解锁巨型结构的并行建造能力，建造规划更自由；注意环世界/戴森球会摧毁原有行星与殖民地。
+--- reviews_zh_current ---
+订阅 6119、收藏 1149。本 MOD 修改游戏机制，使戴森球、哨兵阵列等巨型结构可以同时建造、升级并允许同一星系建造多个。
+--- features_zh_current ---
+["巨型结构", "同时建造", "建造自由", "平衡调整", "2.7版本"]
+================================================================================
+IDX steam_id: 1824937448
+TITLE_EN: Upgradable Resource Collectors
+TAGS: Balance,Economy,Buildings
+SUBS: 7231
+--- description_clean ---
+[url=https://steamcommunity.com/workshop/filedetails/discussion/1824937448/3200367300182017121/] https://i.imgur.com/gvoTFYV.png 
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2684192072/] https://i.imgur.com/3wsFrbs.png 
+
+This mod adds upgraded versions of the resource gathering buildings in two technological tiers to the game. This allows you to convert building slots into several districts worth of jobs, but at a cost. For example you can build a power plant on a planet which has run out of energy sources and therefore cannot build additional generator districts, but these power plants of course require a source of fuel in the form of exotic gases. The same applies to fertilizer/explosives (volatile motes) for Hydroponic Farms/Mineral Mines, etc.
+
+The general mod philosophy is that you can't just conjure resources out of thin air, but by investing some space and resources for some additional production infrastructure you can wring a lot more resources out of your worlds. This is generally especially useful to maximize production on specialized colonies such as mining worlds where the various stacking bonuses help to offset the upkeep costs.
+
+https://images.steamusercontent.com/ugc/12097980922584105801/54C6B7951D4BE3C50C9DC1080CEF366C6B1EDB7D/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false
+
+Though this increases the need for strategic resources, that is offset quite a bit by the fact that this mod also adds upgraded versions of the strategic resource mining buildings, as well as allowing you to build them on habitats that have the appropriate strategic resource deposits. Think of this as requiring specialized heavy-duty industrial equipment in order to mine greater quantities of these rare resources.
+
+To unlock the new buildings several technologies have been added which need to be researched first. Their naming conventions, descriptions and sprites all match the general themes and aesthetics of the base game.
+
+https://images.steamusercontent.com/ugc/12378430722167753985/08BAF5885CED6B680066BB5D527D5655326F4B3A/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false
+
+If you like my content please also check out the Youtube channel of my wife and I, where we play games and talk trash together. We would greatly appreciate it if you took some time to watch our antics!
+
+[url=https://www.youtube.com/@SAXONandDANI] https://i.imgur.com/lGzNkD5.png
+--- title_zh_current ---
+可升级资源采集建筑（Upgradable Resource Collectors）
+--- summary_zh_current ---
+新增两个科技等级的资源采集建筑升级版，可将建筑槽转化为相当于多个区域岗位的产出，代价是需要稀有资源维持。
+--- description_zh_current ---
+• 为资源采集建筑新增两个科技等级的升级版本，可将建筑槽转化为相当于数个区域岗位的产出，但需要付出代价。
+• 例如：在能源枯竭、无法再建发电区域的星球上建造发电厂，但发电厂需要易爆气体作为燃料；水培农场/矿物矿场对应肥料/炸药（挥发性晶簇）等。
+• 总体设计理念：不能凭空变出资源，但通过投入空间与资源建设额外生产设施，可以从世界中压榨出更多资源。
+• 对采矿世界等专业化殖民地的产出最大化尤其有用，各类叠加加成有助于抵消维护成本。
+--- gameplay_zh_current ---
+研究相关科技后在建筑槽中建造升级版采集建筑，获得高产出但需消耗稀有资源；适合专业化星球规划。
+--- reviews_zh_current ---
+订阅 7231、收藏 1212。本 MOD 为资源采集建筑新增两个科技等级的升级版本，可将建筑槽转化为额外的资源产出。
+--- features_zh_current ---
+["建筑升级", "资源产出", "稀有资源", "经济优化", "专业星球"]
+================================================================================
+IDX steam_id: 3010528164
+TITLE_EN: 崩坏：星穹铁道 | 音乐与图片 | Honkai: Star Rail | Music and Picture
+TAGS: Balance,Fixes,Gameplay,Graphics,Loading Screen,Overhaul,Sound,Spaceships,Species,Utilities
+SUBS: 18591
+--- description_clean ---
+Honkai: Star Rail's Music and Picture MOD
+崩坏：星穹铁道 音乐与图片 模组
+
+https://i.imgur.com/B47ycsP.gif
+
+https://i.imgur.com/Dv9q584.png
+
+本作是崩坏：星穹铁道模组的音乐、图片与顾问包模组，即「崩坏：星穹铁道」模组的子模组！本模组内含音乐800余首，精美图片140余张，星穹铁道角色顾问语音（待优化）。其中，模组音乐涵盖「失控」、「雪融于烬」、「长生梦短」、「行于命途」与「星空剧场」等星穹铁道音乐专辑。
+
+This MOD is Honkai: Star Rail MOD's Music, Picture and Advisor Module, which is a subMOD of the Honkai: Star Rail MOD! This MOD contains more than 200 pieces of music, more than 140 beautiful pictures, Star Rail roles' consultant voice(needs to be optimized). Among them, the MOD music includes Star Rail music albums, such as "Out of Control", "Of Snow and Ember", "Svah Sanishyu", "Experience the Paths" and "Astral Theater".
+
+
+
+https://i.imgur.com/bvFzvQv.png
+
+MOD大部分素材来源：【崩坏：星穹铁道】BY 米哈游 [url=https://sr.mihoyo.com]miHoYo Link
+
+群星 崩坏：星穹铁道模组 | Stellaris Honkai: Star Rail MOD [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2982710154]MOD Link
+
+崩坏：星穹铁道音乐模组 | Honkai: Star Rail's Music, Picture and Advisor MOD [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3010528164]MOD Link
+
+原神音乐模组 | Genshin Impact Music MOD [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3153052124]MOD Link
+
+鸣潮音乐模组 | Wuthering Waves Music MOD [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3405085864]MOD Link
+
+钢四 原神主体模组 提瓦特黎明 |  HOI4 Genshin Impact Main MOD Daybreak of Teyvat [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2610774092]MOD Link
+
+https://i.imgur.com/NNyCKag.png 
+
+Bilibili https://space.bilibili.com/74219799  @綠豆糕呀
+Youtube https://www.youtube.com/@Mung_Bean_Cake
+
+星穹铁道MOD交流群：108467214；制作组群：692875844。
+
+
+模组制作不易，还请尊重原创。愿此行，终抵群星！
+The making of this Mod is not easy, and please respect the originality. May This Journey Lead Us Starward!
+
+https://i.imgur.com/B47ycsP.gifhttps://i.imgur.com/HK7sAmI.gif
+--- title_zh_current ---
+崩坏：星穹铁道 | 音乐与图片
+--- summary_zh_current ---
+《崩坏：星穹铁道》MOD 的音乐、图片与顾问子模组，内含 800 余首音乐、140 余张精美图片与角色顾问语音。
+--- description_zh_current ---
+• 本作是「崩坏：星穹铁道」MOD 的音乐、图片与顾问包模组，即该 MOD 的子模组。
+• 内含音乐 800 余首、精美图片 140 余张、星穹铁道角色顾问语音（待优化）。
+• 音乐涵盖《失控》《雪融于烬》《长生梦短》《行于命途》与《星空剧场》等星穹铁道音乐专辑。
+• 大部分素材来源为米哈游《崩坏：星穹铁道》。
+• 配套 MOD：崩坏：星穹铁道主 MOD（2982710154）、原神音乐模组（3153052124）、鸣潮音乐模组等。
+--- gameplay_zh_current ---
+作为星穹铁道主 MOD 的子模组订阅，游戏内音乐、加载图与顾问语音会替换为星穹铁道主题内容。
+--- reviews_zh_current ---
+订阅 1.86 万、收藏 1111。这是「崩坏：星穹铁道」MOD 的音乐、图片与顾问包子模组，内含 800 余首音乐与 140 余张图片。
+--- features_zh_current ---
+["音乐扩展", "加载图", "顾问语音", "星穹铁道联动", "图片包"]
+================================================================================
+IDX steam_id: 2479028391
+TITLE_EN: Godly Traits Redux
+TAGS: Leaders,Species
+SUBS: 9713
+--- description_clean ---
+For Stellaris 3.2.*
+
+Addon for civics and ascension perks:
+https://steamcommunity.com/sharedfiles/filedetails/?id=2479031671
+Addon with minor changes:
+https://steamcommunity.com/sharedfiles/filedetails/?id=2479068093
+For more trait points and picks:
+https://steamcommunity.com/sharedfiles/filedetails/?id=1848976806
+
+
+This mod now adds:
+-12 species traits
+-5 leader traits
+-4 "gimme points" species traits
+
+Heavily inspired by the Original Empire from Ancient Cache of Technologies: Sins of the Fallen Empires. The gov/civic/trait/perks are supposed to be overpowered. They are less overpowered than the standard OE traits (go figure :P).
+
+If anyone is interested in improving this mod, either by tweaking or adding content, feel free. Taking code from me is fine, after all code is made to be used.
+
+LEGACY VERSIONS: https://steamcommunity.com/sharedfiles/filedetails/?id=1895241655
+https://steamcommunity.com/sharedfiles/filedetails/?id=1692035101
+--- title_zh_current ---
+神级特质重制（Godly Traits Redux）
+--- summary_zh_current ---
+新增 12 个物种特质、5 个领袖特质与 4 个「送点」特质，强度失衡向，受远古科技宝库「失落帝国之罪」启发。
+--- description_zh_current ---
+适配 3.2.*。新增内容：12 个物种特质、5 个领袖特质、4 个「送点」物种特质。受 Ancient Cache of Technologies: Sins of the Fallen Empires 的原版帝国启发，国策/特质/飞升设定为过强，但比标准 OE 特质稍弱。欢迎任何人改进或补充内容，代码可自由使用。另有配套附加模组（国策与飞升、微调、更多特质点与特质槽）。
+--- gameplay_zh_current ---
+创建物种时选择神级特质，体验高强度的物种养成；可搭配配套附加模组获得国策、飞升与更多特质点。
+--- reviews_zh_current ---
+订阅 9713、收藏 1633。新增 12 个物种特质、5 个领袖特质与 4 个送点特质，强度失衡向，受远古科技宝库启发。
+--- features_zh_current ---
+["物种特质x12", "领袖特质x5", "强度向", "远古科技宝库联动"]
+================================================================================
+IDX steam_id: 2898179957
+TITLE_EN: Star Wars Mandalorian Ships 4.4
+TAGS: Gameplay,Spaceships,Star Wars,Mandalorian,Ships,Shipsets
+SUBS: 14026
+--- description_clean ---
+While best known for their Beskar-cladded warriors who fear no-one, Mandalore is also home to a well established shipbuilding industry. Organizations like MandalMotors are more than capable of building large warships that can rival and even exceed in fighting capabilities against the likes of those built by Kuat, Corellia, or Rendili. Always ready to supply new ships whenever the Mandalorian clans decide to "unify" and attempt to conquer the entire galaxy...
+
+Much like all my other Star Wars sets, there are both vanilla and NSC editions available. This version is set up for the standard vanilla lineup which means that if you are more interested in using NSC, be sure to check out that version instead (linked below):
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2898180179] Star Wars Mandalorian Ships NSC Edition 
+
+
+ Roster of Ships: 
+
+Note that any model written in italics is an add-on model that can be optionally enabled through an edict (only for players using this shipset and unavailable to the ai obviously)
+
+ Strike Craft 
+- Fang Fighter (for mods that re-add fighters)
+- Davaab Bomber
+- Basilisk Wardroid Droppod
+
+ Civilian Ships 
+- Mantis Science Ship
+- Gauntlet Starfighter Transport Ship
+- Zygerrian Colony Ship
+- Mandalorian Troopship Construction Ship
+
+ Corvette 
+- Vode An Missile Ship
+
+ Frigate 
+- Crusader Gunship
+
+ Destroyers 
+- Jehavey Frigate
+- Vengeance Frigate Mk.I
+
+ Cruisers 
+- Assault Cruiser Mk.III
+- Assault Cruiser Mk.IV
+- Providence Heavy Cruiser
+- Traeger Escort Carrier
+
+ Battleships 
+- Kedalbe Battleship
+- Kandosii Battleship
+- Lictor Heavy Cruiser
+
+ Titans 
+- Veragitor Star Destroyer
+* Kandosii Dreadnought 
+
+ Juggernaut 
+- Kyramud Dreadnought
+
+ Colossus 
+- Kyramud Worldcracker Refit
+
+ Models are also included for: 
+- Starbases (All 5 Tiers)
+- Habitats (All 3 Tiers)
+- Deep Space Citadel (All 3 Tiers)
+- Civilian Stations
+- Defense Platform / Ion Cannon
+- City Planet
+- Hyper Relay
+
+ Megastructure skins included: 
+- Asteroid Industrial Complex (for Gigastructures)
+
+
+ Recommended Mods: 
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2954963007] Star Wars Weapons and Ship Components (by Superior General Delvardus) 
+For all those who have been asking for a weapons mod, I have now finally finished my own version.
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1708335879] Star Wars Starting Systems and Portrait Collection Pack (by force728) 
+This collection completes it all by including a lore-accurate Mandalore starting system and portraits of Mandos from both the Old Republic and Galactic Civil War Eras.
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2525278602] Fleet Formation Mod v2 (by Rage000) 
+Highly recommended for use with any shipset that consists of recognizable spacecraft as the ship spacing in vanilla is absolutely horrendous.
+
+
+ Frequently Asked Questions: 
+
+ Is there compatibility with Downscaled Ships, Real Space System Scale, or any other scaling mod? 
+
+Answer: It will not be done on my end as it is more extra work for mods that I personally never use. So the answer here is No.
+
+ Is this mod Achievement Compatible? 
+
+Answer: This is a shipset. A shipset modifies the game's checksum. So No.
+
+
+ Full List of Credits: 
+
+A full list of credits regarding the use of every asset in this shipset can be found on a dedicated page in the discussion area. I have done my best to ensure that every contributor has been credited so if there is any confusion regarding the models used in this mod, please check it out.
+
+[url=https://steamcommunity.com/workshop/filedetails/discussion/2898179957/3768982992503523874/] Full List of Credits 
+
+
+ If you are curious on what might be coming next be sure to see my collection above the description where I list all my plans for the future! 
+
+Thanks to everyone and may the force be with you!
+--- title_zh_current ---
+星球大战曼达洛舰船 4.4（Star Wars Mandalorian Ships 4.4）
+--- summary_zh_current ---
+完整的曼达洛舰船外观包：从小型打击机到歼星舰、巨兽、巨像一应俱全，含恒星基地、居住站、城市星球与巨构皮肤。
+--- description_zh_current ---
+曼达洛人不仅有贝斯卡铠甲的勇士，也有成熟的造船工业（如 MandalMotors）。本模组提供完整舰船清单：打击机（Fang 战斗机、Davaab 轰炸机、Basilisk 机器人空投舱）、民用船（Mantis 科研船、Gauntlet 战斗机运输、Zygerrian 殖民船、曼达洛运输建造船）、护卫舰（Vode An 导弹舰）、护卫舰（Crusader 炮艇）、驱逐舰（Jehavey、Vengeance Mk.I）、巡洋舰（突击巡洋 Mk.III/IV、Providence 重型巡洋、Traeger 护航航母）、战列舰（Kedalbe、Kandosii、Lictor 重型巡洋）、泰坦（Veragitor 歼星舰、Kandosii 无谓舰）、巨兽（Kyramud 无谓舰）、巨像（Kyramud 碎星改造）。另含恒星基地（5 级）、居住站（3 级）、深空要塞、防御平台/离子炮、城市星球、超空间中继模型与巨构皮肤（小行星工业综合体）。提供原版与 NSC 两个版本。
+--- gameplay_zh_current ---
+选择曼达洛舰船外观，从侦察舰到巨像组建完整舰队；使用 NSC 的玩家请选择 NSC 版模组。
+--- reviews_zh_current ---
+订阅 14026、收藏 1288。完整曼达洛舰船外观包：全舰种模型、基地与巨构皮肤，提供原版与 NSC 版本。
+--- features_zh_current ---
+["曼达洛舰船", "全舰种覆盖", "基地与巨构皮肤", "NSC版", "星球大战主题"]
+================================================================================
+IDX steam_id: 1457731350
+TITLE_EN: Overpowered (Cheat Edicts)
+TAGS: Cheats,Balance,Utilities
+SUBS: 15116
+--- description_clean ---
+Updated to Stellaris v4.4
+3.14 version can be found here:
+https://steamcommunity.com/sharedfiles/filedetails/?id=3478588716
+
+Gives your Empire various Overpowered Boosts. Activate and deactivate them at will.
+
+Inspired by Aitherix' "Edicts++". It can be found here:
+https://steamcommunity.com/sharedfiles/filedetails/?id=686391357
+
+
+This mod will obviously make the game completely unbalanced and most likely too easy. Maybe don't use it when you want a challenge...
+
+
+Features:
+- Many custom edicts, giving your Empire completely overpowered modifiers
+- Choose the cheats and boosts you want to give you the desired sandbox (and completely imbalanced) experience
+- Planet Decision: Modify a Planet in the way you like: manipulate the planet's size or class, add deposits, or spawn fleets in orbit
+- Options to increase your opinion with other empires or your subjects
+- Option to hide the Overpowered Edicts in the menu so it doesnt get too crowded
+- The AI should never be able to pick any of these edicts
+
+For many edicts, the changes will take effect only after the start of the next in-game month.
+--- title_zh_current ---
+强力（作弊法令）（Overpowered (Cheat Edicts)）
+--- summary_zh_current ---
+为帝国提供各种超强增益的法令合集，可随时开关；含行星决策（改大小/类别/矿藏/生成舰队）与好感度提升等作弊选项，AI 无法使用。
+--- description_zh_current ---
+已更新至群星 v4.4（3.14 版见另一链接）。为帝国提供各种超强增益，可随时开启或关闭。灵感来自 Aitherix 的「Edicts++」。特性：大量自定义法令，提供完全失衡的修正；自由选择想要的作弊与增益，打造你想要的沙盒（且完全不平衡）体验；行星决策——按喜好修改行星大小或类别、添加矿藏或在轨道生成舰队；提升与其他帝国或附庸的好感度；可在菜单中隐藏强力法令避免拥挤；AI 永远无法选择这些法令。注意：多数法令在游戏内下个月初才生效。
+--- gameplay_zh_current ---
+需要放松或沙盒体验时开启对应法令，获得巨大增益；适合想体验无敌帝国的玩家，注意法令下月生效。
+--- reviews_zh_current ---
+订阅 15116、收藏 1486。超强增益法令合集：可随时开关、含行星修改决策与好感度提升，AI 无法使用。
+--- features_zh_current ---
+["作弊法令", "行星决策", "好感度提升", "沙盒体验", "AI不可用"]
+================================================================================
+IDX steam_id: 1873457161
+TITLE_EN: ( Twinks Eternal Empires )
+TAGS: Buildings,Gameplay,Spaceships,Species
+SUBS: 4013
+--- description_clean ---
+Twinks Eternal Empires! My personal trauma of code that will not get an update. Anyone who likes is free to take over and try.
+--- title_zh_current ---
+Twinks Eternal Empires（永恒帝国）
+--- summary_zh_current ---
+作者的个人作品，自称是其「代码伤疤」、不会再更新，欢迎喜爱者自由接手继续开发。
+--- description_zh_current ---
+• 页面描述极简，仅一句话：「Twinks Eternal Empires！我个人的代码伤疤（personal trauma of code），不会再获得更新。任何喜欢的人都可以接手尝试。」
+• 页面未提供具体功能、截图或更新说明；从页面标签看涉及建筑、玩法、飞船与物种
+--- gameplay_zh_current ---
+描述未提供安装与使用指引；作者明确不会更新，使用或接手前请自行评估其与当前游戏版本的兼容性。
+--- reviews_zh_current ---
+👍 好评：作者欢迎喜爱者自由接手继续开发。
+⚠️ 注意：作者明确声明不会再更新；页面未说明具体内容与适配版本。
+--- features_zh_current ---
+["个人作品", "作者弃更", "欢迎接手", "页面信息有限", "涉及建筑与飞船"]
+================================================================================
+IDX steam_id: 739477966
+TITLE_EN: Advanced Weapons (2.2+, Alpha)
+TAGS: Military,Technologies
+SUBS: 16031
+--- description_clean ---
+Latest Changes 
+
+ Yes, it will work with NSC nicely. 
+
+
+ (12//16/18) Update. 
+
+1. Well, it is ready for 2.2.... kinda.
+2. Right now, missiles/torpedo and some other weapons' prices and upkeep are not properly adjusted, thus you will find them too cheap thus overpowered. Will fix them hopefully soon.
+
+ (05/22/18) Update. 
+
+1. Right now I just updated version number so it won't show warning. But I still need to test this new patch and new DLC.
+
+ (03/10/18) Update. 
+
+1. Balance change : Space Amoeba are buffed.
+
+ (03/06/18) Update. 
+
+1. Removed Morph tech as requirement for Biological Warfare tech. It turned out Paradox made Unlifting tech (which is requirement for Morth tech) never appears if you don't have any pre-sapient species within your empire, and it turns out... this screws stuffs quite a bit. For compensate the chance of appearance of Biological Warfare tech is a bit lowered.
+
+ (03/06/18) Update. 
+
+First part of missile update is finally done. First to show are Crystaline-based weapons.
+
+1.Adds Crystaline Shard missiles (4 variants) Very high damaging, with the last one comparable with Adv. PPC (now you can go non-lasers for the end-game if you like.) 
+
+Yes, they are back to the game (they were available as energy weapons during 1.0~1.3 era but Paradox removed them eventually as researchable weapons), not as normal energy weapons, but as missiles.
+
+2.Adds Cluster torpedoes which have some tracking power compared to normal torpedoes.
+
+3.Adds Crystaline Shard Torpedoes, ignores all shield and 60% of armor (the reason why this is not full 100% is that otherwise these torpedoes won't sync well with other weapons. Back to vanilla 1.0-old problem where you were forced to go full torpedo or didn't.
+
+
+ (02/26/18) Update. 
+
+1. Added custom PPC firing sound. So how many people are going to notice this?
+
+
+ Available compatibility patches for other mods. Too bad TONS of mods are actually not updated for 2.0... 
+
+-Advanced Ship Behaviour Modules : http://steamcommunity.com/sharedfiles/filedetails/?id=795293992
+
+ *I HIGHLY recommend to use Advanced Ship Behaviour Modules mod (no, despite "Advanced" word I did not write that mod.) This solves a lot of problems regarding ship balance and formation. It is highly recommended to use the compatibility I provided to fully benefit from ASBM. 
+
+ About this mod 
+
+For longer and grand games, this mod adds several advanced weapons.
+
+
+1. New powerful X-Large energy lances for your battleships and bigger ones (3 variants + 1 Titan Beam variant.)
+-Very hard-hitting lances with some tracking. Some later tier lances have some strict requirements to obtain.
+
+
+2. Twin-linked Autocannons for little ships and twin-linked Kinetic Artillery cannons for broadside ships (3 variants each.)
+-Both are reasonably powerful, requiring a lot of minerals but low power. They are not great at piercing armor just like their vanilla brothers.
+
+
+3. A powerful, long-ranged Aegis point defense system (3 variants.)
+-Very long range point defense system may can take care of entire fleet's range, but at higher cost and power.
+
+
+4. 6 sets of new Space Amoeba strikecrafts, including both bomber and fighter variants (6 sets.)
+-Fast and powerful when strikecraft AI is un-bugged. :P
+
+-Last two tier Amoebas are immune to vanilla strikecraft countermeasures thanks to shield. You may want to bring some flaks and/or Aegis point defense.
+
+
+5. A powerful all-around energy cannon, Particle Projector Cannon. (3 variants.)
+-From nearly dead Sci-Fi franchise!
+
+-Command your mech warriors.... I mean, ships to kill your targets with these slow-firing, accurate and deadly long-ranged energy/kinetic hybrid. 
+
+-Just be warned, they have (some say, significant) minimum range that have to be considered... Well, just like Battletech really (tho none of PC games actually implemented this min range properly.)
+
+
+6. New Gauss Flak cannons, and its upgraded Psi and Sentient AI variants for Spiritualist and Materalist factions.
+
+
+7. New, but rather boring three variants of mass accelerators. They do have decent stats and increased range.... that's it really. But you will find them much easier to obtain and far less time consuming compared to high level lances. Good choice if you are unlucky with lances.
+
+1. Crystaline Shard missiles (4 variants) Very high damaging, with the last one comparable with Adv. PPC.
+
+2. Cluster torpedoes which have some tracking power compared to normal torpedoes.
+
+3. Crystaline Shard Torpedoes (4 variants), ignores all shield and 60% of armor. They are extremely powerful end-game torpedoes.
+
+
+ FAQ 
+
+Q: Do AIs use these weapons?
+A: Yes. they do.
+
+Q: Does Fallen Empire use these weapons?
+A: No. It is intentional to make this mod compatible with other mods. Otherwise I have to override a lot of stuffs, which cause a lot of problems.
+
+Q: How about crisis?
+A: No. And this is even more tricky because the codings and the engine of this game are quite glitchy for crisis in general. This is one of the reasons why you won't trouble even if you have researched Annihilator Lance, despite the fact it is labeled as a dangerous technology (for now.)
+
+Q: Hey, <insert the weapon's name here> is overpowered!
+A: Yes, or no. No one knows. Notice my weapons are usually expensive and require a lot of power.
+
+Q: Does this mod require any DLCs?
+A: No.
+
+
+ Recommended Mods 
+
+Advanced Ship Behaviour Modules
+https://steamcommunity.com/sharedfiles/filedetails/?id=790455347
+
+Automated Behavior Ajdustment
+https://steamcommunity.com/sharedfiles/filedetails/?id=799999383
+
+LEX - Leviathan Events Xtended
+https://steamcommunity.com/sharedfiles/filedetails/?id=792416294
+(FINALLY, some worthy foe to test these advanced weapons! This is one of the most original mods available.)
+
+ These first three mods are absolutely recommended. 
+
+New Ship Classes & More
+https://steamcommunity.com/sharedfiles/filedetails/?
+--- title_zh_current ---
+高级武器 2.2+ Alpha（Advanced Weapons (2.2+, Alpha)）
+--- summary_zh_current ---
+扩展武器系统：添加晶体导弹、集束鱼雷、PPC 等高级武器，丰富后期舰船配置选择。
+--- description_zh_current ---
+本 MOD 为群星 2.2+ 添加大量高级武器，当前处于 Alpha 测试阶段。亮点包括：晶体碎片导弹（4 种变体，伤害极高，最后一档可比肩高级 PPC，让后期可以不走激光路线——晶体武器曾是 1.0~1.3 时代的能量武器，后被官方移除，现以导弹形式回归）；集束鱼雷（比普通鱼雷有追踪能力）；晶体碎片鱼雷（无视全部护盾与 60% 护甲）；PPC 专属开火音效等。与 NSC 可以良好协同。已知问题：导弹/鱼雷等部分武器价格与维护费未正确调整，会偏便宜导致过强，作者计划修复。
+--- gameplay_zh_current ---
+研究新增科技解锁高级武器线。目前为 Alpha 版本，导弹/鱼雷类武器可能偏强，注意游戏平衡。
+--- reviews_zh_current ---
+订阅 1.6 万、收藏 2864。这是一款武器扩展模组，作者自述新增水晶碎片导弹、集束鱼雷、水晶碎片鱼雷等武器，并加入自定义 PPC 音效。作者标注为 Alpha 阶段，且坦承导弹/鱼雷等部分武器的价格与维护尚未调整、可能过强，后续会修复。近期更新还调整了太空变形虫的平衡。此为 2.2+ 版本。作者未提供更多评价信息。
+--- features_zh_current ---
+["晶体碎片导弹（4 变体）", "集束鱼雷与晶体鱼雷", "PPC 武器与音效", "与 NSC 协同良好"]
+================================================================================
+IDX steam_id: 2218335517
+TITLE_EN: SW: Fallen Republic - Galaxy BG
+TAGS: Galaxy Generation,Graphics
+SUBS: 21414
+--- description_clean ---
+3.0.* Compatible
+https://imgur.com/xkuaiqP.png
+This mod adds a galaxy background for Fallen Republic. Make sure to load the mod after Fallen Republic.
+
+
+Features: 
+
+[*]adding the Star Wars Region borders as Galaxy Background
+
+
+
+Keep Involved: 
+Consider joining our Discord to receive progress reports on the mod, coordinate and join multiplayer games, interact with the dev team and the community, suggest new features and events, and be the first to learn of secrets and future content.
+
+
+Join the Team: 
+We are always looking for new individuals to contribute their talents to the mod. Some associated skills needed to join the team, depending on the area you wish to contribute, might be a basic knowledge of coding, sound design, 3-D model making, 2-D illustration (concept art, pixel art, etc), or bilingualism. If you have any of these skills or skills related to the aforementioned, check the addendum for a link to the application.
+
+
+
+Addendum: 
+[url=https://docs.google.com/forms/d/1G9boK5Zwv5XpeRSa4mcU383Prm5P2kfLhd4An9_utnY/viewform?edit_requested=true] Star Wars: Fallen Republic Dev/Beta Team Application
+
+
+
+[url=discord.gg/uq3WyBb] https://imgur.com/JOxzf5B.png 
+
+
+
+
+Star Wars and all of related logos, icons, marks, and characters are solely owned by The Walt Disney Company. This total conversion mod is not endorsed, sponsored, or affiliated with The Walt Disney Company, Lucasfilm Ltd. LLC, Electronic Arts, or any other publisher or producer of Star Wars related media. No independent rights will be asserted against The Walt Disney Company, Lucasfilm Ltd. LLC, or Electronic Arts and no commercial exhibition or distribution will be permitted. This is entirely a community-driven, non-profit project.
+--- title_zh_current ---
+星战：堕落共和国 - 银河背景（SW: Fallen Republic - Galaxy BG）
+--- summary_zh_current ---
+为《星战：堕落共和国》大 MOD 添加星战区域边界风格银河背景的小型 MOD，需在堕落共和国之后加载。
+--- description_zh_current ---
+本 MOD 为《星战：堕落共和国》（Star Wars: Fallen Republic）总转换 MOD 添加银河背景：将星球大战区域边界以银河背景形式呈现。加载顺序：需在 Fallen Republic 之后加载。适配 3.0+。
+--- gameplay_zh_current ---
+搭配《星战：堕落共和国》使用，在 MOD 加载顺序中置于其后，即可在银河界面看到星战风格背景。
+--- reviews_zh_current ---
+订阅 2.14 万、收藏 1709。这是为《星战：堕落共和国》总转换模组添加银河背景的子模组，将星球大战区域边界以背景形式呈现。
+--- features_zh_current ---
+["星战区域边界银河背景", "需在 Fallen Republic 之后加载"]
+================================================================================
+IDX steam_id: 1085848794
+TITLE_EN: Immersive Galaxy - Planet Variety, 4K (1/2)
+TAGS: Graphics
+SUBS: 12267
+--- description_clean ---
+[url=http://steamcommunity.com/sharedfiles/filedetails/?id=1085097357]Cloud mod REQUIRED
+
+https://i.imgur.com/c65MtHl.png
+
+https://i.imgur.com/grtVC9V.png
+
+http://i.imgur.com/3mUPw2P.png
+
+This mod contains all the texture in 4K format (4096x2048 px) for those that want extra pretty in their systems. It is more demanding than the 2K mod, and you should stick to it unless you have a computer that is good enough.
+
+Performance wise, and this only comes from observation, it is quite demanding for the HDD/SDD where steam is installed as stellaris is loading/unloading textures on the fly when entering a system, meaning anytime you enter a different system, the game dump all textures and then loads new ones, evry single time you change systems, doing it can be slow, especially for a computer with a slow HDD (such as laptops).
+
+Cloud mod and Part 2 are required.
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1085097357]https://i.imgur.com/Em919sf.png
+[url=https://steamcommunity.com/workshop/filedetails/?id=1412421533]https://i.imgur.com/grtVC9V.png
+
+http://i.imgur.com/8xdKLsr.png
+
+If your computer can't run these properly, I suggest you try out the LITE mod, which sacrifice a bit of variety for enhanced performance:
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1090786705]https://i.imgur.com/fmjzNcd.png
+
+For any other information, please go to the [url=http://steamcommunity.com/workshop/filedetails/?id=1085097357]cloud mod.
+
+https://i.imgur.com/fU7aGnH.png
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1128927140]https://i.imgur.com/LYRHaeq.png
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1173995428]https://i.imgur.com/Fmk5em0.png
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1242221332]https://i.imgur.com/db6bSym.png
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1412637064]https://i.imgur.com/ww6WKBK.png
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=1445668908]https://i.imgur.com/aDTLICW.png
+
+http://i.imgur.com/jJ5MXKG.png
+
+    [*]2.1:
+Barren planet update:
+ - 10 new barren planets
+ - 10 new cold barren planets
+    [*]2.0:
+Major rework of the way the mod works :
+ - Base has been renamed Clouds, still required for other planet variety mods to work, it is a shared dependency. (580 Mb)
+ - "Uninhabitable pack" is now the "2K pack", contains ALL the textures for ALL planets in the 2K resolution. (1.62 Gb)
+ - "Inhabitable pack" is now the "4K pack", contains ALL the textures for ALL planets in the 4K resolution. (2.96 Gb)
+ - LITE has been reworked a bit and received the new normal maps. (650 Mb)
+ - The modular packs are dropped.
+Bug fix :
+ - ALL normal maps corrected (they were inverted due to openGL/Dx fuckery).
+ - Many specular reworked and fixed.
+ - Many seams corrected.
+Optimization :
+ - Removed normal maps for gas giants.
+New planets :
+ - 5 new alpine planets
+ - 5 new arctic planets
+ - 5 new barren planets
+ - 5 new desert planets
+ - 5 new gaia planets
+ - 15 new gas giants planets
+ - 5 new molten planets
+ - 5 new savannah planets
+ - 5 new toxic planets
+ - 5 new tundra planets
+ - 4 new machine planets
+New clouds :
+ - Final rework for the clouds, all of them have been hand drawn. No more procedural generation. Last time I have to do this hopefully.
+    [*]1.2:
+- New Toxic planets, 11 new planets added to the existing 4. (concern only uninhabitable)
+- New Shielded planets, 4 new planets added to unique one. (concern only uninhabitable)
+    [*]1.1:
+Optimization:
+ - Clouds cut down to 4K for diffuse, 2K for normal, and 1K for shadows (was mistakenly in 8K, should greatly improve performance).
+ - Clouds texture variety down, from 35 to 15.
+ - Base mod size down to 210 Mo (from 1500 Mb).
+Various :
+ - Clouds entirely redone, they're more aesthetically pleasing with more transparency.
+ - Tomb world variety now 10 (was 6).
+ - Made some planet packs standalone (barren, cold barren, molten, gas giant & tomb).
+ - Renamed textures to enhance mod compatibility.
+ - Save game enabler available, to put new texture on a old save.
+ - Lite version released, half the textures for less powerful computers.
+--- title_zh_current ---
+沉浸式银河 - 星球多样化 4K（1/2）（Immersive Galaxy - Planet Variety, 4K）
+--- summary_zh_current ---
+以 4K 分辨率（4096x2048）纹理呈现多样星球贴图的图形 MOD 第一部分，需云层 MOD 与第 2 部分，配置要求较高。
+--- description_zh_current ---
+本 MOD 是沉浸式银河系列第一部分：以 4K 格式（4096x2048 像素）提供星球多样化纹理，为星系带来更精致的视觉效果。比 2K 版更吃性能：进入星系时游戏会即时加载/卸载纹理，机械硬盘（尤其笔记本）上切换星系可能较慢。必需依赖：云层 MOD（1085097357）与第 2 部分（1412421533）。配置不足者可尝试 LITE 版（1090786705），牺牲部分多样性换取性能。
+--- gameplay_zh_current ---
+需同时订阅云层 MOD 与第 2 部分。纯图形 MOD，配置较弱的电脑建议使用 LITE 版。
+--- reviews_zh_current ---
+订阅 1.23 万、收藏 1591。这是沉浸式银河系列第一部分，以 4K 格式提供星球多样化纹理，为星系带来更精致的视觉效果。
+--- features_zh_current ---
+["4K（4096x2048）星球纹理", "需云层 MOD 与第 2 部分", "有 LITE 低配版可选"]
+================================================================================
+IDX steam_id: 3195070547
+TITLE_EN: More Leader Traits
+TAGS: Leaders
+SUBS: 39057
+--- description_clean ---
+This mod adds many (46) new leader traits!
+
+ High-Quality Traits 
+Most traits have their own icon as well as differing flavor text and name depending on whether or not you're a normal, hive or machine empire. [url=https://steamcommunity.com/workshop/filedetails/discussion/3195070547/4293692344079110030/] List of all traits.
+
+ Galactic Paragons DLC 
+At the moment the Galactic Paragons DLC is required for most traits. A few traits are available without (Although only to tier 2, just like vanilla shared traits). I am working on making more traits show up when Galactic Paragons is not enabled, but this will be slow as this mod is currently low priority for me.
+
+ Translations 
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3586812419]Russian by [url=https://steamcommunity.com/profiles/76561198360204975]superakk32299
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3217975651]Japanese by [url=https://steamcommunity.com/profiles/76561197971340114]Via
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3108330591]Simplified Chinese by [url=https://steamcommunity.com/profiles/76561198862821477]卡尔文迪斯梅特
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3644127257]Korean by [url=https://steamcommunity.com/profiles/76561198130676602]Ritar
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3280610892]Italian by [url=https://steamcommunity.com/profiles/76561198145226667]DarthGisa
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3513691177]French by [url=https://steamcommunity.com/profiles/76561199311073872]Stern
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3363611459]Polish by [url=https://steamcommunity.com/id/356795376253839]black mamba
+
+
+[url=https://discord.gg/8rE723wsSG]https://i.imgur.com/4Und3QN.png
+--- title_zh_current ---
+更多领袖特质（More Leader Traits）
+--- summary_zh_current ---
+新增 46 个高品质领袖特质，多数自带专属图标，普通/蜂巢/机械帝国文本各异；多数特质需银河英杰 DLC。
+--- description_zh_current ---
+本 MOD 新增 46 个领袖特质，多数特质拥有专属图标，并根据普通、蜂巢或机械帝国显示不同风味文本与名称。DLC 需求：目前大多数特质需要「银河英杰」（Galactic Paragons）DLC；少数特质无需 DLC 即可获得（但仅至 2 级，与原版共享特质一致）。作者正在推进更多特质对无 DLC 玩家开放，但因该 MOD 当前优先级较低，进度较慢。已有多语言翻译（俄/日/简中/韩/意等）。
+--- gameplay_zh_current ---
+启用后领袖可获得 46 个新特质，配合银河英杰 DLC 体验完整内容。适合喜欢领袖养成的玩家。
+--- reviews_zh_current ---
+订阅 3.9 万、收藏 2130。本 MOD 新增 46 个领袖特质，多数拥有专属图标与风味文本。
+--- features_zh_current ---
+["46 个新领袖特质", "专属图标与格式塔文本变体", "多数需银河英杰 DLC", "多语言支持（含简中）"]
+================================================================================
+IDX steam_id: 2956750503
+TITLE_EN: UI Overhaul Dynamic - More Tradition Categories (80)
+TAGS: Fixes,Graphics,Overhaul
+SUBS: 35828
+--- description_clean ---
+For 4.4 ✔️
+https://i.imgur.com/ugRr97n.png
+It does require the main mod to run.
+
+This is a submod for [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1623423360]UI Overhaul Dynamic that increases the amount of selectable tradition categories from the default 7 to 80.
+(The AI will also fully fill the new slots before using unity ambitions)
+This gives you some extra legroom if you're using custom tradition mods.
+Also works nicely in tandem with my [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1890399946]Ascension Slots mod.
+
+
+Supported Mods:
+
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=946222466]Expanded Stellaris Traditions
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2806737895]Forerunner - A Traditions Overhaul
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=1311725711]Plentiful Traditions
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2436408502]Simple Traditions
+[*]Most likely any other tradition mod that doesn't tinker too much with the UI
+
+
+
+🎭 More Category Slots 🎭
+
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2814586266]12 slots
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2603031001]16 slots
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2956750257]24 slots
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2604778880]32 slots
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2608299248]48 slots
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2608299476]64 slots
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2956750503]80 slots (you are here)
+
+
+📑 Load Order 📑
+
+[*]Any tradition mod(s)
+[*]UI Overhaul Dynamic
+[*]UI Overhaul Dynamic - More Tradition Categories
+--- title_zh_current ---
+UI 优化动态：更多传统分类（80）
+--- summary_zh_current ---
+UI 优化动态的子 MOD，扩展传统分类到 80 个槽位。
+--- description_zh_current ---
+适配 4.4，需要主 MOD UI Overhaul Dynamic 才能运行。本子 MOD 将可选传统分类数量从默认 7 个提升到 80 个（AI 也会在使用凝聚力雄心前填满新槽位），为自定义传统 MOD 玩家提供更大空间，也可与作者的槽位 MOD 配合。已确认兼容：More Stellaris Traditions、A Tradition Overhaul、Traditions 等大部分不深度改动 UI 的传统 MOD。加载顺序：任意传统 MOD → UI Overhaul Dynamic → 本 MOD。同系列还提供 16/24/32/48/64/128 等不同档位槽位版本。
+--- gameplay_zh_current ---
+需同时订阅云层 MOD 与第 2 部分。纯图形 MOD，配置较弱的电脑建议使用 LITE 版。
+--- reviews_zh_current ---
+订阅 3.58 万、收藏 2104。本 MOD 作为 UI Overhaul Dynamic 的子模组，将可选传统分类数量从 7 个提升到 80 个。
+--- features_zh_current ---
+["4K（4096x2048）星球纹理", "需云层 MOD 与第 2 部分", "有 LITE 低配版可选"]
+================================================================================
+IDX steam_id: 3193699928
+TITLE_EN: Planetary Mega Engineering
+TAGS: Economy
+SUBS: 32899
+--- description_clean ---
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+Fixed a lot of bugs and errors resulting in poor performance.
+
+Fixed some modifiers not working correctly.
+
+Changed technologies on the back end so they should show up for everyone now.
+
+Added one tech, only one deposit linked to it currently.
+
+This update may cause issues with some saved games, specifically with player economy (sending people into the red unintentionally).
+
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+Planetary Mega Engineering is a mod where you will build powerful planetary megastructures that make planets considerably more valuable and strategically important.
+
+Unlock the decisions that allow you to build these powerful deposits by researching the required technologies.
+
+The deposits themselves range from space elevators and orbital defence networks to orbital robotics assembly labs, planet-wide energy infrastructure and much more. Most deposits are available from the the moment you research their technology tier, but some are connected to ascension paths.
+
+This mod was created with tall empires in mind or people who simply want planets to matter more than they do.
+
+The mod is intentionally overpowered and is intended to be used with other overpowered mods.
+
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+Supported Version and Compatibility:
+
+ Version 4.X              
+
+Wilderness origin not supported.
+
+ This mod should work with most other mods as it does not overwrite any files. 
+
+This mod does not overwrite -ANY- base-game files. I've been very careful about this. As such, this mod should not break any other mods, but other mods that change base game files -CAN- break this mod. Please keep this in mind when reporting crashes or bugs, as it's likely a conflict with a different mod.
+
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+KNOWN ISSUES:
+
+Long running (want to fix):
+
+#### ANY planetary action that wipes deposits will remove this mods deposits as well. EX: Ecumenopolis completion.
+
+This includes starting the game on a planetary diversity planet with this mods custom origin. ####
+
+A mod that provides a workaround: https://steamcommunity.com/sharedfiles/filedetails/?id=3536044971
+
+Follow their recommended load order so nothing breaks.
+
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+Thank you to:
+YesYesMe for the Korean translation.
+GameCON for the Russian translation.
+巴特勒船长 for the Chinese translation.
+
+
+Legacy Versions:
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3496890020]Legacy Version v3.14
+
+
+Feedback welcome.
+--- title_zh_current ---
+行星巨型工程（Planetary Mega Engineering）
+--- summary_zh_current ---
+行星级巨型工程扩展。
+--- description_zh_current ---
+（更新日志：修复大量导致性能问题的 Bug 与错误、部分修正不生效、调整科技让所有人都能看到、新增一项科技。）行星巨型工程让你建造强大的行星级巨构，使行星变得更有价值、更具战略重要性——研究对应科技后解锁建造决议，矿藏类型从太空电梯、轨道防御网络到轨道机器人组装实验室、全行星能源基础设施等等。大部分矿藏在研究对应科技等级后立即可用，部分与飞升路线挂钩。本 MOD 为「精耕」帝国或希望行星更有存在感的玩家设计，刻意过强、适合搭配其他强力 MOD 使用。适配 4.X；荒野起源（Wilderness）不支持。因不覆盖任何文件，应可与大多数 MOD 兼容——本 MOD 不覆盖任何原版文件。
+--- gameplay_zh_current ---
+启用后领袖可获得 46 个新特质，配合银河英杰 DLC 体验完整内容。适合喜欢领袖养成的玩家。
+--- reviews_zh_current ---
+订阅 3.29 万、收藏 3358。本 MOD 让你建造行星级巨构，通过解锁决议为行星添加多种矿藏。
+--- features_zh_current ---
+["46 个新领袖特质", "专属图标与格式塔文本变体", "多数需银河英杰 DLC", "多语言支持（含简中）"]
+================================================================================
+IDX steam_id: 2609450219
+TITLE_EN: Star fantasy: Castle Scarlet 银河幻想·红魔城
+TAGS: Fixes,Gameplay
+SUBS: 9237
+--- description_clean ---
+For every touhou project lover  !!!
+[img=https://i.imgur.com/fVVaDCS.gif]
+
+warning：English is Machine translation
+warning：All icons and picture come from the Internet . Because time has passed for a long time, I forgot the pixiv ID of the artist, so if you know, you can tell me in the comment area, I will add that this mod will not be used for any business activities
+
+The ship model is borrowed from：https://steamcommunity.com/sharedfiles/filedetails/?id=1919185944
+
+What's this mod?
+A mod about Touhou project series game , though this mod only uses those roles and with my changes.
+This mod will generate a very, very powerful AI country. The leader of this country is Remilia scarlet. You can get a lot of help from her and her friends to quickly improve your national level.
+However, if you overuse this mod, you may lose a lot of game experience, so please play with other powerful modules
+
+If I never heard Touhou project?
+If you hate animation content,please ignore this module.
+If you haven't heard of the Touhou or only know a little about it and have a little interest in it, you are welcome to subscribe to this module. Although the character and speaking style of the characters are subjective by me, if you can have an interest in understanding the Touhou series through playing it, my module is very successful.
+
+What can I play in this mod?
+This module only includes the content of AI countries, so you can't choose the race as your race to play, but this country will have a high favor for you at the beginning. Generally speaking, this country will be your friend as long as you don't actively corrupt relations.
+At the same time, this module contains an optional origin. If you choose it, you will quickly get strong assistance from AI countries, so don't choose it if it's not necessary, unless you want to enjoy the pleasure similar to cheating.
+
+这MOD干啥的?
+一个关于东方project系列的mod，这个mod会生成一个非常强大的AI斯卡雷特帝国，它会提供你很多很多帮助。
+因为数值没有经过测试，所以可能会很imba，所以请搭配其他强力mod使用。
+这个mod形象点来说就是被我糅合了夸特，涅槃，堕落妈，东方繁星录的厨力放出mod。
+
+我能在这里面玩到什么?
+夸特能给你船，这个也能给
+涅槃有个强力ai国家，这个也有，虽然可能要你主动败坏关系
+堕落妈对你很好，这个mod的ai国家对你也很好，啥东西都可能给你
+东方繁星录imba，这个mod也很imba（大概）
+红魔厨不咕鸟厨力放出所做mod，另外，小恶魔真不是我老婆，是舰R作者之一的臭海豹的老婆，他让我写的，我老婆是16！！！
+--- title_zh_current ---
+银河幻想·红魔城（Star fantasy: Castle Scarlet）
+--- summary_zh_current ---
+东方 Project 主题 MOD：生成强大的蕾米莉亚·斯卡雷特 AI 帝国，可获大量帮助。
+--- description_zh_current ---
+献给每一位东方 Project 爱好者！注意：英文为机器翻译；所有图标与图片来自网络，因年代久远作者遗忘了画师 pixiv ID，知情者可评论区告知；本 MOD 不用于任何商业活动。舰船模型借用于另一个 MOD（ID 1919185944）。这是一个东方 Project 系列游戏主题 MOD，使用其中的角色并加以改动：会生成一个非常非常强大的 AI 国家，其领袖是蕾米莉亚·斯卡雷特，你可以从她及其朋友那里获得大量帮助，快速提升国家等级。然而……事情没那么简单。
+--- gameplay_zh_current ---
+东方主题内容 MOD：强力 AI 帝国、角色事件与舰船，喜欢东方 Project 的玩家专属。
+--- reviews_zh_current ---
+订阅九千余，是东方题材 MOD 中的人气作品。
+--- features_zh_current ---
+["蕾米莉亚·斯卡雷特 AI 帝国", "东方 Project 角色与事件", "强力助力机制", "借用的精美舰船模型"]
