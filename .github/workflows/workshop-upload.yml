@@ -62,7 +62,7 @@ jobs:
           PY
           mkdir -p content
           cp dist/workshop/index.html content/
-          cp dist/workshop/og_card.png content/
+          cp web/og_card.png content/og_card.png
 
       - name: steamcmd 上传（cm2network 官方镜像；首次运行不带码=触发 Valve 发码）
         env:
