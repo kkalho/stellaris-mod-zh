@@ -196,10 +196,11 @@ const vers=[...new Set(MODS.map(m=>(m.ver.match(/(\d+\.\d+)/)||[])[1]).filter(Bo
 $("#tag").innerHTML='<option value="">全部标签</option>'+tags.map(t=>`<option>${esc(t)}</option>`).join("");
 $("#ver").innerHTML='<option value="">全部版本</option>'+vers.map(v=>`<option>${v}</option>`).join("")}
 async function decompress(b64){const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
-const ds=new DecompressionStream("gzip");const stream=new Response(bytes.stream().pipeThrough(ds));
+const ds=new DecompressionStream("gzip");const stream=new Response(new Blob([bytes]).stream().pipeThrough(ds));
 return stream.json()}
 (async()=>{if(!("DecompressionStream" in window)){$("#err").style.display="block";return}
-MODS=await decompress(DATA_B64);initFilters();render();
+try{MODS=await decompress(DATA_B64);initFilters();render();}catch(e){
+$("#err").style.display="block";$("#err p").innerHTML="⚠ 数据解压失败："+esc(String(e))+"（请更换新版浏览器或用在线版）";return}
 try{const r=await fetch(VERSION_CDN,{cache:"no-store"});const v=await r.json();
 if(v.exported_at&&v.exported_at!==EXPORTED_AT){const u=$("#upd");u.style.display="block";
 u.innerHTML=`🚀 已有新数据快照（${esc(v.exported_at)}），本页为 ${EXPORTED_AT}。更新方法见工坊页面说明，或先看 <a style="color:var(--acc)" href="${ONLINE_URL}">在线版</a>。`}}catch(e){/* 离线环境无网络，静默 */}})();

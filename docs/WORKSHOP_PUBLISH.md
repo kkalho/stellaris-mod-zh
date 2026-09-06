@@ -27,11 +27,26 @@ python scripts/export_workshop_snapshot.py --limit 50 # 试水版（首次发布
 | `data/stellaris/workshop_version.json` | **进 git**：离线页「检查更新」经 jsDelivr 读取对比 `exported_at` |
 
 生成后自检：
-- [ ] 体积合理（全量约 0.7-1.2MB；明显异常先查数据是否为空）
+- [ ] 体积合理（全量约 1.3MB；明显异常先查数据是否为空）
 - [ ] 本地双击打开：搜索「巨构」「jugou」、版本筛选、卡片→详情、Esc 关闭
 - [ ] 断网状态打开仍可用（「检查更新」静默失败属正常）
 
-## 3. 首次发布（steamcmd）
+> ✅ 2026-09-06 已完成一轮浏览器端到端验证（本地 8123 静态服务 + IAB）：渲染 1020 卡、中文/拼音搜索、
+> 详情五段与三个跳转、Esc、版本筛选（4.4→250）全部通过；期间修复 decompress 用 Blob.stream()（Uint8Array
+> 无 .stream()）并为初始化加 try/catch 错误面板。
+
+## 2.5 一键发布套件（2026-09-06 新增，推荐）
+
+```bash
+python scripts/make_workshop_vdf.py    # 生成 dist/workshop/workshop.vdf + publish.bat + og_card 副本
+```
+
+- **发布**：双击 `dist/workshop/publish.bat`（首次自动下载 steamcmd 到 %LOCALAPPDATA%\steamcmd）→ 输入账号密码 → 手机令牌确认。
+- **首发回填**：日志里找 `published file id`，然后 `python scripts/make_workshop_vdf.py --set-id <ID>` 并把 `data/stellaris/workshop_item_id.json` 一起 git 提交——之后每次更新都会指向同一物品，订阅者自动收推送。
+- vdf 描述自动从 description.txt 注入（Valve KeyValue 多行转义已处理）；上传内容走 ASCII 暂存目录 `%LOCALAPPDATA%\stellaris-snapshot-workshop`（规避中文路径风险）。
+- 等价命令行：`steamcmd +login 账号 +workshop_build_item dist/workshop/workshop.vdf +quit`。
+
+## 3. 首次发布（steamcmd 手动流程，与 §2.5 等价）
 
 1. 安装 steamcmd（Windows: 解压版即可；不要装在本项目目录）。
 2. 写 `steamcmd_workshop.vdf`（UTF-8，无 BOM）：
