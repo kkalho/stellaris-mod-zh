@@ -1,7 +1,7 @@
-"""通过 TAT 自动化助手把 cloud_sync_fix.sh 推送到腾讯云并执行。
+"""通过 TAT 自动化助手把云同步脚本推送到腾讯云并执行。
 
-用法: python scripts/tat_sync.py [--poll-inv INV_ID]
-默认动作: 读取 cloud_sync_fix.sh -> base64 -> RunCommand -> 打印 InvocationId。
+用法: python scripts/tat_sync.py --script <同步脚本.sh> [--poll-inv INV_ID]
+--script 必填（一次性脚本已按 §14.1.5 清理，无默认值）；脚本通常由 run_wave.py sync 生成。
 """
 import sys, base64, json, os, time
 from pathlib import Path
@@ -12,7 +12,7 @@ REGION = "ap-shanghai"
 INSTANCE = "lhins-ca3ol8ju"
 
 
-def run_command(script="cloud_sync_fix.sh"):
+def run_command(script):
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     root = Path(here).resolve()
     sh_path = (root / script).resolve()
@@ -47,7 +47,8 @@ if __name__ == "__main__":
     if "--poll-inv" in sys.argv:
         inv_id = sys.argv[sys.argv.index("--poll-inv") + 1]
         sys.exit(describe(inv_id))
-    script = "cloud_sync_fix.sh"
     if "--script" in sys.argv:
         script = sys.argv[sys.argv.index("--script") + 1]
+    else:
+        raise SystemExit("用法: python scripts/tat_sync.py --script <同步脚本.sh> [--poll-inv INV_ID]")
     sys.exit(run_command(script))
