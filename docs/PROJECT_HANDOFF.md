@@ -121,6 +121,21 @@
 > 不同，本次是真失败；**主会话直做兜底可行**：按任务包原文写 description/gameplay（补丁格式只带
 > 两字段），照抄字段由合并脚本按 steam_id 从任务包拼装（零转写风险），门禁 0 命中。下一步 wave9
 > = `--start 401`（任务包未预导出）。
+> **维护轮 19（2026-09-06，本轮，第二档改进）**：①**reviews 格式归一**——全库审计 1020 条：
+> 叙述体 932 / 👍标签体 43 / 自由体 45；43 条 👍 体已转「订阅 X、收藏 Y。…需要注意：…」叙述体
+> （内容零改写，数字取库内真实值，fix_reviews_unify_20260906.json）；**规范：今后 reviews 一律叙述体**；
+> 45 条自由体为过时 MOD 手写短评，保留为可接受差异。②**串扰自动检测**——`detect_crosstalk.py`
+> （三类精确重复：features 列表/gameplay 全文/summary 跨 MOD 相同；KNOWN_LEGIT 豁免 4 组合法系列
+> 文案；--files 模式已接入 run_wave merge 阶段，命中即阻断）。**首战告捷**：全库扫出 5 组真串扰
+> （预扫永远抓不到的非相邻错挂：暗蓝UI←堕落帝国扩展、嘉然包←更多飞升、飞升拓宽←星规阵列、
+> 传统分类80←4K星球、行星巨工←领袖特质，共 10 MOD）已按各自原文修复（fix_crosstalk_009.json，
+> wave9 前置导入）；累计串扰 19 处全修。③**云端趋势备份**——服务器 crontab 增 04:45 档：trend
+> 导出 7 天本地轮换（backups/trend/）；`pull_trend_backup.py` 走 TAT **分片回传**（⚠ 实测 TAT
+> 输出上限 ~32KB 外层 base64，非文档宣称 64KB；lzma 压缩 CSV 后按 14KB 切片），趋势历史已进
+> git（data/stellaris/trend_backup_*.csv，10364 行基线）。**月度自动拉取任务未建**（本会话属定时
+> 任务，系统禁止再建）——新会话建：每 30 天跑 pull_trend_backup.py + 提交，保留最近 6 份滚动。
+> ④前端模块化**延后**：等 wave12 收官+工坊发布稳定后单独会话做（源码拆模块+构建拼单文件）。
+> MCP hook 注意：本会话无法 CronCreate。
 > **维护轮 18（2026-09-06，本轮，第一档改进）**：①**仓库卫生**——根目录 4 个一次性 cloud_sync_*.sh
 > 出库（git rm --pathspec-from-file 走 Write 白名单通道，钩子拦「命令文本含 .sh」的误报绕法已验证）；
 > data 下 9.2MB baseline bak 残留清除；**deep_wave/ 规范落地**——分片导入后 `run_wave.py archive`

@@ -11,6 +11,8 @@
 | 增量入库 | `python scripts/import_new_batch.py N M` | upsert 新 MOD + 自动更新 progress.json |
 | 翻译导入 | `python scripts/import_stellaris_translations.py translations/batchN_zh.json` | 批次格式 |
 | 译名一致性 | `python scripts/check_terminology.py [--files a.json ...]` | advisory 不阻断；词表 `games/stellaris/term_list.json`（canonical=库内多数派/官方名） |
+| 串扰检测 | `python scripts/detect_crosstalk.py [--files a.json ...]` | 跨 MOD 字段精确重复=串扰症状；--files 已接入 run_wave merge 阶段（命中阻断）；全库模式豁免 KNOWN_LEGIT 合法系列 |
+| 趋势备份回传 | `python scripts/pull_trend_backup.py` | TAT 分片拉回云端 trend 表（lzma+14KB 分片，实测输出上限 ~32KB）；提交由调用方执行 |
 | 版本标注 | `python scripts/detect_stellaris_versions.py` | 双轨：显式声明 + 时间推断 |
 | DLC 标注 | `python scripts/detect_stellaris_dlcs.py` | 英文描述 + 中文翻译双轨，命中全标「可选」 |
 | 拼音索引 | `python scripts/rebuild_pinyin_idx.py` | 含中文译名拼音 |

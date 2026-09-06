@@ -144,6 +144,9 @@ def cmd_merge(args):
         gate_files.append(str(pp["fix"]))
     print(f"② 合并件 {pp['merged'].name}: {len(ordered)} 条 → 门禁（含分片与修复文件）:")
     run(sys.executable, str(GATE), *gate_files)
+    print("② 串扰检测（精确重复）:")
+    run(sys.executable, str(BASE_DIR / "scripts" / "detect_crosstalk.py"),
+        "--files", str(pp["merged"]))
     print(f"✓ merge 完成: {pp['merged'].stat().st_size//1024}KB")
 
 
