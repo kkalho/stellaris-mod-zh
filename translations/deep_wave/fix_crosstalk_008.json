@@ -1,0 +1,26 @@
+{
+ "game": "stellaris",
+ "source": "wave8 串扰修复（按各自 description_clean 原文重写，只带需修字段）：2436408502 gameplay+features 错挂邻条 784249404（Auto Survey At Start）；1800624677 features「中文」项原文无据（B组上报），移除",
+ "translations": [
+  {
+   "steam_id": "2436408502",
+   "features_zh": [
+    "5 条新传统树",
+    "工业/科研/海军线",
+    "政府/领袖线",
+    "采纳奖励加成",
+    "适配 3.8"
+   ]
+  },
+  {
+   "steam_id": "1800624677",
+   "features_zh": [
+    "暗夜精灵",
+    "完整文明包",
+    "舰船外观",
+    "奥术科技",
+    "魔兽联动"
+   ]
+  }
+ ]
+}
