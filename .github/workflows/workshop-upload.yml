@@ -64,20 +64,27 @@ jobs:
           cp dist/workshop/index.html content/
           cp web/og_card.png content/og_card.png
 
-      - name: steamcmd 上传（cm2network 官方镜像；首次运行不带码=触发 Valve 发码）
+      - name: steamcmd 上传（首次运行不带码=触发 Valve 发码）
         env:
           STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
           STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
           STEAM_GUARD_CODE: ${{ inputs.steam_guard_code }}
         run: |
-          if [ -z "$STEAM_GUARD_CODE" ] || [ "$STEAM_GUARD_CODE" = "00000" ]; then
-            LOGIN_ARGS=(+login "$STEAM_USERNAME" "$STEAM_PASSWORD")
-          else
-            LOGIN_ARGS=(+login "$STEAM_USERNAME" "$STEAM_PASSWORD" "$STEAM_GUARD_CODE")
-          fi
           docker run --rm -i \
             -e STEAM_USERNAME -e STEAM_PASSWORD -e STEAM_GUARD_CODE \
             -v "$GITHUB_WORKSPACE:/work" \
             cm2network/steamcmd:latest \
-            bash -c 'steamcmd "${LOGIN_ARGS[@]}" +workshop_build_item /work/workshop.vdf +quit' 2>&1 | tee /tmp/steamcmd.log
-          grep -i "published file id" /tmp/steamcmd.log || echo "（首次登录未走到上传属正常：先收码再带码跑一次）"
+            bash -c 'if [ -z "$STEAM_GUARD_CODE" ] || [ "$STEAM_GUARD_CODE" = "00000" ]; then
+                       /home/steam/steamcmd/steamcmd.sh +login "$STEAM_USERNAME" "$STEAM_PASSWORD" +quit
+                     else
+                       /home/steam/steamcmd/steamcmd.sh +login "$STEAM_USERNAME" "$STEAM_PASSWORD" "$STEAM_GUARD_CODE" +workshop_build_item /work/workshop.vdf +quit
+                     fi' 2>&1 | tee /tmp/steamcmd.log
+          if [ -z "$STEAM_GUARD_CODE" ] || [ "$STEAM_GUARD_CODE" = "00000" ]; then
+            if grep -qi "Steam Guard" /tmp/steamcmd.log; then
+              echo "✅ 已触发 Valve 发码：请查收邮箱/手机上的 5 位码，用它作为输入再运行一次"
+            else
+              echo "⚠ 未看到 Steam Guard 提示——请检查上方日志中账号密码是否正确"; exit 1
+            fi
+          else
+            grep -i "published file id" /tmp/steamcmd.log || { echo "⚠ 未找到 published file id，请查看上方日志"; exit 1; }
+          fi
