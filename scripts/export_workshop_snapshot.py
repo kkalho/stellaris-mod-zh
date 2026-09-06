@@ -45,7 +45,8 @@ def load_records(limit: int | None) -> list[dict]:
     rows = conn.execute(
         """SELECT m.id, m.steam_id, m.title, m.title_en, m.version, m.subscriptions, m.favorites,
                   m.tags, m.score, m.like_ratio, m.time_updated, m.status, m.optional_dlcs,
-                  m.preview_url, m.pinyin_idx, m.translated
+                  m.preview_url, m.pinyin_idx, m.translated,
+                  m.translation_stale, m.translation_confirmed_at
            FROM mods m WHERE m.game_id='stellaris' ORDER BY m.subscriptions DESC"""
     ).fetchall()
     tr: dict[int, dict[str, str]] = {}
@@ -74,6 +75,10 @@ def load_records(limit: int | None) -> list[dict]:
         except ValueError:
             feats = []
         q = " ".join(filter(None, [m["title"] or "", m["title_en"] or "", m["pinyin_idx"] or ""])).lower()
+        conf = m["translation_confirmed_at"] or ""
+        upd_day = upd
+        stale = 1 if int(m["translation_stale"] or 0) == 1 else (
+            1 if (conf and upd_day and upd_day > conf) else 0)
         out.append({
             "sid": m["steam_id"], "t": m["title"] or m["title_en"], "te": m["title_en"] or "",
             "s": t.get("summary", ""), "d": t.get("description", ""), "g": t.get("gameplay", ""),
@@ -83,6 +88,7 @@ def load_records(limit: int | None) -> list[dict]:
             "lr": round(m["like_ratio"] or 0, 3), "upd": upd,
             "dep": 1 if (m["status"] or "") == "deprecated" else 0,
             "dlc": dlc if isinstance(dlc, list) else [], "pv": m["preview_url"] or "", "q": q,
+            "stl": stale,
         })
     if limit:
         out = out[:limit]
@@ -155,6 +161,8 @@ const EXPORTED_AT="__DATE__";
 const VERSION_CDN="__CDN__";
 const ONLINE_URL="__ONLINE__";
 const ISSUE_URL="__ISSUE__";
+const SYNON=__SYNON__;
+function variants(q){const v=[q];const s=SYNON[q];if(s)for(const x of s)v.push(x);return v}
 let MODS=[];
 const $=s=>document.querySelector(s);
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -166,7 +174,7 @@ return `<div class="card" data-sid="${m.sid}">${m.pv?`<img loading="lazy" src="$
 <div class="chips">${m.dep?'<span class="b r">⚠ 已废弃</span>':""}${verBadge(m.ver)}${tags}</div>
 <div class="row"><span>👥 ${fmt(m.subs)} · ⭐ ${fmt(m.favs)}</span><span>${m.upd?"更新 "+m.upd:""}</span></div></div>`}
 function filtered(){const q=$("#q").value.trim().toLowerCase(),tag=$("#tag").value,ver=$("#ver").value,sort=$("#sort").value;
-let a=MODS.filter(m=>(!q||m.q.includes(q))&&(!tag||m.tg.includes(tag))&&(!ver||(m.ver||"").includes(ver)));
+let a=MODS.filter(m=>(!q||variants(q).some(x=>m.q.includes(x)))&&(!tag||m.tg.includes(tag))&&(!ver||(m.ver||"").includes(ver)));
 if(sort==="subs")a.sort((x,y)=>y.subs-x.subs);else if(sort==="upd")a.sort((x,y)=>(y.upd||"").localeCompare(x.upd||""));else a.sort((x,y)=>x.t.localeCompare(y.t,"zh"));return a}
 function render(){const a=filtered();$("#grid").innerHTML=a.map(card).join("");
 $("#meta").textContent=`快照 ${EXPORTED_AT} · ${MODS.length} 个 MOD · 当前显示 ${a.length} 个`}
@@ -174,6 +182,7 @@ function detail(m){const dl=m.dlc.length?`<section><h4>涉及 DLC（可选）</h
 $("#sheet").innerHTML=`<h2>${esc(m.t)}</h2><div class="en">${esc(m.te)}</div>
 <div class="chips">${m.dep?'<span class="b r">⚠ 已废弃</span>':""}${verBadge(m.ver)}${m.tg.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
 <p class="row" style="margin-top:10px">👥 订阅 ${fmt(m.subs)} · ⭐ 收藏 ${fmt(m.favs)} · 评分 ${m.sc} · 好评率 ${(m.lr*100).toFixed(0)}% · 数据更新 ${m.upd||"-"}</p>
+${m.stl?`<section><h4>内容时效</h4><p>⚠ MOD 在翻译确认之后有更新（或原文已变化），中文内容可能与最新版本略有出入，以工坊原页为准。</p></section>`:""}
 <section><h4>简介</h4><p>${esc(m.s)}</p></section>
 <section><h4>详细介绍</h4><p>${esc(m.d)}</p></section>
 <section><h4>具体玩法</h4><p>${esc(m.g)}</p></section>
@@ -241,8 +250,16 @@ def main():
     payload = json.dumps(records, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     b64 = base64.b64encode(gzip.compress(payload, mtime=0)).decode("ascii")
 
+    synon = {}
+    tl = BASE_DIR / "games" / "stellaris" / "term_list.json"
+    if tl.exists():
+        for t in json.loads(tl.read_text(encoding="utf-8")).get("terms", []):
+            group = [t["canonical"]] + [a for a in t.get("aliases", []) if a != t["canonical"]]
+            for v in group:
+                synon[v] = [x for x in group if x != v]
     html = (HTML_TEMPLATE
             .replace("__DATA__", b64)
+            .replace("__SYNON__", json.dumps(synon, ensure_ascii=False, separators=(",", ":")))
             .replace("__DATE__", exported)
             .replace("__CDN__", VERSION_CDN)
             .replace("__ONLINE__", ONLINE_URL)

@@ -1274,6 +1274,7 @@ async function showDetail(id, push = true) {
         <div class="meta-item"><div class="k">中文支持</div><div class="v"><span class="status-badge ${zh.cls}" style="margin:0">${zh.label}</span></div></div>
         ${d.act && d.act.lvl ? `<div class="meta-item"><div class="k">更新状态</div><div class="v">${actBadge(d.act)}</div></div>` : ''}
         ${versionRisk(d) ? `<div class="meta-item" style="grid-column:1/-1"><div class="k">旧版风险提示</div><div class="v"><span class="status-badge ${versionRisk(d).cls}" style="margin:0">${versionRisk(d).label}</span></div></div>` : ''}
+        ${d.stale_notice ? `<div class="meta-item" style="grid-column:1/-1"><div class="k">内容时效</div><div class="v">${esc(d.stale_notice.reason === 'stale' ? '⚠ MOD 原文在翻译确认后已变化，中文内容滞后，正在等待更新' : `⚠ MOD 在翻译确认（${d.stale_notice.confirmed_at}）之后有更新（最近更新 ${d.stale_notice.updated}），中文内容可能与最新版本略有出入，以工坊原页为准`)}</div></div>` : ''}
         <div class="meta-item"><div class="k">订阅数</div><div class="v">${fmt(d.subs)}</div></div>
         <div class="meta-item"><div class="k">收藏数</div><div class="v">${fmt(d.fav)}</div></div>
         <div class="meta-item"><div class="k">最后更新</div><div class="v">${esc(d.updated)}</div></div>

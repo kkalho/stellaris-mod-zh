@@ -106,10 +106,14 @@ def search(game_id, keyword, limit=60, sort="subs", tag=None, version=None, db=N
     """
     conds, params = [], []
     for w in words:
-        kw = f"%{w}%"
-        conds.append("(m.title_en LIKE ? OR m.title LIKE ? OR m.steam_id LIKE ? "
-                     "OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ? OR m.pinyin_idx LIKE ?)")
-        params.extend([kw] * 6)
+        variant_conds, variant_params = [], []
+        for v in term_variants(game_id, w):
+            kw = f"%{v}%"
+            variant_conds.append("(m.title_en LIKE ? OR m.title LIKE ? OR m.steam_id LIKE ? "
+                                 "OR ttitle.zh_text LIKE ? OR tsum.zh_text LIKE ? OR m.pinyin_idx LIKE ?)")
+            variant_params.extend([kw] * 6)
+        conds.append("(" + " OR ".join(variant_conds) + ")")
+        params.extend(variant_params)
     if not conds:
         conds.append("(m.title_en != '' OR m.title != '')")
     sql += " WHERE m.game_id=? AND " + " AND ".join(conds)
@@ -213,6 +217,7 @@ def get_detail(game_id, steam_id, db=None):
         "preview": m.get("preview_url") or "",
         "score": calc_score(m.get("subscriptions"), m.get("favorites")),
         "act": activity_of(m.get("time_updated")),
+        "stale_notice": stale_notice_of(m),
         "like_ratio": round((m.get("favorites") or 0) / (m.get("subscriptions") or 1) * 100, 1)
                       if m.get("subscriptions") else 0,
         "status": m.get("status"),
@@ -328,6 +333,45 @@ def activity_of(ts):
     if days <= 540:
         return {"lvl": "slow", "days": days}
     return {"lvl": "stale", "days": days}
+
+
+def stale_notice_of(m):
+    """内容时效提示（数据真实原则）：翻译确认后 MOD 又更新，或原文 hash 已变（stale 标记）→
+    中文内容可能滞后于最新版本。"""
+    conf = str(m.get("translation_confirmed_at") or "")
+    tu = int(m.get("time_updated") or 0)
+    if int(m.get("translation_stale") or 0) == 1:
+        return {"reason": "stale", "confirmed_at": conf, "updated": ""}
+    if not conf or not tu:
+        return None
+    try:
+        update_day = time.strftime("%Y-%m-%d", time.localtime(tu))
+        if update_day <= conf:  # 按日粒度比较，同日更新不误报
+            return None
+        return {"reason": "updated", "confirmed_at": conf, "updated": update_day}
+    except (ValueError, OSError):
+        return None
+
+
+_TERM_CACHE = {}
+
+
+def term_variants(game_id, word):
+    """term_list 驱动的同义词扩展：查询词全等命中某术语的 canonical/别名 → 返回整组变体。"""
+    if game_id not in _TERM_CACHE:
+        cache = {}
+        p = os.path.join(BASE, "games", game_id, "term_list.json")
+        if os.path.exists(p):
+            try:
+                with open(p, encoding="utf-8") as f:
+                    for t in json.load(f).get("terms", []):
+                        group = [t["canonical"]] + list(t.get("aliases", []))
+                        for v in group:
+                            cache[v] = group
+            except (ValueError, OSError):
+                pass
+        _TERM_CACHE[game_id] = cache
+    return _TERM_CACHE[game_id].get(word, [word])
 
 
 def get_gems(game_id, db=None):
