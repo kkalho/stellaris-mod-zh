@@ -46,33 +46,31 @@ python scripts/make_workshop_vdf.py    # 生成 dist/workshop/workshop.vdf + pub
 - vdf 描述自动从 description.txt 注入（Valve KeyValue 多行转义已处理）；上传内容走 ASCII 暂存目录 `%LOCALAPPDATA%\stellaris-snapshot-workshop`（规避中文路径风险）。
 - 等价命令行：`steamcmd +login 账号 +workshop_build_item dist/workshop/workshop.vdf +quit`。
 
-## 3. 首次发布（steamcmd 手动流程，与 §2.5 等价）
+## 3. 发布路线（2026-09-06 更新：**主路线 = GitHub Actions**，本地 steamcmd 已判死）
 
-1. 安装 steamcmd（Windows: 解压版即可；不要装在本项目目录）。
-2. 写 `steamcmd_workshop.vdf`（UTF-8，无 BOM）：
+> 本机实测：steamcdn 的 Akamai/Valve 更新主机 TLS 全部不可达（curl/steamcmd 双双失败，仅
+> cloudflare.steamstatic 镜像可达），steamcmd 引导器自更新无法完成（HTTPS 断言 + 借用客户端
+> DLL 均无效）——**本地 steamcmd 路线在本机网络下不可行**，已弃用；publish.bat 与 vdf 模板保留
+> 作未来网络恢复时的备选。
 
-```
-"workshopitem"
-{
-  "appid"                "281990"
-  "publishedfileid"      ""
-  "contentfolder"        "C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/dist/workshop"
-  "previewfile"          "C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/web/og_card.png"
-  "visibility"           "0"
-  "title"                "群星 MOD 中文图鉴（离线查询手册 · 持续更新）"
-  "description"          "<粘贴 dist/workshop/description.txt 全文，内部引号需转义为 \">"
-  "changenote"           "首个公开版本：Top 1020 中文数据快照"
-}
-```
+### 主路线：GitHub Actions（仓库自带 workflow）
 
-3. 上传（会触发 Steam 手机令牌确认）：
+1. **配置凭据（只做一次，凭据不经过任何对话）**：GitHub 仓库页 → Settings → Secrets and
+   variables → Actions → New repository secret，添加两条：
+   - `STEAM_USERNAME`：你的 Steam 账号名
+   - `STEAM_PASSWORD`：你的 Steam 密码
+   （或本机 gh CLI：`gh secret set STEAM_USERNAME` / `gh secret set STEAM_PASSWORD`，回车后粘贴）
+2. **发布（每次两跑）**：仓库 Actions 页 → 「工坊发布（workshop-upload）」→ Run workflow：
+   - 第 1 次：验证码保持默认 `00000` → 运行会在登录步骤失败并**触发 Valve 发码**（邮箱/手机收 5 位码）
+   - 第 2 次：用收到的码作为输入再运行 → 上传成功，日志里找 **published file id**
+3. **回填 ID**：把 ID 告诉 AI 或自己跑 `python scripts/make_workshop_vdf.py --set-id <ID>`，
+   提交 `data/stellaris/workshop_item_id.json`——之后每次发布自动指向同一物品，订阅者自动收更新。
+4. 工作流细节：重建知识库（rebuild_all + verify）→ 生成快照 → vdf → docker cm2network/steamcmd
+   上传；凭据全走仓库 Secrets，令牌码经 workflow 输入传入（短时一次性，不上日志明文以外的位置）。
 
-```bash
-steamcmd +login <Steam账号> +workshop_build_item <vdf路径> +quit
-```
+### 订阅目录说明（不变）
 
-4. **记下日志中的 publishedfileid**，回填进 vdf（以后每次更新必须带），并在本文件登记物品 ID。
-5. 订阅自己的物品 → 到 `Steam/steamapps/workshop/content/281990/<物品ID>/` 双击 index.html 完成端到端验证。
+物品发布后订阅者在 `Steam\steamapps\workshop\content\281990\<物品ID>\index.html` 打开离线页。
 
 ## 4. 日常更新（订阅者自动收推送）
 
