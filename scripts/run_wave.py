@@ -198,8 +198,10 @@ def cmd_sync(args):
         return max(400, p.stat().st_size // 2)
 
     fetches = [(pp["merged"], minsize(pp["merged"]))]
+    expect = 50
     if pp["fix"].exists():
         fetches.append((pp["fix"], minsize(pp["fix"])))
+        expect += len(json.loads(pp["fix"].read_text(encoding="utf-8"))["translations"])
     lines = ["#!/bin/bash", f"# cloud_sync_wave{wave}.sh — 由 run_wave.py sync 生成（翻译轻量同步）",
              "set -e", "cd /opt/stellaris-mod-zh", f'SHA="{sha}"',
              "mkdir -p translations/deep_wave", "",
@@ -222,7 +224,6 @@ def cmd_sync(args):
         lines += [f'fetch "{rel}" {mn}', ""]
     check_py = " + ".join(f'len(json.load(open("{p.relative_to(BASE_DIR).as_posix()}", encoding="utf-8"))["translations"])'
                           for p, _ in fetches)
-    expect = "50" if not pp["fix"].exists() else "52"
     lines += ["python3 - <<'PY'", "import json", f"assert {check_py} == {expect}, '条数对账失败'", 'print("sanity OK")', "PY", "",
               "/usr/bin/python3 scripts/import_stellaris_translations.py \\",
               "  " + " \\\n  ".join(f'"{p.relative_to(BASE_DIR).as_posix()}"' for p, _ in fetches), "",
