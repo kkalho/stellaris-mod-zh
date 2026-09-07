@@ -72,4 +72,4 @@
 - ~~翻译腐化无检测机制~~ ✅ P0 已解决（2026-09-02：基线迁移 + 检测脚本）；P1 待做=集成到每日 sync_subscriptions 自动标记 stale；P2 待做=增量重译流水线（导出差异→子智能体重译→更新基线）
 - `details.jsonl` 30 行历史重复（无害，导入按 ID 去重）
 - CK3 云端落后本地一个版本链（短期待办 #2 解决）
-- `D:\Projects\temp\stellaris-mod-zh-deploy\` 旧副本待清理（确认无用后删除）
+- ~~`D:\Projects\temp\stellaris-mod-zh-deploy\` 旧副本~~ ✅ 已删除（2026-09-07 连同 D 盘主仓库副本、早期空骨架库一并核验清理，零唯一数据，GitHub 为唯一事实源）
