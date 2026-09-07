@@ -215,7 +215,7 @@
 
 | 项 | 值 |
 |---|---|
-| 本地仓库 | `C:/Users/wangf/Desktop/群星工具/stellaris-mod-zh/`（2026-09-06 二次迁移；历史路径 Documents/新建文件夹 与 D:/Projects/walong 均已退役，D 盘冻结待删） |
+| 本地仓库 | `C:/Users/wangf/Desktop/群星工具/stellaris-mod-zh/`（2026-09-06 二次迁移；历史路径均已退役并删除（2026-09-07 清理 D 盘主副本+temp deploy 副本+空骨架库，核验零唯一数据）） |
 | GitHub | `https://github.com/kkalho/stellaris-mod-zh`（用户 kkalho，master 分支） |
 | 云端公网 | `http://150.158.24.195:8080`（2026-08-30 已与本地收敛，公网实测 577/577） |
 | 云端目录 | `/opt/stellaris-mod-zh`（systemd 服务 `stellaris-mod`） |
