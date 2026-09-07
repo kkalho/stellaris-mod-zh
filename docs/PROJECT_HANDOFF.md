@@ -152,6 +152,16 @@
 > ⚠️ 新坑：run_wave sync 的条数对账值曾硬编码 50+2，被 fix 条数 5 的批次触发服务端 sanity 拦截
 > （sanity 正确工作）——已改为读 fix 文件实际条数。剩余 wave10-12 = #451-584 共 3 批
 > （下一批 `run_wave.py export --start 451`）。
+> **维护轮 22（2026-09-06，本轮）**：①**工坊发布切 CI 主路线并跑通发码**——本地 steamcmd 判死
+> （本机到 Valve 更新主机 TLS 全断：akamai/steampowered 不可达、仅 cloudflare.steamstatic 可达；
+> 换官方镜像+借用客户端 DLL 均无效）；`workshop-upload.yml` 建成（Actions 重建知识库→快照→vdf→
+> docker cm2network/steamcmd 上传；凭据全走仓库 Secrets STEAM_USERNAME/PASSWORD；两跑式令牌：
+> 首跑触发 Valve 发码→用户报码→带码二跑；首次发码已触发（run 34036572412 确认 Steam Guard 邮件
+> 已发，待用户回码后完成上传与 ID 回填）。修了三处：og_card 取 web/ 源文件、steamcmd 实际路径
+> /home/steam/steamcmd/steamcmd.sh、登录参数在容器内组装。②**工作区二次迁移**——本地主仓库从
+> `C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh` 迁至 **`C:/Users/wangf/Desktop/群星工具/
+> stellaris-mod-zh`**（桌面「群星工具」聚合文件夹；桌面临时发布副本一并移入 `群星工具/群星工坊发布/`；
+> 迁移前全部提交推送，GitHub 为准）；D 盘旧副本仍冻结待删。证书换证自动任务的路径提示已同步更新。
 > **维护轮 18（2026-09-06，本轮，第一档改进）**：①**仓库卫生**——根目录 4 个一次性 cloud_sync_*.sh
 > 出库（git rm --pathspec-from-file 走 Write 白名单通道，钩子拦「命令文本含 .sh」的误报绕法已验证）；
 > data 下 9.2MB baseline bak 残留清除；**deep_wave/ 规范落地**——分片导入后 `run_wave.py archive`
@@ -205,7 +215,7 @@
 
 | 项 | 值 |
 |---|---|
-| 本地仓库 | `C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/`（2026-09-05 起；D 盘旧副本冻结待删，勿双开） |
+| 本地仓库 | `C:/Users/wangf/Desktop/群星工具/stellaris-mod-zh/`（2026-09-06 二次迁移；历史路径 Documents/新建文件夹 与 D:/Projects/walong 均已退役，D 盘冻结待删） |
 | GitHub | `https://github.com/kkalho/stellaris-mod-zh`（用户 kkalho，master 分支） |
 | 云端公网 | `http://150.158.24.195:8080`（2026-08-30 已与本地收敛，公网实测 577/577） |
 | 云端目录 | `/opt/stellaris-mod-zh`（systemd 服务 `stellaris-mod`） |
@@ -564,7 +574,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 
 ## 13. 接手检查清单（新 AI 开工前必做）
 
-1. `cd "C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh" && git log --oneline -5` —— 确认最新提交（本文对应 d99b9e2 之后）
+1. `cd "C:/Users/wangf/Desktop/群星工具/stellaris-mod-zh" && git log --oneline -5` —— 确认最新提交（本文对应本维护轮之后）
 2. `python scripts/verify_db.py` —— 数据体检（退出码 0 = 健康；报归零先跑 `rebuild_all.py`）
 3. `python -m pytest tests -q` —— 12 用例应全绿（9 基础 + 3 门禁回归）
 4. `curl http://127.0.0.1:8080/api/stellaris/stats` 与 `curl http://150.158.24.195:8080/api/stellaris/stats` —— 本地/云端均应为 total=1020、translated=1020；本地测试服务惯例跑 8099（`python web_server_multigame.py 8099`，**用户浏览器标签可能开着它，别乱关**）
