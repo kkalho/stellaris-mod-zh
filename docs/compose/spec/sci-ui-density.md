@@ -1,14 +1,23 @@
 ---
 feature: sci-ui-density
-status: designed
+status: delivered
 updated: 2026-09-11
 branch: feature/sci-fi-ui
-commits: 
+commits: f44871d..88ae463
 ---
 
 # 群星图鉴 · 主区拉满与密度收紧
 
 ## Report
+
+**What was built** — 游戏视图下主区/搜索/游戏条放开 `max-width`（保持 block `width:auto`，由左右轨 margin 收进通道，避免 `width:100%` 溢出）；场景卡/统计/工具条/列表间距收紧；场景卡·统计·工具条·列表卡加克制 L 角标（内缩避开 clip-path）；左轨 logo 慢呼吸，`prefers-reduced-motion` 关闭。
+
+**Verification** — node SYNTAX OK；pytest 12 passed；线上 density 规则无 `width:100%`；`max-width:none` 生效。
+
+**Journey log**
+1. `game-shell` 是并列兄弟节点各自吃 rail margin，绝不能写 `width:100%`（会叠在 margin 外侧溢出 64+300px）。
+2. L 角标画在 `inset:0` 会被 `--cut` 切角裁掉，需 `inset:3–4px`。
+3. 用户反馈「空隙大/别扭」根因是主列 `max-width:1100` 居中，不是情报栏本身。
 
 ## [S1] Problem
 
@@ -52,6 +61,6 @@ commits:
 
 ## Tasks
 
-- [ ] T1: 拉满主区宽度并收紧间距 — acceptance: ≥1500px 双栏下主内容贴满左右轨之间的可用宽,无大片居中留白;场景卡/统计/列表间距更紧(covers: D1,D2)
-- [ ] T2: 克制角标与呼吸态 — acceptance: 主要卡片有四角角标;logo/状态点慢呼吸;reduced-motion 无动画(covers: D3; depends: T1)
-- [ ] T3: 自检 — acceptance: pytest 绿;8099 无语法错误;布局标记仍在(covers: D1-D3; depends: T1,T2)
+- [x] T1: 拉满主区宽度并收紧间距 — acceptance: ≥1500px 双栏下主内容贴满左右轨之间的可用宽,无大片居中留白;场景卡/统计/列表间距更紧(covers: D1,D2)
+- [x] T2: 克制角标与呼吸态 — acceptance: 主要卡片有四角角标;logo/状态点慢呼吸;reduced-motion 无动画(covers: D3; depends: T1)
+- [x] T3: 自检 — acceptance: pytest 绿;8099 无语法错误;布局标记仍在(covers: D1-D3; depends: T1,T2)
