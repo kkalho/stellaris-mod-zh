@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -879,10 +879,108 @@ body[data-view="game"][data-galaxy="closed"] .hero::after { height: 40px; }
   grid-column: 1 / -1;
 }
 body[data-view="game"][data-galaxy="open"] .hero { /* open uses default clamp height */ }
+
+/* ===== 右侧情报栏 ===== */
+.intel-rail {
+  display: none;
+  position: fixed; right: 0; top: 0; bottom: 0; width: 300px; z-index: 40;
+  background: linear-gradient(180deg, rgba(6, 14, 26, 0.96), rgba(4, 10, 18, 0.98));
+  border-left: 1px solid var(--line);
+  flex-direction: column;
+  padding: 14px 12px 16px;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+body[data-view="game"].has-intel .intel-rail { display: flex; }
+body[data-view="game"].has-intel .game-shell,
+body[data-view="game"].has-intel footer { margin-right: 300px; }
+body[data-view="game"].has-intel .hero { max-width: none; }
+.intel-rail .ir-head {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-num); font-size: 10px; letter-spacing: 3px;
+  color: var(--ac); text-transform: uppercase;
+  padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  margin-bottom: 10px; flex-shrink: 0;
+}
+.intel-rail .ir-head::before { content: "//"; opacity: 0.7; }
+.intel-rail .ir-head .ir-game {
+  margin-left: auto; font-family: var(--font-cn); letter-spacing: 1px;
+  color: var(--dim); text-transform: none; font-size: 11px;
+  max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.intel-rail .ir-block {
+  margin-bottom: 12px; min-height: 0;
+  border: 1px solid var(--line);
+  background: rgba(4, 12, 22, 0.45);
+  clip-path: var(--cut-sm);
+  display: flex; flex-direction: column;
+}
+.intel-rail .ir-block.grow { flex: 1; min-height: 120px; }
+.intel-rail .ir-block-head {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 10px 6px;
+  font-size: 11px; letter-spacing: 1px; color: var(--dim);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.intel-rail .ir-block-head .ir-more {
+  margin-left: auto; background: none; border: none; cursor: pointer;
+  color: var(--ac); font-size: 10px; font-family: var(--font-cn);
+  letter-spacing: 1px; padding: 2px 4px;
+}
+.intel-rail .ir-block-head .ir-more:hover { text-decoration: underline; }
+.intel-rail .ir-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  padding: 8px 10px;
+}
+.intel-rail .ir-stat .n {
+  font-family: var(--font-num); font-size: 16px; color: var(--ac);
+  font-weight: 700; letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(var(--ac-rgb), 0.35);
+}
+.intel-rail .ir-stat .l {
+  font-size: 10px; color: var(--faint); letter-spacing: 1px; margin-top: 2px;
+}
+.intel-rail .ir-filter {
+  padding: 0 10px 8px; font-size: 11px; color: var(--dim); line-height: 1.5;
+}
+.intel-rail .ir-list { overflow-y: auto; flex: 1; min-height: 0; padding: 4px 0; }
+.intel-rail .ir-item {
+  display: flex; gap: 8px; align-items: flex-start;
+  padding: 7px 10px; cursor: pointer;
+  transition: background 0.12s;
+  border: none; background: transparent; width: 100%;
+  text-align: left; color: inherit; font-family: var(--font-cn);
+}
+.intel-rail .ir-item:hover { background: rgba(var(--ac-rgb), 0.08); }
+.intel-rail .ir-item .rank {
+  font-family: var(--font-num); font-size: 10px; color: var(--faint);
+  min-width: 14px; padding-top: 2px;
+}
+.intel-rail .ir-item .body { flex: 1; min-width: 0; }
+.intel-rail .ir-item .t {
+  font-size: 12px; color: var(--ink); line-height: 1.35;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.intel-rail .ir-item .m {
+  font-family: var(--font-num); font-size: 10px; letter-spacing: 0.5px;
+  margin-top: 2px; color: var(--dim);
+}
+.intel-rail .ir-item .m.up { color: #9fe8b8; }
+.intel-rail .ir-item .m.down { color: #ff8fa0; }
+.intel-rail .ir-item .m.gem { color: #f0c160; }
+.intel-rail .ir-empty {
+  padding: 12px 10px; font-size: 11px; color: var(--faint); line-height: 1.6;
+}
 @media (prefers-reduced-motion: reduce) {
   .hero { transition: none; }
   .search-row:focus-within { animation: none; }
   .mod-card, .scene-card, .lcard, .search-row button { transition: none; }
+}
+@media (max-width: 1499px) {
+  body[data-view="game"].has-intel .game-shell,
+  body[data-view="game"].has-intel footer { margin-right: 0; }
+  .intel-rail { display: none !important; }
 }
 </style>
 </head>
@@ -905,6 +1003,33 @@ body[data-view="game"][data-galaxy="open"] .hero { /* open uses default clamp he
   <div class="rail-spacer"></div>
   <button type="button" class="rail-btn rail-home" onclick="showLauncher()" title="返回舰桥"><span class="ri">⌂</span><span>舰桥</span></button>
 </nav>
+
+<!-- 桌面宽屏右侧情报栏（热度+遗珠） -->
+<aside class="intel-rail" id="intelRail" aria-label="情报栏">
+  <div class="ir-head">// INTEL <span class="ir-game" id="intelGame">—</span></div>
+  <div class="ir-block">
+    <div class="ir-block-head">筛选读数</div>
+    <div class="ir-stats">
+      <div class="ir-stat"><div class="n" id="intelCount">—</div><div class="l">当前列表</div></div>
+      <div class="ir-stat"><div class="n" id="intelPage">—</div><div class="l">当前页</div></div>
+    </div>
+    <div class="ir-filter" id="intelFilter">全部 · 订阅量排序</div>
+  </div>
+  <div class="ir-block grow">
+    <div class="ir-block-head">
+      热度 TOP
+      <button type="button" class="ir-more" onclick="railPanel('trendPanel', openTrendPanel)">完整趋势 ↗</button>
+    </div>
+    <div class="ir-list" id="intelTrend"><div class="ir-empty">加载中…</div></div>
+  </div>
+  <div class="ir-block grow">
+    <div class="ir-block-head">
+      遗珠雷达
+      <button type="button" class="ir-more" onclick="railPanel('gemsPanel', openGemsPanel)">完整遗珠 ↗</button>
+    </div>
+    <div class="ir-list" id="intelGems"><div class="ir-empty">加载中…</div></div>
+  </div>
+</aside>
 
 <!-- 启动页：数据舰桥 -->
 <section id="launcher" class="launcher">
@@ -2440,11 +2565,102 @@ function railPanel(id, opener) {
 function setRailChrome() {
   const on = document.body.dataset.view === 'game';
   document.body.classList.toggle('has-rail', on);
+  document.body.classList.toggle('has-intel', on);
   const logo = $('railLogo');
   if (logo) {
     const g = GAME || 'stellaris';
     logo.textContent = (GAME_META[g] && GAME_META[g].glyph) || '✦';
     logo.title = (GAME_META[g] && GAME_META[g].name) || g;
+  }
+  const ig = $('intelGame');
+  if (ig) {
+    const g = GAME || 'stellaris';
+    ig.textContent = (GAME_META[g] && GAME_META[g].name) || g;
+  }
+  if (on) loadIntelRail();
+}
+
+// ==================== 右侧情报栏：热度 TOP + 遗珠 ====================
+function intelShortTitle(t, n) {
+  const s = String(t || '');
+  return s.length > n ? s.slice(0, n) + '…' : s;
+}
+function updateIntelFilter() {
+  if (document.body.dataset.view !== 'game') return;
+  const c = $('intelCount'); const p = $('intelPage'); const f = $('intelFilter');
+  if (c) c.textContent = allResults.length ? String(allResults.length) : '0';
+  if (p) {
+    const totalPages = Math.max(1, Math.ceil(allResults.length / PER_PAGE));
+    p.textContent = allResults.length ? (curPage + '/' + totalPages) : '—';
+  }
+  if (f) {
+    const bits = [];
+    const kw = ($('kw') && $('kw').value.trim()) || '';
+    if (kw) bits.push('“' + kw + '”');
+    if (activeTag) bits.push(tagZhMap[activeTag] || activeTag);
+    const ver = $('versionsel') && $('versionsel').value;
+    if (ver) bits.push(versionLabels[ver] || ver);
+    const sort = ($('sortsel') && $('sortsel').value) || 'subs';
+    const sortMap = { subs: '订阅量↓', subs_asc: '订阅量↑', updated: '最近更新', name: '名称' };
+    bits.push(sortMap[sort] || sort);
+    f.textContent = bits.join(' · ');
+  }
+}
+async function loadIntelRail() {
+  if (document.body.dataset.view !== 'game') return;
+  updateIntelFilter();
+  const trendBox = $('intelTrend');
+  const gemsBox = $('intelGems');
+  if (trendBox && !trendBox.dataset.loaded) trendBox.dataset.loaded = '';
+  if (gemsBox && !gemsBox.dataset.loaded) gemsBox.dataset.loaded = '';
+  // 趋势
+  try {
+    if (!trendCache) trendCache = await api('/api/' + GAME + '/trend');
+    if (document.body.dataset.view !== 'game') return;
+    const t = trendCache;
+    if (!trendBox) { /* no-op */ } else if (t && t.note) {
+      trendBox.innerHTML = '<div class="ir-empty">' + esc(t.note) + '</div>';
+      trendBox.dataset.loaded = '1';
+    } else {
+      const up = ((t && t.mods) || []).filter(m => m.diff > 0).slice(0, 5);
+      if (!up.length) {
+        trendBox.innerHTML = '<div class="ir-empty">暂无明显上涨</div>';
+      } else {
+        trendBox.innerHTML = up.map((m, i) => {
+          const sid = String(m.id == null ? '' : m.id).replace(/[^0-9]/g, '');
+          const pct = m.pct > 0 ? '+' : '';
+          return '<button type="button" class="ir-item" onclick="showDetail(\'' + sid + '\')">' +
+            '<span class="rank">' + (i + 1) + '</span>' +
+            '<span class="body"><span class="t">' + esc(intelShortTitle(m.title, 18)) + '</span>' +
+            '<span class="m up">▲ ' + fmt(Math.abs(m.diff)) + ' (' + pct + m.pct + '%)</span></span></button>';
+        }).join('');
+      }
+      trendBox.dataset.loaded = '1';
+    }
+  } catch (e) {
+    if (trendBox) trendBox.innerHTML = '<div class="ir-empty">趋势暂不可用</div>';
+  }
+  // 遗珠（与面板/gemsCache 共用）
+  try {
+    if (!gemsCache) gemsCache = await api('/api/' + GAME + '/gems');
+    if (document.body.dataset.view !== 'game') return;
+    const gems = (gemsCache && gemsCache.gems) || [];
+    if (!gemsBox) { /* no-op */ } else if (!gems.length) {
+      gemsBox.innerHTML = '<div class="ir-empty">暂无满足条件的遗珠</div>';
+      gemsBox.dataset.loaded = '1';
+    } else {
+      gemsBox.innerHTML = gems.slice(0, 6).map((k, i) => {
+        const sid = String(k.id == null ? '' : k.id).replace(/[^0-9]/g, '');
+        const ratio = (k.ratio * 100).toFixed(0);
+        return '<button type="button" class="ir-item" onclick="showDetail(\'' + sid + '\')">' +
+          '<span class="rank">💎</span>' +
+          '<span class="body"><span class="t">' + esc(intelShortTitle(k.title, 18)) + '</span>' +
+          '<span class="m gem">收藏率 ' + ratio + '% · ' + fmt(k.subs) + '</span></span></button>';
+      }).join('');
+      gemsBox.dataset.loaded = '1';
+    }
+  } catch (e) {
+    if (gemsBox) gemsBox.innerHTML = '<div class="ir-empty">遗珠暂不可用</div>';
   }
 }
 
@@ -2488,6 +2704,7 @@ const _origRenderList = renderList;
 renderList = function(rows, title) {
   _origRenderList(rows, title);
   if ($('content')) $('content').classList.add('mod-grid');
+  updateIntelFilter();
 };
 
 // 面板互斥时同步左轨高亮
@@ -2516,7 +2733,19 @@ showLauncher = function() {
 const _origEnterGame = enterGame;
 enterGame = function(g, opts) {
   _origEnterGame(g, opts);
-  setRailChrome();
+  setRailChrome(); // 内部会 loadIntelRail
+};
+
+// 面板拉到数据后刷新情报栏
+const _origOpenTrend = openTrendPanel;
+openTrendPanel = async function() {
+  await _origOpenTrend();
+  if (document.body.dataset.view === 'game') loadIntelRail();
+};
+const _origOpenGems = openGemsPanel;
+openGemsPanel = async function() {
+  await _origOpenGems();
+  if (document.body.dataset.view === 'game') loadIntelRail();
 };
 
 // ==================== 启动序列（必须在所有声明之后） ====================
