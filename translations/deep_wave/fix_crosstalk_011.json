@@ -1,0 +1,14 @@
+{
+ "game": "stellaris",
+ "source": "wave11 串扰/矛盾修复（按各自 description_clean 原文重写，只带需修字段）：1866576239(PD Planet View) summary 称需主模组+改造界面，与原文「stand-alone 独立运行、仅增加行星肖像」直接矛盾（B组上报）；1915620447 summary「按真实比例缩放舰船模型」实为邻条 System Scaling 内容（C组上报）",
+ "translations": [
+  {
+   "steam_id": "1866576239",
+   "summary_zh": "Planetary Diversity 的行星肖像附加包：在星球查看界面显示更多 PD 系列行星立绘；可独立运行（无需 PD 本体），功能仅此一项、不做其他改动。"
+  },
+  {
+   "steam_id": "1915620447",
+   "summary_zh": "Real Space 系列子模组：为 System Scaling 缩放系统适配战斗半径与飞行速度调整，使舰船交战节奏与缩放后的星系尺度相称（不缩放模型本身）。"
+  }
+ ]
+}
