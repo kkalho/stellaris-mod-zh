@@ -869,7 +869,16 @@ body[data-view="game"][data-galaxy="closed"] .hero::after { height: 40px; }
 @media (max-width: 959px) {
   body[data-view="game"].has-rail .game-shell,
   body[data-view="game"].has-rail footer { margin-left: 0; }
+  .side-rail { display: none !important; }
+  .toolbar .narrow-only { display: inline-flex !important; }
 }
+.toolbar .narrow-only { display: none; }
+#content.mod-grid .back-btn,
+#content.mod-grid .detail,
+#content.mod-grid .detail-preview {
+  grid-column: 1 / -1;
+}
+body[data-view="game"][data-galaxy="open"] .hero { /* open uses default clamp height */ }
 @media (prefers-reduced-motion: reduce) {
   .hero { transition: none; }
   .search-row:focus-within { animation: none; }
@@ -971,6 +980,11 @@ body[data-view="game"][data-galaxy="closed"] .hero::after { height: 40px; }
       <button class="dlc-btn" style="margin-left:auto" onclick="openDlcPanel()">🧩 DLC</button>
       <button class="dlc-btn" onclick="openCcPanel()">⚔ 冲突</button>
       <button class="dlc-btn" onclick="openGemsPanel()">💎 遗珠</button>
+      <button class="dlc-btn narrow-only" onclick="openPicksPanel()">🌟 精选</button>
+      <button class="dlc-btn narrow-only" onclick="openLocPanel()">🌐 汉化</button>
+      <button class="dlc-btn narrow-only" onclick="openLocalPanel()">📁 本地</button>
+      <button class="dlc-btn narrow-only" onclick="openTrendPanel()">📈 趋势</button>
+      <button class="dlc-btn narrow-only" onclick="copyList()">📋 清单</button>
       <button class="back-btn" style="margin-bottom:0" onclick="clearFilters()">清除筛选</button>
     </div>
     <div id="dlcPanel" class="dlc-panel" style="display:none"></div>
@@ -1786,6 +1800,7 @@ async function showDetail(id, push = true) {
     <a class="link" style="margin-top:0;cursor:pointer" onclick="copyId('${sid}')">📋 复制 Mod ID</a>
   </div></div>`;
   $('content').innerHTML = html;
+  if ($('content')) $('content').classList.remove('mod-grid');
   // 直接定位到详情主体，跳过首页那一屏固定内容
   const el = document.querySelector('.detail');
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2392,6 +2407,7 @@ function route() {
     document.body.dataset.view = 'game';
     document.body.dataset.theme = g;
     $('gamesel').value = g;
+    setRailChrome();
     return;
   }
   applyFromURL({ fromPop: true });
@@ -2439,10 +2455,9 @@ function toggleGalaxy(force) {
   const btn = $('galaxyToggle');
   if (btn) btn.textContent = next ? '收起星图' : '展开星图';
   try { localStorage.setItem('galaxyOpen', next ? '1' : '0'); } catch (e) {}
-  // 高度变化后同步 renderer
-  requestAnimationFrame(() => {
+  const hero = $('hero');
+  const syncGalaxySize = () => {
     if (window.dispatchEvent) window.dispatchEvent(new Event('resize'));
-    const hero = $('hero');
     if (hero && G && G.renderer && G.camera) {
       try {
         G.renderer.setSize(hero.clientWidth, hero.clientHeight, false);
@@ -2450,7 +2465,22 @@ function toggleGalaxy(force) {
         G.camera.updateProjectionMatrix();
       } catch (e) {}
     }
-  });
+  };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    syncGalaxySize();
+    return;
+  }
+  let done = false;
+  const onEnd = (ev) => {
+    if (ev && ev.target !== hero) return;
+    if (done) return;
+    done = true;
+    hero.removeEventListener('transitionend', onEnd);
+    syncGalaxySize();
+  };
+  if (hero) hero.addEventListener('transitionend', onEnd);
+  setTimeout(onEnd, 360);
 }
 
 // 主列表网格容器
@@ -2482,11 +2512,11 @@ showLauncher = function() {
   railActiveClear();
 };
 
-// enterGame 结束后刷新 rail logo —— 包一层安全：在 loadTop 后
+// enterGame：原函数内部会设 data-view=GAME，包装必须在返回后再刷 rail
 const _origEnterGame = enterGame;
 enterGame = function(g, opts) {
-  setRailChrome();
   _origEnterGame(g, opts);
+  setRailChrome();
 };
 
 // ==================== 启动序列（必须在所有声明之后） ====================
