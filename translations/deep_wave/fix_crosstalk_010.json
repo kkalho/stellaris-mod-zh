@@ -1,0 +1,19 @@
+{
+ "game": "stellaris",
+ "source": "wave10 串扰/矛盾修复（按各自 description_clean 原文重写，只带需修字段）：2461014769(星战库亚特黎明) summary+reviews 的「克隆战争」原文无据（A组上报）；686768193(光环特效精简) summary「提升性能」与原文「not made for improving performance」直接矛盾（C组上报）；2178603631(ACOT补完) summary「调整科技获取机制」与原文「ACOT 系列补完模组」不符（C组上报）",
+ "translations": [
+  {
+   "steam_id": "2461014769",
+   "summary_zh": "星球大战主题大型模组：添加大量星战星级战列巡洋舰与星际无畏舰，生产商夸特动力船坞作为帝国阵营登场，含大量可玩事件与高难度挑战。",
+   "reviews_zh": "订阅 8.43 万、收藏 9249。这是星球大战主题的大型剧情模组，作者聚焦夸特动力船坞帝国阵营与星战帝国舰船，剧情分为前传、主线与后传三幕，含多个特色起源与较高挑战性，中文作者作品。"
+  },
+  {
+   "steam_id": "686768193",
+   "summary_zh": "光环特效精简：移除护盾衰减器等光环模块产生的多余画面特效，受影响舰船仅保留微弱光晕提示；不改变模块本身的任何功能。"
+  },
+  {
+   "steam_id": "2178603631",
+   "summary_zh": "ACOT（远古科技宝藏）系列补完模组：补足 Ancient Cache of Technologies 系列缺失的内容，需按加载顺序置于 ACOT 系列（含 Secrets Beyond the Gates、Dawn of Ascension 等）之后；不支持铁人模式，建议用 Irony Mod Manager 调整加载顺序。"
+  }
+ ]
+}
