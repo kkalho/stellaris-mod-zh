@@ -201,7 +201,7 @@ def cmd_sync(args):
         return max(400, p.stat().st_size // 2)
 
     fetches = [(pp["merged"], minsize(pp["merged"]))]
-    expect = 50
+    expect = len(json.loads(pp["merged"].read_text(encoding="utf-8"))["translations"])
     if pp["fix"].exists():
         fetches.append((pp["fix"], minsize(pp["fix"])))
         expect += len(json.loads(pp["fix"].read_text(encoding="utf-8"))["translations"])
