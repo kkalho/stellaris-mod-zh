@@ -982,6 +982,126 @@ body[data-view="game"].has-intel .hero { max-width: none; }
   body[data-view="game"].has-intel footer { margin-right: 0; }
   .intel-rail { display: none !important; }
 }
+
+/* ===== 密度收紧：主区拉满 + 间距压缩 + 克制角标 ===== */
+body[data-view="game"] .game-bar,
+body[data-view="game"] .search-box,
+body[data-view="game"] main {
+  max-width: none;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 22px;
+  padding-right: 22px;
+}
+body[data-view="game"] .game-bar {
+  justify-content: flex-start;
+  padding-top: 10px;
+  padding-bottom: 0;
+}
+body[data-view="game"] .search-box {
+  margin: 10px 0 4px;
+  max-width: none;
+}
+body[data-view="game"] .search-row input { font-size: 14px; padding: 11px 14px; }
+body[data-view="game"] .search-row button { padding: 11px 24px; }
+body[data-view="game"] .hint { margin-top: 6px; }
+body[data-view="game"] main { padding-top: 4px; padding-bottom: 28px; }
+body[data-view="game"] .scene-cards {
+  gap: 10px;
+  margin: 10px 0 12px;
+}
+body[data-view="game"] .scene-card { padding: 12px 14px; }
+body[data-view="game"] .scene-card .sc-icon { font-size: 18px; }
+body[data-view="game"] .scene-card .sc-t { margin-top: 6px; font-size: 13px; letter-spacing: 1.5px; }
+body[data-view="game"] .scene-card .sc-d { font-size: 11.5px; margin-top: 2px; }
+body[data-view="game"] .stats {
+  gap: 10px;
+  margin: 4px 0 12px;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+}
+body[data-view="game"] .stat {
+  padding: 10px 16px;
+  min-width: 120px;
+  flex: 0 1 auto;
+}
+body[data-view="game"] .stat .num { font-size: 18px; letter-spacing: 1px; }
+body[data-view="game"] .stat .label { font-size: 10px; letter-spacing: 1.5px; }
+body[data-view="game"] .tag-bar { margin-bottom: 10px; }
+body[data-view="game"] .toolbar {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  gap: 6px;
+}
+body[data-view="game"] .dlc-btn { padding: 6px 12px; font-size: 12px; }
+body[data-view="game"] .list-title { margin: 6px 0 8px; }
+body[data-view="game"] #content.mod-grid { gap: 8px; }
+body[data-view="game"] footer {
+  margin-top: 12px;
+  padding: 14px 16px 24px;
+}
+
+/* 四角 L 形角标（克制） */
+.scene-card, .stat, .mod-card, .detail, .dlc-panel, .toolbar, .search-row {
+  position: relative;
+}
+.scene-card::after, .stat::after, .toolbar::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--ac), var(--ac)) top left / 12px 1px,
+    linear-gradient(var(--ac), var(--ac)) top left / 1px 12px,
+    linear-gradient(var(--ac), var(--ac)) top right / 12px 1px,
+    linear-gradient(var(--ac), var(--ac)) top right / 1px 12px,
+    linear-gradient(var(--ac), var(--ac)) bottom left / 12px 1px,
+    linear-gradient(var(--ac), var(--ac)) bottom left / 1px 12px,
+    linear-gradient(var(--ac), var(--ac)) bottom right / 12px 1px,
+    linear-gradient(var(--ac), var(--ac)) bottom right / 1px 12px;
+  background-repeat: no-repeat;
+  opacity: 0.22;
+}
+.mod-card::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--ac), var(--ac)) top left / 10px 1px,
+    linear-gradient(var(--ac), var(--ac)) top left / 1px 10px,
+    linear-gradient(var(--ac), var(--ac)) bottom right / 10px 1px,
+    linear-gradient(var(--ac), var(--ac)) bottom right / 1px 10px;
+  background-repeat: no-repeat;
+  opacity: 0.2;
+}
+
+/* 呼吸状态点 */
+.rail-logo {
+  animation: breathe-dot 3.2s ease-in-out infinite;
+}
+@keyframes breathe-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(var(--ac-rgb), 0.15); }
+  50% { opacity: 0.88; box-shadow: 0 0 0 4px rgba(var(--ac-rgb), 0.06); }
+}
+
+/* 情报栏行内不换行挤压 */
+.intel-rail .ir-item .t { max-width: 100%; }
+.intel-rail .ir-item .m { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.intel-rail .ir-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* 卡片 hover 边框略亮 */
+.mod-card:hover, .scene-card:hover {
+  border-color: rgba(var(--ac-rgb), 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-logo { animation: none; }
+  .scene-card, .mod-card, .stat, .toolbar, .search-row { transition: none; }
+}
+@media (max-width: 900px) {
+  body[data-view="game"] .stats { flex-wrap: wrap; justify-content: center; }
+  body[data-view="game"] .stat { min-width: 0; flex: 1 1 30%; }
+}
 </style>
 </head>
 <body data-view="launcher" data-theme="bridge" data-galaxy="closed">
