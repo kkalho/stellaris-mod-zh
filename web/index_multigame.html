@@ -2627,8 +2627,16 @@ async function loadIntelRail() {
         trendBox.innerHTML = '<div class="ir-empty">暂无明显上涨</div>';
       } else {
         trendBox.innerHTML = up.map((m, i) => {
-          const sid = String(m.id == null ? '' : m.id).replace(/[^0-9]/g, '');
+          // /trend 的 mods[] 字段是 steam_id（不是 search/gems 的 id）
+          const raw = m.steam_id != null ? m.steam_id : (m.id != null ? m.id : '');
+          const sid = String(raw).replace(/[^0-9]/g, '');
           const pct = m.pct > 0 ? '+' : '';
+          if (!sid) {
+            return '<div class="ir-item" style="cursor:default">' +
+              '<span class="rank">' + (i + 1) + '</span>' +
+              '<span class="body"><span class="t">' + esc(intelShortTitle(m.title, 18)) + '</span>' +
+              '<span class="m up">▲ ' + fmt(Math.abs(m.diff)) + ' (' + pct + m.pct + '%)</span></span></div>';
+          }
           return '<button type="button" class="ir-item" onclick="showDetail(\'' + sid + '\')">' +
             '<span class="rank">' + (i + 1) + '</span>' +
             '<span class="body"><span class="t">' + esc(intelShortTitle(m.title, 18)) + '</span>' +
