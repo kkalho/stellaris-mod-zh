@@ -984,13 +984,12 @@ body[data-view="game"].has-intel .hero { max-width: none; }
 }
 
 /* ===== 密度收紧：主区拉满 + 间距压缩 + 克制角标 ===== */
+/* 宽度只放开 max-width；block 默认 width:auto 才能被 has-rail/has-intel 的 margin 正确收进双轨之间。
+   禁止写 width:100%——那是视口宽，会叠在 margin 外侧溢出。 */
 body[data-view="game"] .game-bar,
 body[data-view="game"] .search-box,
 body[data-view="game"] main {
   max-width: none;
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
   padding-left: 22px;
   padding-right: 22px;
 }
@@ -1042,29 +1041,29 @@ body[data-view="game"] footer {
   padding: 14px 16px 24px;
 }
 
-/* 四角 L 形角标（克制） */
+/* 四角 L 形角标（克制；内缩避开 clip-path 切角） */
 .scene-card, .stat, .mod-card, .detail, .dlc-panel, .toolbar, .search-row {
   position: relative;
 }
 .scene-card::after, .stat::after, .toolbar::after {
   content: "";
-  position: absolute; inset: 0;
+  position: absolute; inset: 4px;
   pointer-events: none;
   background:
-    linear-gradient(var(--ac), var(--ac)) top left / 12px 1px,
-    linear-gradient(var(--ac), var(--ac)) top left / 1px 12px,
-    linear-gradient(var(--ac), var(--ac)) top right / 12px 1px,
-    linear-gradient(var(--ac), var(--ac)) top right / 1px 12px,
-    linear-gradient(var(--ac), var(--ac)) bottom left / 12px 1px,
-    linear-gradient(var(--ac), var(--ac)) bottom left / 1px 12px,
-    linear-gradient(var(--ac), var(--ac)) bottom right / 12px 1px,
-    linear-gradient(var(--ac), var(--ac)) bottom right / 1px 12px;
+    linear-gradient(var(--ac), var(--ac)) top left / 14px 1px,
+    linear-gradient(var(--ac), var(--ac)) top left / 1px 14px,
+    linear-gradient(var(--ac), var(--ac)) top right / 14px 1px,
+    linear-gradient(var(--ac), var(--ac)) top right / 1px 14px,
+    linear-gradient(var(--ac), var(--ac)) bottom left / 14px 1px,
+    linear-gradient(var(--ac), var(--ac)) bottom left / 1px 14px,
+    linear-gradient(var(--ac), var(--ac)) bottom right / 14px 1px,
+    linear-gradient(var(--ac), var(--ac)) bottom right / 1px 14px;
   background-repeat: no-repeat;
-  opacity: 0.22;
+  opacity: 0.28;
 }
 .mod-card::after {
   content: "";
-  position: absolute; inset: 0;
+  position: absolute; inset: 3px;
   pointer-events: none;
   background:
     linear-gradient(var(--ac), var(--ac)) top left / 10px 1px,
@@ -1072,7 +1071,7 @@ body[data-view="game"] footer {
     linear-gradient(var(--ac), var(--ac)) bottom right / 10px 1px,
     linear-gradient(var(--ac), var(--ac)) bottom right / 1px 10px;
   background-repeat: no-repeat;
-  opacity: 0.2;
+  opacity: 0.22;
 }
 
 /* 呼吸状态点 */
