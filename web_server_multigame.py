@@ -680,11 +680,22 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/":
             self._send_html(self._load_index())
             return
-        # 白名单静态资源（favicon / OG 分享图）：固定文件名，防路径穿越
-        if path in ("/favicon.svg", "/og_card.png"):
-            fp = os.path.join(BASE, "web", path.lstrip("/"))
+        # 白名单静态资源（favicon / OG 分享图 / 自托管字体）：固定文件名，防路径穿越
+        _static_font = {
+            "/fonts/orbitron-latin-700-normal.woff2": "font/woff2",
+            "/fonts/rajdhani-latin-500-normal.woff2": "font/woff2",
+            "/fonts/rajdhani-latin-600-normal.woff2": "font/woff2",
+        }
+        if path in ("/favicon.svg", "/og_card.png") or path in _static_font:
+            rel = path.lstrip("/")
+            fp = os.path.join(BASE, "web", rel)
             if os.path.exists(fp):
-                ctype = "image/svg+xml" if path.endswith(".svg") else "image/png"
+                if path in _static_font:
+                    ctype = _static_font[path]
+                elif path.endswith(".svg"):
+                    ctype = "image/svg+xml"
+                else:
+                    ctype = "image/png"
                 self.send_response(200)
                 self.send_header("Content-Type", ctype)
                 self.send_header("Content-Length", str(os.path.getsize(fp)))
