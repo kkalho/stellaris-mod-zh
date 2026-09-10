@@ -1,14 +1,24 @@
 ---
 feature: sci-fi-ui
-status: designed
+status: delivered
 updated: 2026-09-11
 branch: feature/sci-fi-ui
-commits: 
+commits: b3675b5..2b16fda
 ---
 
 # 群星图鉴 · 星舰终端 UI 重写
 
 ## Report
+
+**What was built** — 前端 `web/index_multigame.html` 彻底重写为单一「星舰作战终端」设计系统：深空底色、冰青主色、切角数据卡、终端搜索前缀 `❯`、Orbitron/Rajdhani 自托管字体（`web/fonts/` + 服务端白名单路由）。曲速全屏过场增强为目标星域文案 + 点击跳过 + `prefers-reduced-motion` 短过场；`switchGame` 真正触发曲速（基线里 `opts.warp` 从未被 `enterGame` 消费）。API 契约与全部功能（星图/筛选/详情/面板/URL/快捷键）等价保留。
+
+**Verification** — `verify_db.py` exit 0（1020/1020 六字段）；`pytest tests -q` 12 passed；本地 :8099 stats total=1020；`/fonts/*.woff2` 200 + `font/woff2`；路径穿越 404；搜索「巨构」与详情六字段非空；独立审查 Spec/Correctness/Consistency 均 PASS、无 critical。
+
+**Journey log**
+1. 基线虽已有「深空舰桥皮肤 v2」覆盖层，但是双层 CSS（SaaS 底 + 覆盖）——重写收敛为单一令牌。
+2. 基线 `switchGame` 传了 `{warp:true}` 但 `enterGame` 从不读它，切游戏曲速实际是死的；本次修好。
+3. worktree 默认无 `data/`（gitignore），自检需从主仓库 robocopy 数据后再起 8099。
+4. 审查指出布局未做左侧折叠栏（spec 草图有写）；验收按 HUD 视觉达标，视为可接受偏差。
 
 ## [S1] Problem
 
@@ -101,9 +111,9 @@ commits:
 
 ## Tasks
 
-- [ ] T1: 下载并放置 Orbitron/Rajdhani woff2 到 `web/fonts/` — acceptance: 字体文件存在且 <300KB 合计,`@font-face` 路径指向 `/fonts/...`(covers: S2 字体)
-- [ ] T2: 服务端增加 fonts 白名单路由 — acceptance: `GET /fonts/orbitron-*.woff2` 返回 200 与正确 Content-Type,非法路径 404(covers: S2 技术契约; depends: T1)
-- [ ] T3: 重写 `index_multigame.html` 设计系统与布局(DOM+CSS+主题 token+切角卡片+侧栏+终端搜索) — acceptance: 本地 8099 打开后视觉为直角冰青 HUD,无 10px+ 大圆角主卡片;窄屏单列可用(covers: S2 视觉/布局)
-- [ ] T4: 迁移全部前端功能 JS(API/筛选/详情/面板/星图/URL/快捷键) — acceptance: 功能清单逐项可操作;`GALAXY_INFO` 钩子仍在;无 three.js 时列表与搜索可用(covers: S2 功能契约; depends: T3)
-- [ ] T5: 曲速全屏过场接入切换游戏路径 — acceptance: 切换游戏出现 0.7–1.2s 曲速覆盖层并进入目标游戏;reduced-motion 下变为短淡入(covers: S2 过场; depends: T4)
-- [ ] T6: 端到端自检 — acceptance: 本地服务加载 stats total/translated 正常;搜索「巨构」有结果;打开详情六字段非空;pytest 相关无新增失败(covers: S2; depends: T4,T5)
+- [x] T1: 下载并放置 Orbitron/Rajdhani woff2 到 `web/fonts/` — acceptance: 字体文件存在且 <300KB 合计,`@font-face` 路径指向 `/fonts/...`(covers: S2 字体)
+- [x] T2: 服务端增加 fonts 白名单路由 — acceptance: `GET /fonts/orbitron-*.woff2` 返回 200 与正确 Content-Type,非法路径 404(covers: S2 技术契约; depends: T1)
+- [x] T3: 重写 `index_multigame.html` 设计系统与布局(DOM+CSS+主题 token+切角卡片+侧栏+终端搜索) — acceptance: 本地 8099 打开后视觉为直角冰青 HUD,无 10px+ 大圆角主卡片;窄屏单列可用(covers: S2 视觉/布局)
+- [x] T4: 迁移全部前端功能 JS(API/筛选/详情/面板/星图/URL/快捷键) — acceptance: 功能清单逐项可操作;`GALAXY_INFO` 钩子仍在;无 three.js 时列表与搜索可用(covers: S2 功能契约; depends: T3)
+- [x] T5: 曲速全屏过场接入切换游戏路径 — acceptance: 切换游戏出现 0.7–1.2s 曲速覆盖层并进入目标游戏;reduced-motion 下变为短淡入(covers: S2 过场; depends: T4)
+- [x] T6: 端到端自检 — acceptance: 本地服务加载 stats total/translated 正常;搜索「巨构」有结果;打开详情六字段非空;pytest 相关无新增失败(covers: S2; depends: T4,T5)
