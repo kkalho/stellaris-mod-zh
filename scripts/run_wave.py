@@ -81,6 +81,9 @@ def cmd_export(args):
     bounds = [(0, 17, "A"), (17, 34, "B"), (34, len(ts), "C")]
     print("  分组（派工用，prompt 模板见 HANDOFF §5.2 / 历史提交）:")
     for lo, hi, name in bounds:
+        if lo >= len(ts):
+            break  # 收官批次不足 50 条时无 C 组
+        hi = min(hi, len(ts))
         seg = ts[lo:hi]
         print(f"    part{name}: 切片[{lo}:{hi}] {len(seg)} 条 = 目标 #{start+lo}-#{start+hi-1}"
               f"（首 {seg[0]['steam_id']} 末 {seg[-1]['steam_id']}）")
