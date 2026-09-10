@@ -91,9 +91,8 @@ def main():
             rows.setdefault(str(sid), {})[field] = text or ""
         src = "全库"
     problems = scan(rows)
-    if src.startswith("全库"):
-        problems = [x for x in problems
-                    if not _is_known_legit(re.findall(r"\d{6,}", x.split(": ", 1)[-1]))]
+    problems = [x for x in problems
+                if not _is_known_legit(re.findall(r"\d{6,}", x.split(": ", 1)[-1]))]
     print(f"=== 串扰检测（精确重复）：{src}，{len(rows)} 条 ===")
     if not problems:
         print("✅ 无跨 MOD 字段重复")
