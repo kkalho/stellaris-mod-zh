@@ -20,10 +20,14 @@ API（带游戏上下文）:
     GET /api/<game>/localizations → 汉化包数据库
     GET /api/<game>/trend       → 订阅热度趋势（每日快照涨跌）
     GET /api/<game>/dlcs        → DLC 清单
+    GET /api/<game>/comments?id= → 访客留言列表
+    POST /api/<game>/comments   → 提交匿名留言（JSON）
+    GET /api/site/version       → 站点数据版本指纹（前端自动更新感知）
 """
 from __future__ import annotations
 
 import datetime
+import hashlib
 import io
 import json
 import os
@@ -68,6 +72,176 @@ def _rate_allow(ip: str) -> bool:
             for k in [k for k, (w, _) in _rate_bucket.items() if now - w >= RATE_WINDOW]:
                 del _rate_bucket[k]
         return cnt <= RATE_LIMIT
+
+
+# POST 评论专用限流：每 IP 每 10 分钟最多 5 次
+POST_RATE_LIMIT = 5
+POST_RATE_WINDOW = 600.0
+_post_bucket = {}
+
+
+def _post_rate_allow(ip: str) -> bool:
+    now = time.time()
+    with _rate_lock:
+        win, cnt = _post_bucket.get(ip, (now, 0))
+        if now - win >= POST_RATE_WINDOW:
+            win, cnt = now, 0
+        cnt += 1
+        _post_bucket[ip] = (win, cnt)
+        if len(_post_bucket) > 4096:
+            for k in [k for k, (w, _) in _post_bucket.items() if now - w >= POST_RATE_WINDOW]:
+                del _post_bucket[k]
+        return cnt <= POST_RATE_LIMIT
+
+
+# ---------------------------------------------------------------------------
+# 访客留言（独立 SQLite，不写 mods.db；参数化 SQL）
+# ---------------------------------------------------------------------------
+COMMENTS_DB_DIR = os.path.join(BASE, "data", "site")
+COMMENTS_DB_PATH = os.path.join(COMMENTS_DB_DIR, "comments.db")
+_comments_lock = threading.Lock()
+
+
+def _comments_conn():
+    import sqlite3
+
+    os.makedirs(COMMENTS_DB_DIR, exist_ok=True)
+    conn = sqlite3.connect(COMMENTS_DB_PATH, timeout=8)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA busy_timeout = 8000")
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            game_id TEXT NOT NULL,
+            steam_id TEXT NOT NULL,
+            name TEXT NOT NULL DEFAULT '匿名',
+            content TEXT NOT NULL,
+            ip TEXT,
+            created_at TEXT NOT NULL
+        )
+        """
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_comments_mod ON comments(game_id, steam_id, created_at)"
+    )
+    conn.commit()
+    return conn
+
+
+def list_comments(game_id: str, steam_id: str, limit: int = 50):
+    steam_id = re.sub(r"[^0-9]", "", str(steam_id or ""))
+    if not steam_id:
+        return {"comments": [], "total": 0}
+    limit = max(1, min(int(limit or 50), 50))
+    with _comments_lock:
+        conn = _comments_conn()
+        try:
+            rows = conn.execute(
+                "SELECT id, name, content, created_at FROM comments "
+                "WHERE game_id = ? AND steam_id = ? ORDER BY id DESC LIMIT ?",
+                (game_id, steam_id, limit),
+            ).fetchall()
+            total = conn.execute(
+                "SELECT COUNT(*) AS n FROM comments WHERE game_id = ? AND steam_id = ?",
+                (game_id, steam_id),
+            ).fetchone()["n"]
+        finally:
+            conn.close()
+    return {
+        "comments": [
+            {
+                "id": r["id"],
+                "name": r["name"],
+                "content": r["content"],
+                "created_at": r["created_at"],
+            }
+            for r in rows
+        ],
+        "total": total,
+    }
+
+
+def add_comment(game_id: str, steam_id: str, name: str, content: str, ip: str = ""):
+    steam_id = re.sub(r"[^0-9]", "", str(steam_id or ""))
+    if not steam_id or len(steam_id) < 6:
+        raise ValueError("无效的 Steam ID")
+    name = (name or "匿名").strip()[:24] or "匿名"
+    content = (content or "").strip()
+    if len(content) < 2 or len(content) > 500:
+        raise ValueError("留言长度需在 2–500 字之间")
+    # 去掉控制字符，保留换行
+    content = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", content)
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with _comments_lock:
+        conn = _comments_conn()
+        try:
+            cur = conn.execute(
+                "INSERT INTO comments (game_id, steam_id, name, content, ip, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (game_id, steam_id, name, content, ip[:64], now),
+            )
+            conn.commit()
+            cid = cur.lastrowid
+        finally:
+            conn.close()
+    return {"id": cid, "name": name, "content": content, "created_at": now}
+
+
+def _count_comments():
+    try:
+        with _comments_lock:
+            conn = _comments_conn()
+            try:
+                return int(conn.execute("SELECT COUNT(*) AS n FROM comments").fetchone()["n"])
+            finally:
+                conn.close()
+    except Exception:
+        return 0
+
+
+def get_site_version():
+    """站点数据指纹：任一游戏统计/抓取日期/留言数变化 → fingerprint 变 → 前端提示刷新。"""
+    games = {}
+    parts = []
+    for g in list_games():
+        try:
+            db = get_db(g)
+            try:
+                row = db.conn.execute(
+                    "SELECT COUNT(*) AS total, MAX(fetched_at) AS max_fetched "
+                    "FROM mods WHERE game_id = ?",
+                    (g,),
+                ).fetchone()
+                total = int(row[0] or 0)
+                max_fetched = row[1] or ""
+                trow = db.conn.execute(
+                    "SELECT COUNT(*) FROM mods WHERE game_id = ? AND translated = 1",
+                    (g,),
+                ).fetchone()
+                translated = int(trow[0] or 0)
+            finally:
+                db.close()
+            games[g] = {
+                "total": total,
+                "translated": translated,
+                "max_fetched": max_fetched or "",
+            }
+            parts.append(f"{g}:{total}:{translated}:{max_fetched}")
+        except Exception:
+            games[g] = {"total": 0, "translated": 0, "max_fetched": ""}
+            parts.append(f"{g}:err")
+    n_comments = _count_comments()
+    parts.append(f"c:{n_comments}")
+    fp = hashlib.sha1("|".join(parts).encode("utf-8")).hexdigest()[:16]
+    updated = max((v.get("max_fetched") or "" for v in games.values()), default="")
+    return {
+        "ok": True,
+        "fingerprint": fp,
+        "updated_at": updated,
+        "comments": n_comments,
+        "games": games,
+    }
 
 
 def get_cfg(game_id: str):
@@ -712,6 +886,10 @@ class Handler(BaseHTTPRequestHandler):
                      for g in list_games()]
             self._send_json({"games": games})
             return
+        # 站点版本指纹（前端自动更新感知）
+        if path == "/api/site/version":
+            self._send_json(get_site_version())
+            return
 
         # 带游戏前缀的 API: /api/<game>/xxx
         parts = path.strip("/").split("/")
@@ -720,6 +898,12 @@ class Handler(BaseHTTPRequestHandler):
             api_name = parts[2]
             db = None
             try:
+                if api_name == "comments":
+                    # 读留言不依赖 mods 连接
+                    sid = q.get("id", [""])[0]
+                    n = int(q.get("n", ["50"])[0] or 50)
+                    self._send_json(list_comments(game_id, sid, n))
+                    return
                 db = get_db(game_id)
                 if api_name == "stats":
                     self._send_json(get_stats(game_id, db))
@@ -777,6 +961,54 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         self._send_json({"error": "not found"}, 404)
+
+    def do_POST(self):
+        if not _rate_allow(self.client_address[0]):
+            self._send_json({"error": "请求过于频繁，请稍后再试"}, 429)
+            return
+        if not _post_rate_allow(self.client_address[0]):
+            self._send_json({"error": "提交过于频繁，请稍后再试"}, 429)
+            return
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+        parts = path.strip("/").split("/")
+        # /api/<game>/comments → 3 段
+        if not (len(parts) == 3 and parts[0] == "api" and parts[1] in list_games()
+                and parts[2] == "comments"):
+            self._send_json({"error": "not found"}, 404)
+            return
+        game_id = parts[1]
+        try:
+            length = int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            length = 0
+        if length <= 0 or length > 8192:
+            self._send_json({"error": "请求体过大或为空"}, 400)
+            return
+        try:
+            raw = self.rfile.read(length)
+            body = json.loads(raw.decode("utf-8"))
+        except Exception:
+            self._send_json({"error": "JSON 解析失败"}, 400)
+            return
+        # 蜜罐：机器人填了 website 则假成功，不入库
+        if str(body.get("website") or "").strip():
+            self._send_json({"ok": True, "id": 0})
+            return
+        try:
+            result = add_comment(
+                game_id,
+                body.get("steam_id"),
+                body.get("name"),
+                body.get("content"),
+                self.client_address[0],
+            )
+            self._send_json({"ok": True, **result})
+        except ValueError as e:
+            self._send_json({"error": str(e)}, 400)
+        except Exception:
+            traceback.print_exc()
+            self._send_json({"error": "服务器内部错误"}, 500)
 
     def _load_index(self):
         idx = os.path.join(BASE, "web", "index_multigame.html")

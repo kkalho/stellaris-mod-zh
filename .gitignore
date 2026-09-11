@@ -14,6 +14,8 @@ data/**/update_state.json
 data/**/mods.db-shm
 data/**/mods.db-wal
 data/**/*.bak*
+# 访客留言库（运行时生成）
+data/site/
 
 # 趋势导出产物（export_trend.py 生成，派生数据不入库）
 data/**/trend_export.json

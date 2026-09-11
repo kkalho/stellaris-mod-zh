@@ -1132,10 +1132,98 @@ body[data-view="game"] footer {
   body[data-view="game"] .stats { flex-wrap: wrap; justify-content: center; }
   body[data-view="game"] .stat { min-width: 0; flex: 1 1 30%; }
 }
+
+/* ===== 自动更新提示条 ===== */
+.update-banner {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 200; display: none;
+  align-items: center; gap: 14px;
+  padding: 10px 18px;
+  background: rgba(8, 20, 36, 0.94);
+  border: 1px solid rgba(var(--ac-rgb), 0.45);
+  clip-path: var(--cut-sm);
+  box-shadow: 0 0 28px rgba(var(--ac-rgb), 0.25);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-cn); font-size: 13px; color: var(--ink);
+  max-width: min(92vw, 520px);
+}
+.update-banner.show { display: flex; }
+.update-banner .ub-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ok); box-shadow: 0 0 10px var(--ok);
+  animation: breathe-dot 2s ease-in-out infinite; flex-shrink: 0;
+}
+.update-banner .ub-text { flex: 1; line-height: 1.4; }
+.update-banner .ub-text b { color: var(--ac); font-family: var(--font-num); letter-spacing: 1px; }
+.update-banner button {
+  flex-shrink: 0; padding: 6px 14px; cursor: pointer;
+  background: rgba(var(--ac-rgb), 0.2); color: var(--ac-lite);
+  border: 1px solid rgba(var(--ac-rgb), 0.4);
+  clip-path: var(--cut-sm); border-radius: 0;
+  font-family: var(--font-cn); font-size: 12px;
+}
+.update-banner button:hover { background: rgba(var(--ac-rgb), 0.35); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .update-banner .ub-dot { animation: none; }
+}
+
+/* ===== 访客留言 ===== */
+.cmt-block { margin-top: 8px; }
+.cmt-form {
+  display: grid; gap: 8px;
+  padding: 12px 14px; margin-bottom: 14px;
+  background: rgba(4, 12, 22, 0.5);
+  border: 1px solid var(--line);
+  clip-path: var(--cut-sm);
+}
+.cmt-form input[type="text"], .cmt-form textarea {
+  width: 100%; padding: 9px 12px; font-size: 13px;
+  background: rgba(8, 18, 32, 0.9); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 0;
+  outline: none; font-family: var(--font-cn);
+  clip-path: var(--cut-sm);
+}
+.cmt-form input:focus, .cmt-form textarea:focus {
+  border-color: var(--line-strong);
+  box-shadow: 0 0 12px rgba(var(--ac-rgb), 0.15);
+}
+.cmt-form textarea { min-height: 72px; resize: vertical; line-height: 1.6; }
+.cmt-form .cmt-row { display: flex; gap: 8px; align-items: center; }
+.cmt-form .cmt-row input { flex: 1; }
+.cmt-form .cmt-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.cmt-form .cmt-hint { font-size: 11px; color: var(--faint); }
+.cmt-list { display: flex; flex-direction: column; gap: 8px; }
+.cmt-item {
+  padding: 10px 12px;
+  background: rgba(4, 12, 22, 0.45);
+  border: 1px solid var(--line);
+  clip-path: var(--cut-sm);
+}
+.cmt-item .cmt-head {
+  display: flex; gap: 10px; align-items: baseline; margin-bottom: 4px;
+}
+.cmt-item .cmt-name { color: var(--ac-lite); font-size: 13px; font-weight: 600; }
+.cmt-item .cmt-time {
+  font-family: var(--font-num); font-size: 10px; color: var(--faint);
+  letter-spacing: 1px; margin-left: auto;
+}
+.cmt-item .cmt-body {
+  font-size: 13px; color: var(--dim); line-height: 1.7;
+  white-space: pre-wrap; word-break: break-word;
+}
+.cmt-empty { font-size: 12.5px; color: var(--faint); padding: 4px 0 8px; }
 </style>
 </head>
 <body data-view="launcher" data-theme="bridge" data-galaxy="closed">
 <div class="stars" id="stars"></div>
+
+<!-- 数据更新提示条 -->
+<div class="update-banner" id="updateBanner" role="status" aria-live="polite">
+  <span class="ub-dot" aria-hidden="true"></span>
+  <div class="ub-text">知识库数据已更新<b id="updateWhen"></b>，建议刷新页面查看最新内容</div>
+  <button type="button" onclick="location.reload()">立即刷新</button>
+  <button type="button" onclick="dismissUpdateBanner()" title="稍后" style="opacity:.7">✕</button>
+</div>
 
 <!-- 桌面左侧 HUD 导航轨（游戏视图） -->
 <nav class="side-rail" id="sideRail" aria-label="工具导航">
@@ -2070,6 +2158,22 @@ async function showDetail(id, push = true) {
   }
   if (d.description) html += `<h3>📄 详细介绍</h3><div class="desc-text">${esc(d.description)}</div>`;
   if (d.reviews) html += `<h3>💬 玩家评价</h3><div class="desc-text">${esc(d.reviews)}</div>`;
+  // 访客留言
+  html += `<h3>📮 访客留言</h3>
+    <div class="cmt-block" id="cmtBlock" data-sid="${sid}">
+      <div class="cmt-form">
+        <div class="cmt-row">
+          <input type="text" id="cmtName" maxlength="24" placeholder="昵称（可选，默认匿名）" autocomplete="nickname">
+        </div>
+        <textarea id="cmtContent" maxlength="500" placeholder="说点什么…（2–500 字，纯文本）"></textarea>
+        <input type="text" class="cmt-hp" id="cmtWebsite" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="网站">
+        <div class="cmt-row">
+          <span class="cmt-hint">匿名留言 · 请勿刷屏</span>
+          <button type="button" class="dlc-btn" style="margin-left:auto" onclick="submitComment()">发送留言</button>
+        </div>
+      </div>
+      <div class="cmt-list" id="cmtList"><div class="cmt-empty">加载留言…</div></div>
+    </div>`;
   html += `<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
     <a class="link" style="margin-top:0" href="${esc(d.url)}" target="_blank" rel="noopener">🔗 在 Steam 查看原文 ↗</a>
     <a class="link" style="margin-top:0" href="steam://url/CommunityFilePage/${sid}" target="_blank">📥 打开 Steam 订阅页</a>
@@ -2077,10 +2181,79 @@ async function showDetail(id, push = true) {
   </div></div>`;
   $('content').innerHTML = html;
   if ($('content')) $('content').classList.remove('mod-grid');
+  loadComments(sid);
   // 直接定位到详情主体，跳过首页那一屏固定内容
   const el = document.querySelector('.detail');
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   if (push !== false) history.pushState({ view: 'detail', id: sid }, '', buildURL({ id: sid }));
+}
+
+async function loadComments(sid) {
+  const list = $('cmtList');
+  if (!list) return;
+  try {
+    const d = await api('/api/' + GAME + '/comments?id=' + encodeURIComponent(sid) + '&n=50');
+    renderComments(d.comments || []);
+  } catch (e) {
+    list.innerHTML = '<div class="cmt-empty">留言暂时不可用</div>';
+  }
+}
+
+function renderComments(rows) {
+  const list = $('cmtList');
+  if (!list) return;
+  if (!rows.length) {
+    list.innerHTML = '<div class="cmt-empty">还没有留言，来抢沙发</div>';
+    return;
+  }
+  list.innerHTML = rows.map(c => `
+    <div class="cmt-item">
+      <div class="cmt-head">
+        <span class="cmt-name">${esc(c.name || '匿名')}</span>
+        <span class="cmt-time">${esc(c.created_at || '')}</span>
+      </div>
+      <div class="cmt-body">${esc(c.content || '')}</div>
+    </div>`).join('');
+}
+
+async function submitComment() {
+  const block = $('cmtBlock');
+  if (!block) return;
+  const sid = block.getAttribute('data-sid');
+  const name = ($('cmtName') && $('cmtName').value || '').trim();
+  const content = ($('cmtContent') && $('cmtContent').value || '').trim();
+  const website = ($('cmtWebsite') && $('cmtWebsite').value || '').trim();
+  if (content.length < 2) { toast('留言至少 2 个字'); return; }
+  const btn = document.querySelector('#cmtBlock .cmt-form .dlc-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '发送中…'; }
+  try {
+    const r = await fetch('/api/' + GAME + '/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ steam_id: sid, name: name || '匿名', content: content, website: website }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.error) {
+      toast(d.error || '发送失败');
+      return;
+    }
+    toast('✓ 已提交');
+    if ($('cmtContent')) $('cmtContent').value = '';
+    const list = $('cmtList');
+    if (list && d.id) {
+      const item = document.createElement('div');
+      item.className = 'cmt-item';
+      item.innerHTML = `<div class="cmt-head"><span class="cmt-name">${esc(d.name || name || '匿名')}</span>
+        <span class="cmt-time">${esc(d.created_at || '')}</span></div>
+        <div class="cmt-body">${esc(d.content || content)}</div>`;
+      if (list.querySelector('.cmt-empty')) list.innerHTML = '';
+      list.insertBefore(item, list.firstChild);
+    }
+  } catch (e) {
+    toast('网络错误，请稍后重试');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '发送留言'; }
+  }
 }
 
 function toast(msg) {
@@ -2996,6 +3169,47 @@ openGemsPanel = async function() {
   if (document.body.dataset.view === 'game') loadIntelRail();
 };
 
+// ==================== 自动更新感知：站点指纹轮询 ====================
+let _siteFp = null;
+let _sitePollTimer = null;
+let _siteFpDismissed = null;
+
+function dismissUpdateBanner() {
+  const b = $('updateBanner');
+  if (b) b.classList.remove('show');
+  _siteFpDismissed = _siteFp;
+}
+
+async function pollSiteVersion() {
+  if (document.hidden) return;
+  try {
+    const d = await api('/api/site/version');
+    if (!d || !d.fingerprint) return;
+    if (_siteFp === null) {
+      _siteFp = d.fingerprint;
+      return;
+    }
+    if (d.fingerprint !== _siteFp) {
+      _siteFp = d.fingerprint;
+      if (_siteFpDismissed === d.fingerprint) return;
+      const when = d.updated_at ? '（' + d.updated_at + '）' : '';
+      const el = $('updateWhen');
+      if (el) el.textContent = when;
+      const b = $('updateBanner');
+      if (b) b.classList.add('show');
+    }
+  } catch (e) { /* 轮询失败静默 */ }
+}
+
+function startSitePoll() {
+  if (_sitePollTimer) return;
+  _sitePollTimer = setInterval(pollSiteVersion, 60000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) pollSiteVersion();
+  });
+  pollSiteVersion();
+}
+
 // ==================== 启动序列（必须在所有声明之后） ====================
 makeStars();          // 页面底星野（两视图共用）
 buildLauncher();
@@ -3007,6 +3221,7 @@ if ($('galaxyToggle')) {
 }
 setRailChrome();
 route();
+startSitePoll();
 
 
 </script>
