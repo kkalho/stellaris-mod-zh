@@ -1,14 +1,24 @@
 ---
 feature: auto-update-comments
-status: designed
+status: delivered
 updated: 2026-09-11
 branch: feature/auto-update-comments
-commits: 
+commits: 4eddadf..cf3356b
 ---
 
 # 自动更新感知 + 用户评论
 
 ## Report
+
+**What was built** — `GET /api/site/version` 返回站点数据指纹(各游戏 total/translated/max_fetched + 留言数哈希);前端 60s 可见轮询,指纹变化后顶部提示条可刷新/关闭。MOD 详情页新增「访客留言」:匿名昵称+内容写入独立 `data/site/comments.db`(gitignore),GET/POST API 带蜜罐、POST 每 IP 10 分钟 5 次限流、参数化 SQL、前端 esc。
+
+**Verification** — py_compile / node SYNTAX OK;pytest 12 passed;node UTF-8 评论入库可读回;蜜堡不入库且 total 不变;指纹随留言数变化;非法 steam_id 400;独立审查无 critical。
+
+**Journey log**
+1. POST 路径曾误写成 4 段(`/api/g/comments` 应为 3 段),导致 404。
+2. 站点 translated 口径对齐 `mods.translated=1`(与 stats 一致),不用 translations 表 COUNT。
+3. PowerShell `Invoke-RestMethod` 中文易乱码,应用 node fetch 验 UTF-8 评论。
+4. POST 全局限流 + 评论专用限流是叠加防御,不是重复 bug。
 
 ## [S1] Problem
 
@@ -61,6 +71,6 @@ commits:
 
 ## Tasks
 
-- [ ] T1: 后端 site/version + comments 读写 API + do_POST + 蜜罐/限流 — acceptance: curl GET version 有 fingerprint;GET comments 空列表;POST 合法评论入库且可读回;蜜罐不入库;超频 429(covers: A,B)
-- [ ] T2: 前端版本轮询提示条 + 详情评论区 — acceptance: 手动改库后 60s 内出现刷新条;详情可发/看评论;XSS 经 esc 不执行(covers: A,B; depends: T1)
-- [ ] T3: 自检 — acceptance: pytest 仍绿;本地 8099 走通评论与 version;语法检查通过(covers: A,B; depends: T1,T2)
+- [x] T1: 后端 site/version + comments 读写 API + do_POST + 蜜罐/限流 — acceptance: curl GET version 有 fingerprint;GET comments 空列表;POST 合法评论入库且可读回;蜜罐不入库;超频 429(covers: A,B)
+- [x] T2: 前端版本轮询提示条 + 详情评论区 — acceptance: 手动改库后 60s 内出现刷新条;详情可发/看评论;XSS 经 esc 不执行(covers: A,B; depends: T1)
+- [x] T3: 自检 — acceptance: pytest 仍绿;本地 8099 走通评论与 version;语法检查通过(covers: A,B; depends: T1,T2)
