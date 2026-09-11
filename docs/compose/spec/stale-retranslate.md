@@ -1,14 +1,23 @@
 ---
 feature: stale-retranslate
-status: designed
+status: delivered
 updated: 2026-09-11
 branch: feature/stale-retranslate
-commits: 
+commits: 4eddadf..cb96457
 ---
 
 # 增量重译流水线（翻译腐化闭环）
 
 ## Report
+
+**What was built** — `export_stale_tasks.py` 把内容腐化（原文 hash ≠ 基线）导出为 deep 同构任务包；`confirm_stale_translations.py` 在重译导入后刷新 baseline/confirmed_at 并清 stale，补上 import 不写基线的缺口。E2E：改 description → 导出命中 → confirm → detect 清零。
+
+**Verification** — py_compile OK；pytest 12 passed；E2E PASS；空腐化库导出 exit 0 空列表。
+
+**Journey log**
+1. 历史 import 只写 translations 表，不写基线三字段——必须有独立 confirm 步骤。
+2. export 默认只含 content_changed；marked/time_suspect 需显式开关，避免误重译。
+3. confirm `--all-content-stale` 危险：确认前译文必须已更新，否则会把腐化「洗白」。
 
 ## [S1] Problem
 
@@ -57,6 +66,6 @@ commits:
 
 ## Tasks
 
-- [ ] T1: export_stale_tasks.py — acceptance: 对空腐化库输出空列表 exit 0；人为改一行 description 后能导出该 MOD 且含 description_clean 与 *_zh_current(covers: E)
-- [ ] T2: confirm_stale_translations.py — acceptance: 对已改 description 的条目 confirm 后 detect_stale 内容腐化清零、stale=0(covers: C; depends: T1)
-- [ ] T3: 自检 — acceptance: py_compile；pytest 12 仍绿；端到端模拟「改原文→导出→confirm」闭环(covers: E,C; depends: T1,T2)
+- [x] T1: export_stale_tasks.py — acceptance: 对空腐化库输出空列表 exit 0；人为改一行 description 后能导出该 MOD 且含 description_clean 与 *_zh_current(covers: E)
+- [x] T2: confirm_stale_translations.py — acceptance: 对已改 description 的条目 confirm 后 detect_stale 内容腐化清零、stale=0(covers: C; depends: T1)
+- [x] T3: 自检 — acceptance: py_compile；pytest 12 仍绿；端到端模拟「改原文→导出→confirm」闭环(covers: E,C; depends: T1,T2)
