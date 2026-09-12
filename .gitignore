@@ -26,3 +26,8 @@ dist/
 
 # 本机安全工具状态
 .mimosa/
+
+# 子智能体临时产物
+translations/**/_tmp/
+translations/**/_fix_*.py
+translations/**/_postfix*.py
