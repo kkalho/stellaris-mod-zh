@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-09-04 10:12",
-  "db_total": 1020,
+  "updated_at": "2026-09-12 11:25",
+  "db_total": 2008,
   "db_translated": 1020,
-  "workshop_top_total": 1020,
+  "workshop_top_total": 2010,
   "translated_rank_range": [
     1,
-    1020
+    2010
   ],
-  "translated_rank_count": 1020,
+  "translated_rank_count": 2010,
   "next_batch_start_rank": null,
   "next_batch_size": 50,
   "remaining": 0,
