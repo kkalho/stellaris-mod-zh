@@ -1,0 +1,97 @@
+TITLE: Unique Ascension Perks 4.3. DEV branch
+TAGS: Buildings,Gameplay,Utilities,Leaders,Military,Economy,Events,Diplomacy,Technologies
+DESC:
+This is a 4.3.* Beta branch of the great [url=steamcommunity.com/workshop/filedetails/1693982756]Unique Ascension Perks (by DrBLOOD95 - actual version from 08/03/2025 is synced).
+
+//i.imgur.com/ydr2SQm.png⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀‧-----------------------------------‧
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⚹⠀4.3.* ‧ B E T A⠀⚹  
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀‧-----------------------------------‧
+//i.imgur.com/ilmZlI8.png
+Since an updated MOD was sorely missed, some rework has been done, over 600 issues have been fixed. Increased compatibility/performance and fixed (probably) alllast known bugs.
+
+This version is kept separated from the original for testing new or reworked features. So this mod is updated more frequently (more or less always WiP, so multiplayer is not recommended with this branch) you should report any bug. I’ll try to fix them as soon as possible. For more info, see the [url=steamcommunity.com/workshop/filedetails/discussion/1693982756/3423312514214790779/]FEATURES list.
+
+//i.imgur.com/4FuU1Y4.png
+
+Recommendations
+• For more AP slots, I recommend one of the [url=steamcommunity.com/sharedfiles/filedetails/1890399946]UOD series (or alt one of [url=steamcommunity.com/sharedfiles/filedetails/2605594345]Thane-Stus’s mods)
+• If you have problems with extra district view, you can use [url=steamcommunity.com/workshop/filedetails/1623423360]UI Overhaul Dynamic (or UI Overhaul 1080p & 1440p or [url=steamcommunity.com/workshop/filedetails/1587178040]Bigger Planet View)
+• [url=steamcommunity.com/workshop/filedetails/2603967089]Lots of Traditions - PT, EST, and ST
+• [url=steamcommunity.com/workshop/filedetails/2807759164]The Merger of Rules (load order should rather be below)
+
+//i.imgur.com/4FuU1Y4.png
+
+Compatibility
+✅ Guilli’s Planet Modifiers
+✅ Real Space
+✅ Planetary Diversity
+✅ Most Ascension and Tradition Mods like:
+⠀✅ !!!Traditional Trees
+⠀✅ [url=steamcommunity.com/workshop/filedetails/946222466]Expanded Stellaris Traditions (recommended)
+⠀✅ [url=steamcommunity.com/workshop/filedetails/1311725711]Plentiful Traditions (recommended)
+⠀✅ Expanded Stellaris Ascension Perks
+⠀✅ Ascendant Stars
+⠀✅ Forerunner
+✅ Intended all Mods supported by The Merger of Rules (e.g. problems Branch Offices)
+⠀✅ ACOT, ZOFE, GIGA, Ethics and Civics Classic
+✅ Empires Expanded (fixed conflict AP "Economical Mastery")
+✅ Stellar Manipulation Rewrite/Revival - Needs Sartek Merger mod
+• For more you can look at [url=steamcommunity.com/workshop/filedetails/2821711162]Sartek Tradition - Ascension Perk Merger
+• Should be savegame compatible (>3.9 only).
+
+Included
+• [URL=steamcommunity.com/sharedfiles/filedetails/1183120880]AI Cortana Technology Researcher
+• [URL=steamcommunity.com/sharedfiles/filedetails/1410753850]Dynamic Galaxy - Anomalies Respawner & New Anomalies
+• [URL=steamcommunity.com/sharedfiles/filedetails/1530836651]Dynamic Galaxy - Special Projects Extended
+
+//i.imgur.com/4FuU1Y4.png
+
+Localization
+• Fallback (English) to all standard languages
+• 🇬🇧 EN thanks to [url=steamcommunity.com/profiles/76561199110417882]Epimus for improvement
+• 🇯🇵 JP thanks to [url=steamcommunity.com/profiles/76561198099426560]Bee634
+• 🇷🇺 RU thanks to [url=//steamcommunity.com/sharedfiles/filedetails/3039584868]Hann - (previous [url=steamcommunity.com/profiles/76561198060299040]Dexter Morgan)
+• 🇨🇳 CN by [url=steamcommunity.com/profiles/76561198417136420]零 (former [url=steamcommunity.com/sharedfiles/filedetails/2911390086]五萌汉化机翻版)
+• 🇮🇹 IT by [url=steamcommunity.com/sharedfiles/filedetails/2902049163]Rahl81
+
+To-Do
+• Harvester Nanite World (for Nanite Composition)
+• Aggressive Marketing extra branch office building slots (3.4) ✔️
+• Wheel of Fortune rework (add "Treasure Khan-Lord")?
+• Expansion of Infinity split perk!? (leave building slots 35)
+• Combine most edict events and popup decisions into a "main menu"
+• Complete job effect desc ✔️ by Epimus
+• Finishing rework Sector Z-749?
+• Finishing Dark Galaxy Web?
+• Idea new AP "Friends in Highest Places" (by Dominicius)
+• Idea new AP "Galactic Capital" (by Dominicius)
+
+//i.imgur.com/ydr2SQm.pngCredit
+© DrBLOOD95 creating this mod
+• All bug & balance reporters, especially KIRINAS (GlitchFling, Zares and minor Photon, Resetium, EterneAnima)
+• Bee634 for localization patch and JP localization
+• [url=//www.deviantart.com/gstasart]GStas for the Chosen Ruler AP icon
+• Joakim.Westergaard (compatibility updates 3.6)
+• The Icon Emperor for Hive Hull Icons
+• Soilborn for detailed job/district desc (3.7)
+
+⚠️ Current Known Perk Issues ⚠️
+Fixes in progress…
+• Lost Heritage (hyperline overlap while mass-generated / no hyperlines)
+• United Awareness ("veteran" trait blocked) - needs confirmation
+• Space Domestication (re-creation problems) - needs confirmation
+• Aggressive Marketing - needs more info (not compat with E&C BB)
+• Center of Galaxy (specific issue on some players, perks is still operational in game)
+• Primitive Creation (problem with generation)
+• Light of Eternity (minor - you "technically" should not have more than 21 void-clouds, anything else fine)
+• Deep Space Scanner (minor - require manual click each time on colony to create new anomaly)
+• Archaeological Experts (not create digs time-to-time) - half done
+
+
+Support me—1760203465
+[URL=//paypal.me/supportfireprince]//i.imgur.com/KwaAkEo.png
+[url=//ko-fi.com/f1r3pr1nc3]//i.imgur.com/0MxC7Nf.png
+
+
+[URL=//discordapp.com/invite/CMjnnET]//i.imgur.com/4Z8X68t.png
+[url=//github.com/F1r3Pr1nc3/Unique-Ascension-Perks/tree/main/mod]• GitHub repository

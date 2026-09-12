@@ -1,0 +1,93 @@
+TITLE: WP's Dangerous Wildlife Expanded
+TAGS: Military,Gameplay,Graphics,Technologies
+DESC:
+Background:
+Ever wonder why the Xenomorph army tech talks about subconscious interfacing?
+From its cradle as a purely pharmaceutical venture, advancements in our understanding of the morphogenetic field allow for direct, subconscious interfaces with organic units.
+It's because it was actually made for the alien cavalry feature: 
+[quote=Stellaris 1.0]These sturdy war beasts make excellent mounts, once they have finished bonding with their riders. They can traverse almost any terrain, and have proven very effective in scouting and raiding roles. Larger specimens have also been used with success as heavy weapon platforms.
+Pretty cool, right? It's Turok, ARK, Avatar, etc. But nowadays it's been removed from the game. You can't play a really cool idea and the Xenomorph tech looks vaguely un-thematic.
+
+Overview:
+Dangerous Wildlife Expanded adds a selection of new alien fauna, and then gives you fun ways to interact with it.
+
+[*] Discover and explore the habitats of 44 new varieties of alien wildlife.
+[*] Defend yourself from and take the attack back to said wildlife.
+[*] Bring them through the vacuum of space to invade alien worlds.
+[*] Xeno-Cavalry is restored! Ride your alien wildlife with mounted divisions.
+[*] Explore the deepest wilderness, uncovering epic bosses that you can use yourself.
+[*] And lastly breed the wildlife - populating the galaxy as you see fit.
+
+
+Everything is contained inside two short tech paths:
+
+[*]Dangerous Wildlife Manipulation facilitates the discovery, pacification, relocation and breeding of creatures.
+[*]Morphogenetics allows you to genetically modify pacified fauna.
+
+
+👽Wildlife Attacks
+I've added prehistoric mammals, dinosaurs, giant bugs and other apex predators that might exist on earth today. Some are fantasy inspired. Think of them all as alien analogues of what we are familiar with from real life history and pop culture!
+
+Mechanically, wildlife is a tweaked "Dangerous Wildlife" blocker. You'll need a tech to clear them and in the meantime they strike out and attack your colonists in ground war! Attacks will pressure you over time, and some are strong, so you have a reason to land your idle transports. Different wildlife has different strength, too. Packs of Dire-Wolves may be tough, but are nothing compared to the rare and mighty Tyrannosaurus.
+
+Each climate has it's own tech to find. So if you've dealt with Goliath-Bats in your Alpine Caverns, you still need a solution for Millipedes infesting your Tomb World. One major reason for this mod is to give your armies something to do, so land them planet-side and defend your worlds!
+
+After the blocker is cleared, pacified wildlife specimens will appear as a planetary feature. They don't do anything yet, but evolve in fancy ways if you progress through the new techs.
+
+🔓New Technologies
+The Morphogenetics tech is where we start, giving us useful colony bonuses as our citizens learn to live with Wildlife:
+
+https://imgur.com/58rD9pL.png
+
+Impulse control is next, and let's us pack the wildlife into our transport ships:
+
+https://imgur.com/Sn73ruY.png
+
+Remember: Wildlife has varying strength - this remains true when you recruit them. If T-Rex were bad-ass enemies, they are bad-ass allies!
+
+⚠️Your Woolly Mammoths will be stronger on Tundra worlds, and suffocate on a tomb world. Your Megalodon Sharks do well on Ocean worlds, but do very little on Deserts. - Please paradox add triggered_army_modifier so I can do this!⚠️
+
+🐎Xeno Cavalry
+Next are the alien mounts, your citizens can now ride the monsters:
+
+https://imgur.com/T9L2Bri.png
+
+Not everything is mountable, I've only added ones that make sense. But as a cherry on top, if your wildlife is capable of flight (say, Giant-Eagles) then you get flying cavalry - same for if they can swim (like Sharks).
+
+https://imgur.com/juHnqE5.png
+
+Deep Wildlife extraction is a DANGEROUS tech. There is a chance that these exploring teams will provoke the mods apex predators, wildlife bosses!
+
+💀Wildlife Bosses
+Wildlife bosses are titanic specimens that can take on hordes of armies all on their own.
+https://imgur.com/PqkArRO.png
+
+All 44 forms of wildlife have their own boss with unique name and idea for their ultimate kingpin.
+
+If you beat a boss you'll find a planet modifier marking that it has been subdued, and may be useful later. Which is where Exotic Morphogenetics comes in:
+
+https://imgur.com/1zxfoRt.png
+
+Recruiting a boss is a big deal and a tough endgame activity, costing a lot of food, money and time. It's also a one-time thing, try to keep it alive! Think of the feature as a ground-combat megastructure.
+
+🧪Dangerous Wildlife Breeding
+The final feature and technology of the mod allows you to create new deposits:
+
+https://imgur.com/bLdZF33.png
+
+With this you'll be able to specialise your worlds as recruitment capitals. You can take your limited alien Mammoths and transport them to new worlds to gain colony benefits and recruit armies faster. Just in time to send your Panda swarm to fight against the Prethoryn. Sorry if they get zombified.
+
+🦾Unique Empire Interactions:
+In vanilla, Machine Empires don't use Morphogenetics or Epigenetics, same here.
+Fanatic Xenophobes and Purifiers also are uninterested in wildlife.
+And I included that Devouring Swarms will, of course, get to eat them. (Via decision.)
+
+➕Recommendations:
+
+[*]This is a direct expansion to my other mod [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3072858623]Planetary Features Expanded.
+[*]For more recommendations and compatibility advice check [url=https://steamcommunity.com/workshop/filedetails/?id=3419342219]my collection at the top of this page.
+
+
+📜Full details on [url=https://docs.google.com/spreadsheets/d/17gcN4dZ0ZSaKiynktRUvI9ynwKcRIW1ukcMis1-yJ4I/edit?usp=sharing]this spreadsheet - You can right-click comment anything and I'll see!
+
+[url=https://discord.gg/bHVez2C]https://i.imgur.com/4Und3QN.png

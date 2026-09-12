@@ -1,0 +1,110 @@
+TITLE: Mass Effect: Beyond the Relays - For Stellaris 3.10.4
+TAGS: Balance,Buildings,Diplomacy,Economy,Galaxy Generation,Gameplay,Overhaul,Spaceships,Species,Total Conversion
+DESC:
+https://imgur.com/z5QmOTt.gif
+https://i.imgur.com/9nrsYM8.png
+
+[url=https://www.moddb.com/mods/beyond-the-relays/news/dev-diary-progress-check-in]https://i.imgur.com/9eoKD5s.pnghttps://i.imgur.com/GoiJ0kj.png[url=https://www.youtube.com/channel/UCdN2FRwsHxcUGqqOlwBjJKA]https://i.imgur.com/vjDU43D.png
+
+https://i.imgur.com/0IuR4a7.png
+
+Welcome Home, Commander…
+
+Immerse yourself into Bioware's sci-fi epic in a way you’ve never experienced before! 
+
+Beyond the Relays transports you into the CIC of your favorite Mass Effect species, challenging you to change the course of galactic history in a universe where there is no Shepard to save you. Complete with a handcrafted galaxy map with hand-placed, lore accurate planets and systems, you will be tasked with navigating our fully functional Mass Relay network as you lead your people to peace and harmony or war and glory. 
+
+It won’t be easy, facing the 21 empires and their carefully designed civics, traits and government types. But you won’t be alone, Commander. You’ll be accompanied by a team of advisors, each professionally voiced by our talented team of actors…including three advisors wonderfully performed by Mark Meer himself. 
+
+So Commander, do you have what it takes to defend your galaxy? What about to take it?
+
+Subscribe, rate, share & award today
+
+https://i.imgur.com/CwzK6M6.png
+
+Beyond the Relays [1.0] is the culmination of years of learning, working and molding Stellaris to become the Mass Effect 4X we always wanted. The below content is just the beginning of what will be years more of support and development for this mod:
+
+Handcrafted Galaxy Map
+
+https://i.imgur.com/a9n7Cw4.gif
+
+Featuring 600 hand-placed systems, organized into 155 carefully placed star clusters, our galaxy map recreates the Mass Effect universe in stunning detail. With future expansion and size options in the works, you’ll experience the galaxy like never before.
+
+You’ll find that each star cluster contains between 2-10 individual systems interconnected by hyperlanes (to simulate the FTL travel we see in The Trilogy). But in order to travel outside any given cluster, you’ll have to make use of our fully realized Mass Relay Network. 
+
+Fully Realized Mass Relay Network
+
+https://i.imgur.com/0MAj6hV.gif
+
+Mass Relays are the only way for an empire to traverse the galaxy in any meaningful manner - meaning it is impossible to jump from star cluster to star cluster without their use. 
+
+To make this network easier to understand, we have created what we call “sub-sectors,” which are represented by the dim white lines dividing our map. These sub-sectors contain varying numbers of star clusters and are pivotal to understanding the relay network. For ease of use, you will find an alphanumeric label in the corner of each sub-sector for easy reference.
+
+https://i.imgur.com/3LmnpAH.png
+
+True to Mass Effect lore, our relays are broken into two categories: 
+
+Primary Relays: Are larger relays that will allow your ships to traverse larger distances. In the case of our map, you will find that Primary Relays only exist once per sub-sector and will connect only to one single Primary Relay in a neighboring sub-sector. 
+
+(example: BF1’s Primary Relay in Vular only connects to the Bahak Primary Relay in SV1)
+
+Just as in Mass Effect lore, this creates a unique style of space warfare in which choke points are possible only via Relay control. This also means that strategies such as encirclement are viable in a way never before seen in Stellaris - adding a whole new layer of strategic depth to war.
+
+Secondary Relays: Unlike Primary Relays, Secondary Relays have multiple potential destinations, connecting to any other Secondary Relay within their sub-sector.
+
+Custom Planet Classes & Textures
+
+https://i.imgur.com/H7WUUkS.gif
+
+Each possible planet type has a total of 60 possible texture combinations it can appear as! But why stop there? We have also fully integrated Real Space: Planetary Stations, to help ensure that the unique possibilities presented in Mass Effect are represented in our mod. These planets properly represent these Mass Effect species:
+
+- Dextro variants of each planet class/subclass for Turians/Quarians.
+- High Gravity variants for Elcor.
+- Ammonia worlds for Volus.
+
+Custom Empires & Frontend UI
+
+https://i.imgur.com/cCy3nMK.gif
+
+Beyond the Relays includes 21 custom-built empires featuring a slew of unique, custom content consisting of: 
+- Origins
+- Civics
+- AI personalities
+- Traits
+- Technologies
+- Buildings
+- Home world Deposits
+- Starting Economies
+- Lore accurate empire territory
+- Custom Empire Modifiers
+
+Custom Advisors & Soundtrack
+
+https://i.imgur.com/03Bj7jE.jpg
+
+Our sub-mod, Beyond the Advisors, will now officially be integrated into Beyond the Relays going forward! A full list of current advisors can be found on the BtA mod page!
+
+Beyond the Relays will also feature a custom-made OST created by our own [url=https://soundcloud.com/waz-2] Waseem Faraz Butt  which includes our amazing Main Theme! 
+
+Sebdoom has also agreed to allow us to use his original fan music to help give you more awesome tunes to play with! 
+
+https://i.imgur.com/w6uy5BS.png
+
+- Add Cerberus, Migrant Fleet & Collectors
+- Expand and Improve Shipsets
+- Expand and Improve 2D Artwork
+- Complete UI overhaul
+- Complete War, Economy & Resource overhaul
+- Complete diplomacy overhaul
+- More starts and galaxy map sizes
+
+https://i.imgur.com/U4U9IPt.png
+Beyond the Relays' sub-mods are integrated and not compatible with ME:BtR. This includes: 
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2885622417] Beyond the Advisors 
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2878669292] Beyond the Worlds 
+
+Additionally, Real Space is fully integrated and will cause issues if also installed.
+Planetary overhauls like Planetary Diversity, Guilli's, and Real Space New Frontiers are not compatible.
+
+h

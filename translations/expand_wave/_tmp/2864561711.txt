@@ -1,0 +1,19 @@
+TITLE: xTsShipPowerFix
+TAGS: Fixes,Military,Overhaul
+DESC:
+Ship power overflow fix v1.4
+Game version: v4.*
+The same as v3.13 and v3.14
+Re-added the compressed power version: 1000 -> 1000; 1.0G -> 100M
+You need to modify the defines.txt of this mod yourself
+————————————————————
+The power recalculated is basically equal to the original version
+The picture in the front is the original, and the one after it is the recalculated version
+————————————————————
+3.4: 
+Single ship power will not become 1, unless your dpd > 922M
+(damage per day used to calculate ship power is an internal value of the game and is invisible to players)
+The defines file also contains set of parameters with a maximum combat power of 2.1G for a single ship; 
+A set with upper limit 215G (the upper limit of compression has been reached), if the power is too low, it may become 75281; 
+A set with upper limit 2.1G (from 215G to 2.1G), the more powerful it is, the more it decreases compared with the original version. If the power is too low, it may become 23173
+And 52G and 52G->2.1G

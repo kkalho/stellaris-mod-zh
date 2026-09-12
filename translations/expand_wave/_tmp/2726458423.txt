@@ -1,0 +1,8 @@
+TITLE: 舰队collection语音包
+TAGS: Sound
+DESC:
+本Mod是舰队collection:镇守府星际大冒险的语音包mod。
+
+之前语音mod作为本体内容整合在本体mod内，现在独立出来方便以后加入更多的语音mod。
+
+目前只有时雨的语音，后续会添加更多的

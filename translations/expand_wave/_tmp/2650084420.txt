@@ -1,0 +1,18 @@
+TITLE: Cheats Menu (3.8)
+TAGS: Economy,Gameplay,Utilities
+DESC:
+The best compatible version of stellaris for this mod is 3.3 - 3.4
+
+The version 3.8 I have not done a comprehensive test
+
+The Cheats Menu can be opened by the edict or console event csm.1122
+
+If you can not find the edict, should install the mod manualy. ( Steam\steamapps\workshop\content\281990\2650084420 )
+
+This mod uses the unlicense protocol
+https://choosealicense.com/licenses/unlicense/
+
+
+Some code leanred from(Display portrait, Set event object, Make list of countries)
+https://steamcommunity.com/sharedfiles/filedetails/?id=1863514508
+Thank for BetterCheats's Author.
