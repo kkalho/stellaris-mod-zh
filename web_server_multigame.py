@@ -818,6 +818,145 @@ def get_dlc_missing(game_id, owned_app_ids, db=None):
     return {"warnings": warnings, "total_mods": len(rows), "missing_mods": len(warnings)}
 
 
+def _seo_escape(s) -> str:
+    t = "" if s is None else str(s)
+    return (
+        t.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def _seo_clip(s, n: int) -> str:
+    t = "" if s is None else str(s).strip()
+    if len(t) <= n:
+        return t
+    return t[: n - 1] + "…"
+
+
+def render_mod_seo_html(game_id: str, d: dict, host: str) -> str:
+    """服务端详情壳：meta + JSON-LD + 可读摘要 + 深链 SPA（SEO/分享用）。"""
+    title = _seo_clip(d.get("title") or d.get("title_en") or "MOD", 60)
+    summary = _seo_clip(d.get("summary") or d.get("description") or "", 160)
+    desc = _seo_clip(
+        d.get("summary") or d.get("gameplay") or d.get("description") or summary, 300
+    )
+    sid = re.sub(r"[^0-9]", "", str(d.get("id") or ""))
+    author = _seo_clip(d.get("author_name") or d.get("author") or "", 80)
+    subs = int(d.get("subscriptions") or 0)
+    favs = int(d.get("fav") or d.get("favorites") or 0)
+    updated = _seo_clip(d.get("updated") or "", 20)
+    game_name = get_cfg(game_id).game_name if game_id in list_games() else game_id
+    scheme = "https" if (self_host_https(host)) else "http"
+    # host 可能带端口；规范 URL 用当前 Host
+    base = f"{scheme}://{host}" if host else "http://150.158.24.195"
+    page_url = f"{base}/mod/{game_id}/{sid}"
+    spa_url = f"{base}/?game={game_id}&id={sid}"
+    steam_url = f"https://steamcommunity.com/sharedfiles/filedetails/?id={sid}"
+
+    features = d.get("features") or []
+    if isinstance(features, str):
+        try:
+            features = json.loads(features)
+        except Exception:
+            features = [features]
+    feat_txt = "、".join(_seo_clip(f, 20) for f in features[:8])
+
+    ld = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": d.get("title") or title,
+        "alternateName": d.get("title_en") or "",
+        "description": desc,
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "PC",
+        "url": page_url,
+        "sameAs": steam_url,
+        "author": {"@type": "Person", "name": author} if author else None,
+        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    }
+    if not ld.get("author"):
+        ld.pop("author", None)
+    # interactionStatistic 订阅量（近似热度）
+    if subs:
+        ld["interactionStatistic"] = {
+            "@type": "InteractionCounter",
+            "interactionType": "https://schema.org/SubscribeAction",
+            "userInteractionCount": subs,
+        }
+    ld_json = json.dumps(ld, ensure_ascii=False)
+
+    body_summary = _seo_escape(_seo_clip(d.get("summary") or "", 400))
+    body_gameplay = _seo_escape(_seo_clip(d.get("gameplay") or "", 500))
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{_seo_escape(title)} · {game_name} MOD 中文档案</title>
+<meta name="description" content="{_seo_escape(summary)}">
+<link rel="canonical" href="{_seo_escape(page_url)}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{_seo_escape(title)} · {game_name} MOD 中文档案">
+<meta property="og:description" content="{_seo_escape(summary)}">
+<meta property="og:url" content="{_seo_escape(page_url)}">
+<meta property="og:site_name" content="Paradox MOD 中文知识库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{_seo_escape(title)}">
+<meta name="twitter:description" content="{_seo_escape(summary)}">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script type="application/ld+json">{ld_json}</script>
+<style>
+:root {{ --bg:#05080f; --ink:#d7e6f5; --dim:#8aa0b8; --ac:#5ce1e6; }}
+* {{ box-sizing:border-box; margin:0; padding:0; }}
+body {{ font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--ink); line-height:1.7; padding:32px 18px 64px; }}
+.wrap {{ max-width:720px; margin:0 auto; }}
+.eyebrow {{ font-family:ui-monospace,Consolas,monospace; font-size:11px; letter-spacing:3px; color:var(--ac); margin-bottom:10px; }}
+h1 {{ font-size:22px; letter-spacing:1px; margin-bottom:8px; color:#eaf6ff; }}
+.meta {{ color:var(--dim); font-size:13px; margin-bottom:18px; }}
+.panel {{ border:1px solid rgba(92,225,230,.2); background:rgba(8,18,32,.7); padding:16px 18px; margin-bottom:14px; }}
+.panel h2 {{ font-size:13px; letter-spacing:2px; color:var(--ac); margin-bottom:8px; }}
+.panel p {{ color:#b5c4d6; font-size:14px; white-space:pre-wrap; }}
+.btns {{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }}
+.btns a {{ display:inline-block; padding:10px 16px; text-decoration:none; font-size:13px; border:1px solid rgba(92,225,230,.4); color:var(--ac); }}
+.btns a.primary {{ background:rgba(92,225,230,.18); }}
+.foot {{ margin-top:28px; font-size:12px; color:var(--faint,#5a6e88); }}
+.foot a {{ color:var(--dim); }}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">// {game_name} · MOD ARCHIVE</div>
+  <h1>{_seo_escape(d.get("title") or title)}</h1>
+  <div class="meta">
+    {f"Steam ID {sid}" if sid else ""}
+    {f" · 作者 {_seo_escape(author)}" if author else ""}
+    {f" · 订阅 {subs:,}" if subs else ""}
+    {f" · 收藏 {favs:,}" if favs else ""}
+    {f" · 更新 {_seo_escape(updated)}" if updated else ""}
+  </div>
+  <div class="panel"><h2>简介</h2><p>{body_summary or "（暂无中文简介）"}</p></div>
+  {"<div class=\"panel\"><h2>具体玩法</h2><p>" + body_gameplay + "</p></div>" if body_gameplay else ""}
+  {"<div class=\"panel\"><h2>特色</h2><p>" + _seo_escape(feat_txt) + "</p></div>" if feat_txt else ""}
+  <div class="btns">
+    <a class="primary" href="{_seo_escape(spa_url)}">打开完整档案（搜索/星图/留言）</a>
+    <a href="{_seo_escape(steam_url)}" rel="noopener">Steam 创意工坊</a>
+  </div>
+  <div class="foot">
+    数据来自 Steam 创意工坊公开信息 · 中文由 AI 整理 ·
+    <a href="/">返回知识库首页</a>
+  </div>
+</div>
+</body>
+</html>
+"""
+
+
+def self_host_https(host: str) -> bool:
+    return False  # 当前公网仅 HTTP；域名+TLS 后可改
+
+
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.0"  # 禁用 keep-alive，避免连接复用挂起
 
@@ -841,6 +980,17 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _mod_seo_not_found(self, game_id: str, sid: str) -> str:
+        return (
+            "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\">"
+            "<title>未找到 MOD</title>"
+            "<meta name=\"robots\" content=\"noindex\">"
+            "</head><body style=\"font-family:sans-serif;background:#05080f;color:#d7e6f5;padding:40px\">"
+            f"<h1>未找到 Steam ID {sid}</h1>"
+            f"<p><a style=\"color:#5ce1e6\" href=\"/\">返回首页</a></p>"
+            "</body></html>"
+        )
+
     def do_GET(self):
         # 限流（公网防刷；本地使用不会触达 120 次/分钟）
         if not _rate_allow(self.client_address[0]):
@@ -853,6 +1003,36 @@ class Handler(BaseHTTPRequestHandler):
         # 网页界面
         if path == "/":
             self._send_html(self._load_index())
+            return
+        # SEO 详情壳：/mod/<id> 或 /mod/<game>/<id>（可被搜索引擎抓取）
+        seo_m = re.match(r"^/mod(?:/([a-z0-9_-]+))?/([0-9]{6,20})/?$", path)
+        if seo_m:
+            game_id = seo_m.group(1) or "stellaris"
+            sid = seo_m.group(2)
+            if game_id not in list_games():
+                self._send_json({"error": "unknown game"}, 404)
+                return
+            db = None
+            try:
+                db = get_db(game_id)
+                d = get_detail(game_id, sid, db)
+                if not d:
+                    html = self._mod_seo_not_found(game_id, sid)
+                    data = html.encode("utf-8")
+                    self.send_response(404)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Length", str(len(data)))
+                    self.send_header("X-Robots-Tag", "noindex")
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return
+                self._send_html(render_mod_seo_html(game_id, d, self.headers.get("Host") or "150.158.24.195"))
+            except Exception:
+                traceback.print_exc()
+                self._send_json({"error": "服务器内部错误"}, 500)
+            finally:
+                if db:
+                    db.close()
             return
         # 白名单静态资源（favicon / OG 分享图 / 自托管字体）：固定文件名，防路径穿越
         _static_font = {
