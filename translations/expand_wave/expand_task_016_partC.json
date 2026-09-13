@@ -6,7 +6,7 @@
       "steam_id": "2996779545",
       "title_zh": "里格尔之主：塔恩舰船套组",
       "summary_zh": "将《里格尔之主》中的塔恩文明舰船模型完整移植进群星，覆盖全舰种与星港各阶段空间站。",
-      "description_zh": "本 MOD 把策略游戏《Lord of Rigel》里的塔恩（Tharrn）舰船模型完整移植到群星。\n\n塔恩社会是母系氏族，由体型最大、力量最强的雌性统治；文化围绕献给神明的仪式与祭祀展开，且常以其他智慧种族作为血祭。塔恩雌性在权力、威望与争夺配偶上极为好斗，科研被视作低等事务，交由地位较低的雄性处理。她们的舰船粗犷但有效，借此征服了诸多世界。\n\n主要内容：\n· 覆盖全部舰种的完整舰船套组\n· 含各阶段星港与空间站模型（不含巨构与防御平台）\n\n模型出自 Rhombus Studios 开发、Iceberg Interactive 发行的《里格尔之主》。作者表示暂无支持 NSC/缩放舰船等其他 MOD 的计划，但欢迎他人制作兼容补丁。",
+      "description_zh": "本 MOD 把策略游戏《Lord of Rigel》里的塔恩（Tharrn）舰船模型完整移植到群星。\n\n塔恩社会是母系氏族，由体型最大、体魄与力量格外突出的雌性统治；文化围绕献给神明的仪式与祭祀展开，且常以其他智慧种族作为血祭。塔恩雌性在权力、威望与争夺配偶上极为好斗，科研被视作低等事务，交由地位较低的雄性处理。她们的舰船粗犷但有效，借此征服了诸多世界。\n\n主要内容：\n· 覆盖全部舰种的完整舰船套组\n· 含各阶段星港与空间站模型（不含巨构与防御平台）\n\n模型出自 Rhombus Studios 开发、Iceberg Interactive 发行的《里格尔之主》。作者表示暂无支持 NSC/缩放舰船等其他 MOD 的计划，但欢迎他人制作兼容补丁。",
       "gameplay_zh": "纯视觉舰船套组替换，不改数值或机制。启用后可为帝国选择塔恩风格舰船外观，覆盖护卫舰至泰坦等全舰种，以及星港各阶段空间站。模型精度较高，作者提醒若遇到性能问题可反馈。不包含巨构与防御平台模型，也未内置对 NSC 等其他舰船 MOD 的支持。",
       "reviews_zh": "作者介绍塔恩社会为母系氏族，文化重血祭仪式而轻科研，舰船粗犷有效。主要功能是提供覆盖全部舰种与星港各阶段的完整舰船套组。作者在 FAQ 中说明目前没有支持 NSC 或缩放舰船等其他 MOD 的计划，但允许社区自行制作补丁。模型来自《里格尔之主》游戏，作者列出 Rhombus Studios、Iceberg Interactive 与缩略图制作者 ArjenW 的致谢，并说明创作是兴趣项目、不会收费。",
       "features_zh": [
@@ -104,7 +104,7 @@
       "summary_zh": "所有物种特质槽提升至 8，初始特质点数翻倍，机器人人口初始点数由 0 改为 2。",
       "description_zh": "本 MOD 调整物种设计器相关数值：\n\n· 所有物种原型的特质选择上限提升至 8\n· 初始特质点数翻倍\n· 机器人人口初始特质点由 0 增加为 2\n\n原文中英对照，改动极简，专注于放宽物种自定义空间。",
       "gameplay_zh": "平衡向小改动，大幅放宽物种自定义上限。特质槽增至 8、点数翻倍后，玩家可以组合出更极端或更专精的物种构筑，机器人也不再零点开局。适合觉得原版特质槽过紧、想做更多混搭实验的玩家。改动直接、风险低。",
-      "reviews_zh": "作者用极短的中英对照说明本 MOD 只做三件事：所有物种特质槽提升至 8、初始特质点数翻倍、机器人人口初始点数由 0 改为 2。作者未展开兼容性、加载顺序或版本适配等细节，定位是单点平衡调整。对希望扩大物种构筑空间的玩家直接有用，但会明显提高玩家与 AI 物种的自定义强度上限。",
+      "reviews_zh": "作者用极短的中英对照说明本 MOD 只做三件事：所有物种特质槽提升至 8、初始特质点数翻倍、机器人人口初始点数由 0 改为 2。作者未展开兼容性、加载顺序或版本适配等细节，定位是单点平衡调整。对希望扩大物种构筑空间的玩家直接有用，但会明显提高玩家与 AI 物种的自定义强度上限。原文本身就极为简短，作者没有提供额外说明或截图。",
       "features_zh": [
         "所有物种特质槽提升至 8",
         "初始特质点数翻倍",
@@ -151,7 +151,7 @@
       "steam_id": "2053888865",
       "title_zh": "PD-RS:NF 兼容补丁",
       "summary_zh": "解决行星多样性与真实太空：新边疆在矿藏生成、起源与脚本触发器等多处原版文件冲突问题。",
-      "description_zh": "本补丁用于解决 Planetary Diversity（行星多样性）与 Real Space: New Frontiers（真实太空：新边疆）之间的冲突。\n\n加载顺序：\n· Paradox 官方启动器：把补丁放在两个母 MOD 下方\n· Paradoxos 启动器：把补丁放在两个母 MOD 上方\n\n修改文件：\n· common/deposits/01_planetary_deposits.txt\n· common/deposits/01_blocker_deposits.txt\n· common/governments/civics/newfrontiers_origins.txt\n· common/scripted_triggers/pd_scripted_triggers.txt\n· events/newfrontiers_game_start.txt\n\n开发思路：两套 MOD 都为维持逻辑自洽而改写了大量原版矿藏与修正的生成参数；PD 增加新行星类型，NF 增加行星子类修正，改动面都很大，因此做了合并。合并结果通常是把 NF 的改动叠加到 PD 之上；唯一例外是采纳 PD 的论点——盖亚星球不应生成负面或混合修正。\n\n注意：两套 MOD 在行星贴图上仍有冲突，因属纯外观问题，本补丁不做处理。",
+      "description_zh": "本补丁用于解决 Planetary Diversity（行星多样性）与 Real Space: New Frontiers（真实太空：新边疆）之间的冲突。\n\n加载顺序：\n· Paradox 官方启动器：把补丁放在两个母 MOD 下方\n· Paradoxos 启动器：把补丁放在两个母 MOD 上方\n\n修改文件：\n· common/deposits/01_planetary_deposits.txt\n· common/deposits/01_blocker_deposits.txt\n· common/governments/civics/newfrontiers_origins.txt\n· common/scripted_triggers/pd_scripted_triggers.txt\n· events/newfrontiers_game_start.txt\n\n开发思路：两套 MOD 都为维持逻辑自洽而改写了大量原版矿藏与修正的生成参数；PD 增加新行星类型，NF 增加行星子类修正，改动面都很大，因此做了合并。合并结果通常是把 NF 的改动叠加到 PD 之上；仅有一处例外是采纳 PD 的论点——盖亚星球不应生成负面或混合修正。\n\n注意：两套 MOD 在行星贴图上仍有冲突，因属纯外观问题，本补丁不做处理。",
       "gameplay_zh": "纯兼容修复补丁，不添加玩法内容。装上后可同时启用行星多样性与真实太空：新边疆，避免矿藏生成、行星阻塞、国民理念与开局事件因文件覆盖互相打架。必须按启动器类型调整加载顺序。行星贴图层面的外观冲突仍会存在，作者选择不处理。适合同时订阅这两套大型行星 MOD 的玩家。",
       "reviews_zh": "作者说明本补丁用于合并 Planetary Diversity 与 Real Space: New Frontiers 在矿藏生成、起源与脚本触发器上的冲突，并列出五个被修改的文件。作者解释两套 MOD 都为逻辑自洽而大量改写原版生成参数，因此有必要做合并；合并原则是把 NF 改动叠加到 PD 之上，唯独采纳 PD 关于盖亚星球不应生成负面修正的论点。作者还指出两套 MOD 在行星贴图上的冲突属纯外观问题，本补丁不做处理，并分别给出官方启动器与 Paradoxos 的加载顺序要求。",
       "features_zh": [
