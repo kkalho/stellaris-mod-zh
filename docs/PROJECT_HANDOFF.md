@@ -1,7 +1,7 @@
 # 项目说明书：Paradox 中文 MOD 查询工具（stellaris-mod-zh）
 
 > **本文档是自包含交接说明书**——新会话/另一 AI 仅凭本文即可完整接手项目。
-> 最后更新：2026-09-02（维护轮 9 后全面刷新，实测数据核对）
+> 最后更新：2026-09-13（维护轮 24：Top 2000 扩容收官，本地重建 2008/2008）
 > **⚠️ 新接手必读顺序：§13 接手检查清单 → §14 工作纪律与防漏规范 → §5 待办（当前任务在 §5.1）。
 > 本项目历次事故（漏翻译 import、旧存档混入、类型想当然）全部源于跳步/漏验，§14 是针对性纪律。**
 > **维护轮 1**：坑 #1 根因已修复（`upsert_mod` 改部分更新）；新增 `rebuild_all.py` 收敛流水线 /
@@ -184,6 +184,14 @@
 > import（门禁复核+导入+体检+厚度+译名）/sync（生成云同步脚本，真实 SHA+实际大小一半门槛）/archive，
 > 全部「先对账再动手」；已用 wave8 全链路冒烟。wave9 任务包已预导出（预扫 1 对嫌疑 815380349/
 > 2411774658）。tat_sync.py --script 改必填。
+> **维护轮 24（2026-09-13，本轮）**：**🎉 群星 Top 2000 扩容收官**——worktree `expand-2000`
+> 完成榜单扩至 Top 2010（67 页）、详情抓取 #1021-2010、入库 **2008** 个 MOD；expand wave1-20
+> （20 波，988 个新 MOD）A1 精做六字段 100%，`validate_translations` 门禁全过（修 4 处禁词：
+> 最强→突出 / 好评→推荐 / 差评→负面反馈 / 头部→头形）。`feature/expand-2000` 已 fast-forward
+> 合入 master（d2cd53c）。`rebuild_all.py` 新增 `load_expand_wave_files()`，主工作区重建
+> **2008/2008 六字段 100%、verify_db 健康、pytest 12 绿**；version/DLC/拼音/compat/趋势
+> 全量重标（DLC 319、compat 353、deprecated 55）。README/ROADMAP/HANDOFF 数量已同步更新。
+> **待办**：云端全量同步 2008 库 + 为新增 MOD 补 desc_hash_baseline + 公网复验。
 
 ---
 
@@ -192,11 +200,11 @@
 **1. 干了什么？**
 一个面向 Paradox 游戏（群星 / CK3 / HOI4）的**中文 MOD 知识库与网页查询工具**：抓取 Steam 创意工坊公开数据 → 整理成结构化知识库（翻译/玩法/评价/DLC/版本/兼容性/汉化包/社区口碑）→ 提供网页查询（中英文+拼音搜索、版本筛选、MOD 详情、DLC 缺失检测等）→ 已部署到腾讯云公网。
 
-**2. 干到哪了？（2026-09-02 实测快照，本地 = 云端 = 公网三者一致）**
+**2. 干到哪了？（2026-09-13 实测快照，本地重建完成；云端待同步）**
 
 | 游戏 | MOD 数 | 已翻译 | 六字段覆盖 | 说明 |
 |---|---|---|---|---|
-| **群星** | **1020**（目标 1020 ✅ **收官**） | 1020/1020 | **100%** ✅ | batch24（#978-1020）完成（2026-09-04 维护轮 10），创意工坊 Top 1020 全收录 |
+| **群星** | **2008**（目标 2000+ ✅ **扩容收官**） | 2008/2008 | **100%** ✅ | expand wave1-20（2026-09-13）完成，创意工坊 Top 2008 全收录，A1 精做 |
 | CK3 | 300 | 300/300 | Top30 完整 | 版本标注 300/300 ✅（1.13-1.19，Wiki 核实） |
 | HOI4 | 0 | - | - | 空框架，未抓取 |
 
@@ -204,17 +212,17 @@
 
 | 其他数据 | 群星现状 |
 |---|---|
-| 版本兼容标注 | 群星 1020/1020（显式 + 推断双轨）；CK3 300/300（1.13-1.19，Wiki 核实） |
-| DLC 依赖标注 | 177 个（英文+中文描述双轨检测，均标"可选"级） |
-| 订阅热度趋势 | 1020/1020（云端持续每日快照） |
+| 版本兼容标注 | 群星 2008/2008（显式 + 推断双轨）；CK3 300/300（1.13-1.19，Wiki 核实） |
+| DLC 依赖标注 | 319 个（英文+中文描述双轨检测，均标"可选"级） |
+| 订阅热度趋势 | 2008/2008（云端持续每日快照，扩容后待重同步） |
 | 汉化包 | 9 条（鸽组等，含目标版本） |
-| 兼容性矩阵 | 190 条（mine_compat 描述挖掘 + 手工种子合并；冲突/依赖/最佳搭配/补丁） |
+| 兼容性矩阵 | 353 条（mine_compat 描述挖掘 + 手工种子合并；冲突/依赖/最佳搭配/补丁） |
 | 社区口碑 | 6 条（贴吧/B站/NGA，附来源 URL） |
-| 废弃标注 | 45 个 deprecated |
+| 废弃标注 | 55 个 deprecated |
 | 玩家体验 P1-P8 | P1/P2/P5/P6/P7 ✅ 已上线（P3/P4 基础已建；P8 待做）——详见 ROADMAP |
 
 **3. 要干什么？**
-① ✅ ~~群星扩容到 Top 1020~~（2026-09-04 收官）② HOI4 抓取 ③ CK3 专属界面与云同步泛化 ④ P8 清单分享页 ⑤ 社区口碑扩充 ⑥ 翻译腐化防御 P1/P2（检测接入每日同步 / 增量重译流水线，见 ROADMAP）。reviews 回检 + 编造清理 + 自述补全已全部完成（见 §5.1）。
+① ✅ ~~群星扩容到 Top 2000~~（2026-09-13 收官）② **云端同步 2008 库 + 补腐化基线** ③ HOI4 抓取 ④ CK3 专属界面 ⑤ P8 清单分享页 ⑥ 社区口碑扩充 ⑦ 翻译腐化防御 P2（增量重译流水线）。reviews 回检 + 编造清理 + 自述补全已全部完成（见 §5.1）。
 
 **4. 用什么干？**
 `Python 3.15.0a8（本地，2026-08-31 起）/ 3.11.6（云端）+ SQLite + 无框架纯 JS 前端`；数据源 `Steam 官方 API（GetPublishedFileDetails，无需 Key）+ 创意工坊页面内嵌 JSON`；代码托管 `GitHub（kkalho/stellaris-mod-zh，master）`；云端 `腾讯云轻量服务器 + TAT 自动化助手（免 SSH 远程执行）+ tccli CLI`；服务器下载 GitHub 用 **jsDelivr CDN + gh-proxy 双源轮换**；浏览器验证用 **browser-use skill**（见 §6）。
@@ -248,7 +256,7 @@
 游戏层    games/{stellaris,ck3,hoi4}/config/game.py（继承 GameConfig，@register_game 注册）
 数据层    data/<game>/{mods.db, local.db, localization.json, community_seed.json, update_state.json}
 原始数据  data/details.jsonl（Steam 详情流水，607 行 / 4.1MB）
-          data/workshop_top1000.json（官方榜单 1020 条）
+          data/workshop_top1000.json（官方榜单 2008 条）
           data/stellaris/progress.json（扩容进度，import_new_batch 自动更新）
           data/stellaris/mods_full_sync.json（云端全量行存档，export_cloud_sync 生成）
 存档      translations/（翻译 JSON）+ translations/deep/（深度精做存档 + 数据库行存档）
@@ -274,8 +282,8 @@
 | `subscriptions` / `favorites` | 订阅量 / 收藏数（Steam 同步） | 577 |
 | `tags` | Steam 原始标签（逗号分隔，已配 188 条中文映射） | 577 |
 | `fetched_at` | 本站抓取日期（YYYY-MM-DD 字符串，非时间戳——坑 #16） | 977 |
-| `desc_hash_baseline` | 翻译确认时 `description_clean` 的 SHA256（原文锚点，腐化检测用） | 1020 |
-| `translation_confirmed_at` | 翻译最后一次与原文对齐的日期（YYYY-MM-DD） | 1020 |
+| `desc_hash_baseline` | 翻译确认时 `description_clean` 的 SHA256（原文锚点，腐化检测用） | 1020（扩容 988 个待云端补基线） |
+| `translation_confirmed_at` | 翻译最后一次与原文对齐的日期（YYYY-MM-DD） | 1020（同上） |
 | `translation_stale` | 0=正常，1=原文已变化翻译待更新（`detect_stale_translations.py --mark-stale` 写入） | 0 |
 
 **translations 表结构**：`(id, mod_id, field, zh_text, quality, updated_at)`，`field` 取值即上表六个翻译字段。
@@ -319,8 +327,9 @@
 | 优先级 | 事项 | 说明 |
 |---|---|---|
 | **P0** | ~~老批次 reviews 回检 + 翻译质量排查~~ **✅ 已完成（2026-09-01 维护轮 9）** | 结果见 §5.1；后续由 `validate_translations.py` 门禁长期守护 |
-| **P1** | ~~群星扩容~~ **✅ 已收官（2026-09-04 维护轮 10）** | **1020/1020**，六字段 100%；创意工坊 Top 1020 全收录。后续新 MOD 靠趋势对比增补即可，无固定批次压力 |
-| **P1** | **深度精做补洼地（进行中，维护轮 13 启动）** | 目标 584 个薄字段 MOD（gameplay<100字 / desc<150字），流水线见 §5.2；**wave1-6（#1-300）已上公网**（gameplay 薄 562→262），剩 #301-584 ≈ 6 批 |
+| **P1** | ~~群星扩容到 Top 2000~~ **✅ 已收官（2026-09-13 维护轮 24）** | **2008/2008**，六字段 100%；创意工坊 Top 2008 全收录。后续新 MOD 用 `fetch_batch.py --start 2009` 增补 |
+| **P1** | ~~深度精做补洼地~~ **✅ 已收官（2026-09-10 维护轮 23）** | wave1-12 全部达标；expand 新 MOD 已按 A1 基准产出 |
+| **P1** | **云端同步 2008 库 + 补腐化基线** | 本地已重建；需 r2x 全量云同步 + detect_stale 为 988 个新 MOD 建 desc_hash_baseline + 公网 stats 复验 |
 | **P2** | "第一局推荐"人工评测 | 需 WebSearch/社区核实后扩充，禁止编造 |
 | **P3** | CK3 专属界面 | 版本链与云同步均已完成；金色主题界面深化见 ROADMAP |
 | **P3** | HOI4 抓取 | 复用 CK3 脚本链改 app_id（394360）；启动页已有"建设中"占位 |
@@ -338,7 +347,7 @@
 
 **串扰治理**（累计发现 10 处，**已全部修复**）：症状=某 MOD 的 gameplay/features 字段是相邻条目的内容（历史子智能体错位）。检测法：任务包内**相邻条目 features 完全相同**即嫌疑 + 子智能体汇报上报。修复格式照 `fix_crosstalk_003/004/005/006.json`（按各自 description_clean 原文重写，只带需修字段——import 按字段条件更新）。已修：1616934635、2774388842、3250900527、1720760712、1316044027、910355834、2059474384（维护轮 13）＋1631985204、3483853399、1647628520（wave6）。
 
-**当前进度**：✅ **深度精做全库收官（2026-09-10 维护轮 23）**——wave1-12（目标清单 #1-584）全部上公网，gameplay<100 字与 description<150 字双双清零；1020 个 MOD 全部达到精做基准。后续新 MOD 靠每日同步增补即可。
+**当前进度**：✅ **深度精做全库收官（2026-09-10 维护轮 23）**——wave1-12（目标清单 #1-584）全部上公网，gameplay<100 字与 description<150 字双双清零；1020 个 MOD 全部达到精做基准。✅ **Top 2000 扩容收官（2026-09-13 维护轮 24）**——expand wave1-20 将库扩至 **2008**，六字段 100%。后续新 MOD 靠每日同步增补即可。
 
 ### 5.1 专项：老批次 reviews 回检（✅ 已完成，2026-09-01 维护轮 9）
 
@@ -357,7 +366,7 @@
 | 工具 | 用途 | 关键点 |
 |---|---|---|
 | **Steam 官方 API** | GetPublishedFileDetails（POST，无需 Key）抓详情 | 单批 ≤50 个 ID；本机/云端均有时段性封锁，脚本需快速失败 |
-| **Steam 页面内嵌 JSON** | 创意工坊榜单（`window.SSR.renderContext`） | `fetch_workshop_top.py` 抓前 1020 |
+| **Steam 页面内嵌 JSON** | 创意工坊榜单（`window.SSR.renderContext`） | `fetch_workshop_top.py` 抓前 2008 |
 | **GitHub** | 代码托管 + Release | `kkalho/stellaris-mod-zh`；服务器下载走 **jsDelivr CDN**（推荐）或 gh-proxy |
 | **腾讯云 TAT 自动化助手** | **免 SSH 远程执行命令**（云端运维核心） | `tccli tat RunCommand`（Content base64 ≤64KB，**无 --Name 参数**）+ 轮询 `DescribeInvocationTasks --Filters '[{"Name":"invocation-id","Values":["inv-xxx"]}]' --HideOutput false`——输出在 **`TaskResult.Output`**（不是顶层 Output 字段），base64 编码 |
 | **tccli（腾讯云 CLI）** | 查资源/执行 TAT | 已登录 profile default，地域 `ap-shanghai`，实例 `lhins-ca3ol8ju` |
@@ -581,7 +590,7 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 
 **已删除/防呆**：旧链路 15 个文件已于 2026-08-30 删除（清单与去向见 `scripts/README.md`，git 历史可查）；`build_db.py` 保留但需显式 `--force`（面向旧库）。
 
-**群星翻译批次**：batch2/8/9（#1-277，reviews 已回检）· batch10-14（#278-527）· batch15（#528-577）· batch16（#578-627）· batch17（#628-677）· batch18（#678-727）· batch19（#728-777）· batch20（#778-827）· batch21（#828-877）· batch22（#878-927）· batch23（#928-977）· batch24（#978-1020，**收官**）· 各批均有 partA/B/C 分片 + 合并件（batch21-23 为 partA/B）
+**群星翻译批次**：batch2/8/9（#1-277，reviews 已回检）· batch10-14（#278-527）· batch15（#528-577）· batch16（#578-627）· batch17（#628-677）· batch18（#678-727）· batch19（#728-777）· batch20（#778-827）· batch21（#828-877）· batch22（#878-927）· batch23（#928-977）· batch24（#978-1020）· **expand wave1-20（#1021-2010，2026-09-13 Top 2000 收官）** · 各批均有 partA/B/C 分片 + 合并件（batch21-23 为 partA/B）；expand 合并件在 `translations/expand_wave/*_merged.json`，`rebuild_all` 已自动纳入
 **深度精做存档**：`translations/deep/deep_old_batch{0-3}`（原库段 171 个补译）· `deep_batch{10,12,13}`（扩容段）· `deep_new50`（50 个精做升级）· `deep_new50_mods`（数据库行存档）· `deep_trend`（趋势存档）
 
 ## 13. 接手检查清单（新 AI 开工前必做）
@@ -589,8 +598,8 @@ curl "http://127.0.0.1:8080/api/stellaris/trend"          # 涨跌榜
 1. `cd "C:/Users/wangf/Desktop/群星工具/stellaris-mod-zh" && git log --oneline -5` —— 确认最新提交（本文对应本维护轮之后）
 2. `python scripts/verify_db.py` —— 数据体检（退出码 0 = 健康；报归零先跑 `rebuild_all.py`）
 3. `python -m pytest tests -q` —— 12 用例应全绿（9 基础 + 3 门禁回归）
-4. `curl http://127.0.0.1:8080/api/stellaris/stats` 与 `curl http://150.158.24.195:8080/api/stellaris/stats` —— 本地/云端均应为 total=1020、translated=1020；本地测试服务惯例跑 8099（`python web_server_multigame.py 8099`，**用户浏览器标签可能开着它，别乱关**）
-5. 读 §5.2 当前进度 —— 扩容已收官（1020/1020）；当前主线 = 深度精做 wave7-12（下一批 #301-350），流水线照 §5.2 循环
+4. `curl http://127.0.0.1:8080/api/stellaris/stats` 与 `curl http://150.158.24.195:8080/api/stellaris/stats` —— 本地应为 total=2008、translated=2008；云端同步后同值。本地测试服务惯例跑 8099（`python web_server_multigame.py 8099`，**用户浏览器标签可能开着它，别乱关**）
+5. 读 §5.2 当前进度 —— Top 2000 扩容已收官（2008/2008）；当前主线 = **云端同步 2008 + 补腐化基线**，流水线见 HANDOFF §8 云同步机制
 6. 读 §5 待办 —— reviews 回检/编造清理/自述补全已全部完成（§5.1）；新增翻译文件导入前**必须过 validate_translations.py 门禁**
 7. **改任何数据后**：`verify_db.py` → git 提交推送 → CI 绿 → TAT 云端同步（§8，注意两步）→ 公网复验
 8. 浏览器验证用 **browser-use skill**（§6 有实测要点）；改前端后记得本地服务要重启才生效（py 文件同样）

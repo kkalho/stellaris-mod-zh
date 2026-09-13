@@ -8,6 +8,7 @@
 原理：mods.db 是派生物，全部数据都能从 git 内的源文件重建——
     data/details.jsonl + data/workshop_top1000.json   → mods 表元数据
     translations/*_zh.json + translations/deep/*.json → 六字段翻译
+    translations/expand_wave/*_merged.json            → 扩榜波次翻译
     data/stellaris/community_seed.json                → 社区口碑
     detect_* / rebuild_pinyin_idx                     → version / DLC / 拼音标注
     snapshot_trend                                    → 趋势快照（追加，不清历史）
@@ -44,6 +45,26 @@ def load_batch_files() -> list:
         if not f.endswith(".json") or f.startswith(("ck3", "compat")):
             continue
         path = os.path.join(TRANSLATIONS_DIR, f)
+        try:
+            with open(path, encoding="utf-8") as fp:
+                data = json.load(fp)
+            if isinstance(data, dict) and isinstance(data.get("translations"), list):
+                out.append(path)
+        except Exception as e:
+            print(f"  ⚠ 跳过无法解析的文件 {f}: {e}")
+    return out
+
+
+def load_expand_wave_files() -> list:
+    """translations/expand_wave/*_merged.json — 扩榜波次合并产物（标准批次格式）。"""
+    dw = os.path.join(TRANSLATIONS_DIR, "expand_wave")
+    if not os.path.isdir(dw):
+        return []
+    out = []
+    for f in sorted(os.listdir(dw)):
+        if not f.endswith("_merged.json"):
+            continue
+        path = os.path.join(dw, f)
         try:
             with open(path, encoding="utf-8") as fp:
                 data = json.load(fp)
@@ -100,13 +121,17 @@ def main():
         sys.exit(1)
 
     batches = load_batch_files()
+    expands = load_expand_wave_files()
     deeps = load_deep_files()
     print("===== rebuild_all 收敛流水线（幂等，可随时中断重跑）=====")
     print(f"  翻译批次文件: {len(batches)} 个")
+    print(f"  扩榜波次文件: {len(expands)} 个")
     print(f"  深度精做存档: {len(deeps)} 个")
     if args.dry_run:
         for p in batches:
             print(f"    batch: {os.path.relpath(p, BASE_DIR)}")
+        for p in expands:
+            print(f"    expand:{os.path.relpath(p, BASE_DIR)}")
         for p in deeps:
             print(f"    deep:  {os.path.relpath(p, BASE_DIR)}")
 
@@ -123,14 +148,15 @@ def main():
     if r:
         print(f"    新增 {r['added']}，跳过已存在 {r['skipped']}，库中共 {r['total']}")
 
-    # ---- 2) 翻译批次导入 ----
+    # ---- 2) 翻译批次导入（含扩榜波次）----
     def step_import_batches():
         import import_stellaris_translations
         db = ModDB(cfg)
-        for path in batches:
+        for path in batches + expands:
             import_stellaris_translations.import_file(db, path)
         db.close()
-    run_step(f"2/9 导入翻译批次（{len(batches)} 个文件）", step_import_batches, args.dry_run)
+    run_step(f"2/9 导入翻译批次（{len(batches)} 批次 + {len(expands)} 扩榜）",
+             step_import_batches, args.dry_run)
 
     # ---- 3) 深度精做存档导入（覆盖批次翻译的 description/gameplay/reviews/features）----
     def step_import_deep():

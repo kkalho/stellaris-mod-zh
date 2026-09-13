@@ -1,27 +1,28 @@
 # 项目路线图（ROADMAP）
 
-> 更新：2026-09-05 · 配合 `PROJECT_HANDOFF.md` 使用——交接文档回答"怎么做"，本文回答"接下来做什么"。
+> 更新：2026-09-13 · 配合 `PROJECT_HANDOFF.md` 使用——交接文档回答"怎么做"，本文回答"接下来做什么"。
 > 原则：**数据真实优先于功能**；每批扩容必须过 `rebuild_all` + `verify_db`（CI 已兜底）；不破"单文件、无构建"底线。
 
-## 现状基线（2026-09-05）
+## 现状基线（2026-09-13）
 
-- 群星 **1020**/1020 ✅ **收官**（batch24 完成，维护轮 10），六字段 100%；CK3 300（版本链 1.13-1.19 已建）；HOI4 空框架
-- **深度精做进行中**（维护轮 13 启动）：wave1-6（#1-300）已上公网，gameplay 薄 562→262、desc 薄 140→36；剩 #301-584 ≈ 6 批
-- **工坊离线快照版已建成待发布**（维护轮 14）：`export_workshop_snapshot.py` 生成单 HTML（1020 MOD=1288KB），发布套件 `docs/WORKSHOP_PUBLISH.md` 就绪，**待用户 Steam 账号执行 steamcmd 首发**；宣传计划 `docs/PROMOTION.md` 已定
+- 群星 **2008**/2008 ✅ **Top 2000 扩容收官**（expand wave1-20，A1 精做），六字段 100%；CK3 300（版本链 1.13-1.19 已建）；HOI4 空框架
+- **深度精做已收官**（维护轮 23）：wave1-12（#1-584）清零薄字段；expand 波次 988 个新 MOD 均按 A1 基准产出
+- **工坊离线快照版已建成待发布**（维护轮 14）：`export_workshop_snapshot.py` 可生成单 HTML，发布套件 `docs/WORKSHOP_PUBLISH.md` 就绪，**待用户 Steam 账号执行 steamcmd 首发**；宣传计划 `docs/PROMOTION.md` 已定
 - 本地主仓库迁至 `C:/Users/wangf/Documents/新建文件夹/stellaris-mod-zh/`（D 盘旧副本冻结待删）
 - **HTTPS 第一跳已完成**（维护轮 15）：nginx 80 反代上线，**http://150.158.24.195/ 无端口可访问**，443 模板预置；待用户买域名+备案+DNS，runbook 见 `docs/DOMAIN_HTTPS.md`
 - **reviews 全库客观化 + 723 个补作者自述**（维护轮 9）；`validate_translations.py` 导入门禁已接入全部导入入口（「👍 好评：」标签前缀已放行，编造形态仍拦，回归测试 tests/test_validate_gate.py）
 - 数据舰桥启动页 + 银河星图 + 主题系统（青/金/钢灰）已上线公网；遗珠 24 颗以金色菱形脉冲星标上星图
 - 信任包（数据说明面板/数据更新格/报告勘误）与分享包（og 标签/favicon/og_card）已上线
 - 工程设施齐备：CI（重建+体检）、Uptime 拨测、verify_db、export/apply 云同步、TAT 通道
-- **翻译腐化防御体系 P0 已建**（2026-09-02）：mods 表新增 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段，1020 个 MOD 全部建立描述 SHA256 基线（batch24 导入时同步建立）；`detect_stale_translations.py` 三维度检测（内容 hash 变化=确定腐化 / time_updated 较新=疑似 / 已重抓无变化=可自动刷新），退出码 0/1 可集成自动化
-- **腐化防御 P1 已上线**（2026-09-04 维护轮 12）：云端 crontab 三连——04:00 Steam 重抓 → 04:30 `detect_stale_translations --mark-stale` 自动标记 → 04:40 `export_trend` 趋势导出备份；检测/迁移/趋势三脚本已上云，云端 stellaris 1020/1020、ck3 295/300 建基线（ck3 缺 5 个=原始描述为空，天然无原文可比，非缺陷）；本地 ck3 基线同步补齐。剩余 P2=增量重译流水线
+- **翻译腐化防御体系 P0 已建**（2026-09-02）：mods 表新增 desc_hash_baseline / translation_confirmed_at / translation_stale 三字段；`detect_stale_translations.py` 三维度检测（内容 hash 变化=确定腐化 / time_updated 较新=疑似 / 已重抓无变化=可自动刷新），退出码 0/1 可集成自动化
+- **腐化防御 P1 已上线**（2026-09-04 维护轮 12）：云端 crontab 三连——04:00 Steam 重抓 → 04:30 `detect_stale_translations --mark-stale` 自动标记 → 04:40 `export_trend` 趋势导出备份；检测/迁移/趋势三脚本已上云。剩余 P2=增量重译流水线；**扩容后需为 2008 个 MOD 补基线**
 
 ## 短期（随接下来 2-3 批扩容完成）
 
 | # | 事项 | 说明 |
 |---|---|---|
-| 1 | ~~扩容至 1020~~ **✅ 已收官（维护轮 10，2026-09-04）** | batch24（#978-1020，43 个）完成；后续新入榜 MOD 用 `fetch_batch.py --start 1021` 增补即可，无批次压力 |
+| 1 | ~~扩容至 1020~~ **✅ 已收官（维护轮 10，2026-09-04）** | batch24（#978-1020，43 个）完成 |
+| 1.1 | ~~扩容至 2000~~ **✅ 已收官（2026-09-13 expand wave1-20）** | 榜单扩至 Top 2010，入库 2008 个并 A1 精做六字段 100%；`rebuild_all` 已纳入 `expand_wave/*_merged.json`；后续新入榜用 `fetch_batch.py --start 2009` 增补 |
 | 1.5 | ~~深度精做补洼地~~ **✅ 已收官（维护轮 23，2026-09-10）** | wave1-12（目标 #1-584）全部上公网，**gameplay<100 字与 description<150 字双双清零**；累计修复串扰/文案矛盾 26 处；流水线与治理史见 HANDOFF §5.2 |
 | 2 | ~~CK3 云同步泛化~~ **✅ 已完成（维护轮 11，2026-09-04）** | export/apply 加 `--game`（默认 stellaris 兼容），空库跳过导出；CK3 首份全量存档（300 行，版本标注 300/300）已上公网（r16/r16b，1.19×137 等下拉生效）。⚠️ 教训：同步清单必须包含被改的脚本自身（详见 HANDOFF §8 第 7 条） |
 | 3 | ~~老批次 reviews 质量回检~~ **✅ 已完成（维护轮 9，2026-09-01）** | 848 条编造 reviews 已全部重写为客观「订阅 X、收藏 Y」+ 作者自述；`validate_translations.py` 门禁拦截复发 |
