@@ -5,10 +5,10 @@
   {
    "steam_id": "2789654058",
    "title_zh": "ACOT 天体反应堆",
-   "summary_zh": "为多种巨型构造与特殊舰体补全从 Delta 到流光等级的反应堆科技。",
+   "summary_zh": "为小行星炮台、攻击月、巨兽行星舰等多种巨型构造补全从 Delta 到流光等级的反应堆科技。",
    "description_zh": "本 MOD 是 ACOT（Ancient Cache of Technologies）体系下的扩展，为下列单位补全从 Delta 等级到流光（Flowing Light）等级的反应堆：\n\n· 小行星炮台\n· 马奇诺星球\n· 攻击月\n· 巨兽行星舰\n· 恒星系舰\n· O 级恒星系舰（需 Stellar Manipulation）\n· 巨型类星体舰（需 Hyperquasaric Megaconstruction）\n\n作者说明：目前不支持「幕帘奥秘」相关内容，将在后续版本加入。",
    "gameplay_zh": "技术扩展，为 ACOT 相关巨型构造与特殊舰体补全反应堆层级。覆盖小行星炮台、马奇诺星球、攻击月、巨兽行星舰、恒星系舰等；部分高级单位需搭配对应 MOD。O 级恒星系舰需 Stellar Manipulation，巨型类星体舰需 Hyperquasaric Megaconstruction。当前未支持 Secrets of The Shroud，作者表示将在后续加入。本 MOD 侧重科技解锁，不单独添加新的事件链或玩法内容。",
-   "reviews_zh": "作者在描述中说明，本 MOD 为下列单位添加从 Delta 到流光等级的反应堆：小行星炮台、马奇诺星球、攻击月、巨兽行星舰、恒星系舰，以及依赖其他 MOD 的 O 级恒星系舰与巨型类星体舰。作者明确指出「幕帘奥秘」目前尚未支持，将在后续版本补充。描述中同时列出了两项前置 MOD 的工坊链接。",
+   "reviews_zh": "作者在描述中说明，本 MOD 为下列单位添加从 Delta 到流光等级的反应堆：小行星炮台、马奇诺星球、攻击月、巨兽行星舰、恒星系舰，以及依赖其他 MOD 的 O 级恒星系舰与巨型类星体舰。作者明确指出「幕帘奥秘」目前尚未支持，将在后续版本补充。作者同时列出了两项前置 MOD 的工坊链接，并标明了各扩展单位对应的需求。",
    "features_zh": [
     "为多种巨型构造补全反应堆",
     "覆盖 Delta 至流光等级",
@@ -24,7 +24,7 @@
    "summary_zh": "为 Downscaled Ships 提供的快速兼容补丁，适配行星防御军相关内容。",
    "description_zh": "这是一个给 Downscaled Ships 用的快速补丁。\n\n作者指出：在使用本补丁时，植物族（Plantoids）的巡逻艇似乎不会生成缩略图。如果有人有修复办法，欢迎告知作者。",
    "gameplay_zh": "图形兼容补丁，用于「!At War: Planetary Defense Force」与 Downscaled Ships 同时使用时的适配。作者标注这是一次快速制作的补丁，并注明植物族巡逻艇在本补丁下可能缺少缩略图。不添加新的游戏机制或舰船内容，只处理缩放舰体与相关内容的匹配问题。",
-   "reviews_zh": "作者在描述中说明，这是一个给 Downscaled Ships 用的快速补丁。作者还指出：植物族巡逻艇在本补丁下似乎不会生成缩略图，如果有修复办法欢迎告知。描述内容较短，未列出加载顺序或其他兼容细节。",
+   "reviews_zh": "作者在描述中说明，这是一个给 Downscaled Ships 用的快速补丁。作者还指出：植物族巡逻艇在本补丁下似乎不会生成缩略图，如果有修复办法欢迎告知作者。作者没有列出加载顺序、依赖关系、适用版本或其他兼容细节，整段描述非常简短，重点只放在缩放舰体补丁本身与缩略图问题上，也未说明后续是否还会继续维护。",
    "features_zh": [
     "适配 Downscaled Ships",
     "服务行星防御军内容",
@@ -36,7 +36,7 @@
   {
    "steam_id": "2458848549",
    "title_zh": "闭嘴，我们不关心！(3.0)",
-   "summary_zh": "屏蔽与玩家无关的 AI 外交通知轰炸，让界面更安静。",
+   "summary_zh": "用大锤方式压制与玩家无关的 AI 外交通知轰炸，减少提示音打断，让游戏界面更安静。",
    "description_zh": "本 MOD 针对 v3.0.x 更新，用“大锤”方式压制大量与你无关的 AI 之间外交往来通知。\n\n作者描述：AI 会不断改变对敌对关系、条约等的决定，提示音不停；若你需要了解，可以自行查看。本 MOD 通过覆盖外交相关通知，避免这些消息打断你。\n\n本版没有屏蔽部分与战争、防御协定、联邦相关通知。\n\n作者说明：\n· 修改 common/diplomatic_actions/00_actions.txt\n· 已适配 v3.0.x\n· 可用于存档\n· 不兼容铁人成就\n· 推荐加载顺序：尽量放底部",
    "gameplay_zh": "界面体验类 MOD，目标是减少与玩家无关的外交通知干扰。它通过覆盖外交动作相关通知来压制 AI 之间不涉及你的消息。作者注明部分战争、防御协定、联邦通知仍会保留。适用于已有存档，但不兼容铁人成就。加载顺序建议尽量放底部。作者在描述中还用较强烈语气强调，原版外交通知仍很吵，因此做了这个“大锤”方案。",
    "reviews_zh": "作者在描述中以“大锤”为比喻，说明本 MOD 用来压制大量与玩家无关的 AI 外交通知。作者表示自己并不关心 AI 之间反复变动的敌对关系与条约，并注明若需要了解可以自行查看。作者说明本版没有屏蔽部分战争、防御协定、联邦相关通知；MOD 修改 common/diplomatic_actions/00_actions.txt，已适配 v3.0.x，可加入已有存档，但不兼容铁人成就，加载顺序建议尽量放底部。",
@@ -52,10 +52,10 @@
   {
    "steam_id": "1349205172",
    "title_zh": "STREGA - RS 补丁",
-   "summary_zh": "为 STREGA 舰船与空间站提供 Real Space 兼容的补丁 MOD。",
+   "summary_zh": "为 STREGA 舰船与空间站提供 Real Space 兼容支持的补丁 MOD。",
    "description_zh": "本 MOD 是「STREGA ships and stations」的补丁 MOD。\n\n原版 MOD 链接见工坊页面。\n\n作者仅说明这是 STREGA 舰船与空间站的补丁，未在描述中列出具体改动、加载顺序或兼容说明。",
    "gameplay_zh": "兼容补丁，面向 STREGA 舰船与空间站，结合标签可判断用于 Real Space 相关适配。原 MOD 是 STREGA ships and stations。描述内容很短，未列出补丁具体修复项、加载顺序或其他依赖。使用时需先启用原 STREGA MOD。",
-   "reviews_zh": "作者在描述中说明，原 MOD 为 STREGA ships and stations，本 MOD 是其补丁 MOD。作者未列出具体修复内容、加载顺序或其他兼容细节，描述整体非常简短。",
+   "reviews_zh": "作者在描述中说明，原 MOD 为 STREGA ships and stations，本 MOD 是其补丁 MOD。作者未列出具体修复内容、加载顺序或其他兼容细节，描述整体非常简短。作者只给出了原 MOD 的工坊链接，并重复说明本 MOD 的补丁定位，没有进一步解释改动范围、使用条件或是否需要特定加载顺序。",
    "features_zh": [
     "面向 STREGA 舰船与空间站",
     "属于兼容补丁",
@@ -67,10 +67,10 @@
   {
    "steam_id": "683236144",
    "title_zh": "银河中心",
-   "summary_zh": "在银河中心生成恒星，并调整核心区域的亮度与着色器表现。",
+   "summary_zh": "在银河中心开启恒星生成，并调整银河核心的亮度与着色器表现，让环状星系观感更丰富。",
    "description_zh": "本 MOD 让银河中心区域也能生成恒星，并调整与银河核心亮度、着色器相关的视觉表现。\n\n作者指出：环状星系在加入小中心核与若干条通往外缘的辐条后会更有意思。\n\n工坊页面还提供蓝色银河（Blue Galaxy）替代版本，玩法相同，仅配色不同。",
    "gameplay_zh": "银河生成与视觉向调整：开启银河中心恒星生成，并改动核心区域亮度与着色器。对环状星系，作者描述为加入小型中心核与若干辐条后观感更丰富。另有 Blue Galaxy 配色版本可选，机制相同。适合希望银河中心区域更有内容的星图体验。",
-   "reviews_zh": "作者在描述中说明，本 MOD 是一个简单 MOD，开启银河中心的恒星生成，并调整与银河核心亮度、着色器相关的图形表现。作者认为环状星系在加入小中心核与通往外缘的辐条后会更有趣。作者还提供了 Blue Galaxy 配色版本，说明玩法相同、颜色不同。",
+   "reviews_zh": "作者在描述中说明，本 MOD 是一个简单 MOD，开启银河中心的恒星生成，并调整与银河核心亮度、着色器相关的图形表现。作者认为环状星系在加入小中心核与通往外缘的辐条后会更有趣。作者还提供了 Blue Galaxy 配色版本，说明玩法相同、颜色不同，并把该版本作为替代选择展示，没有列出更多技术细节或兼容说明。",
    "features_zh": [
     "开启银河中心恒星生成",
     "调整核心亮度与着色器",
@@ -82,10 +82,10 @@
   {
    "steam_id": "718713442",
    "title_zh": "星盟舰船与阵营",
-   "summary_zh": "提供 Halo 星盟风格舰船与阵营内容的测试版 MOD。",
+   "summary_zh": "提供 Halo 星盟（Covenant）风格舰船与阵营内容，作者标注本版为测试版。",
    "description_zh": "作者标注本 MOD 为“BETA BUILD（测试版）”。\n\n模型版权说明：所有舰船模型归属 YF22；若要使用这些模型或资源，请联系 YF22，其他内容请再联系本作者。\n\n旧版说明：旧版本请前往 Halo Universe MOD。\n\n标签显示本 MOD 涉及玩法、总换、舰船与种族。",
    "gameplay_zh": "测试版内容，围绕 Halo 星盟（Covenant）舰船与阵营展开。作者明确本版本为 BETA，旧版另有 Halo Universe 路线。舰船模型版权归 YF22，使用模型资源需联系其本人。由于描述简短，具体舰船清单、事件与兼容细节未在工坊页面列出。",
-   "reviews_zh": "作者在描述中明确本 MOD 为“BETA BUILD”。作者强调所有舰船模型归属 YF22，使用模型或相关资源需要联系 YF22；其他内容请再联系本作者。作者还说明旧版本请改用 Halo Universe MOD，本页未列出更多玩法或兼容细节。",
+   "reviews_zh": "作者在描述中明确本 MOD 为“BETA BUILD”。作者强调所有舰船模型归属 YF22，使用模型或相关资源需要联系 YF22；其他内容请再联系本作者。作者还说明旧版本请改用 Halo Universe MOD，本页未列出更多玩法或兼容细节。整体说明偏版权与版本指引，而不是完整功能介绍，也没有给出依赖或版本要求。",
    "features_zh": [
     "Halo 星盟主题舰船与阵营",
     "明确标注为测试版",
@@ -97,7 +97,7 @@
   {
    "steam_id": "3010825101",
    "title_zh": "里格尔之主：图洛克舰船组",
-   "summary_zh": "来自《里格尔之主》的图洛克种族完整舰船组，覆盖全舰种与空间站阶段。",
+   "summary_zh": "来自游戏《里格尔之主》的图洛克种族完整舰船组，覆盖全部舰种与空间站各阶段外观表现。",
    "description_zh": "背景设定（作者描述）：\n图洛克人是极端环境生物，能在碳基生命无法生存的环境中生活，因此几乎可居住在各类星球上。他们高度排外，思维方式也不利于研究新课题。为守住新星系，图洛克拥有可观舰队；由于舰船必须承受极端环境，同级舰通常比其他种族更强壮。\n\n主要特性：\n· 覆盖全部舰种的完整舰船组\n· 包含全部空间站阶段与空间站本体\n· 不包含巨构与防御平台\n\nFAQ：目前没有为 NSC/Downscaled ships 等 MOD 提供支持的计划，但欢迎他人制作补丁。\n\n致谢：模型来自游戏《里格尔之主》（Rhombus Studios 开发，Iceberg Interactive 发行）；缩略图由 ArjenW 制作。",
    "gameplay_zh": "纯舰船组 MOD，把《里格尔之主》中的图洛克舰船移植进群星。作者说明图洛克是极端环境生物，高度排外，因舰船需承受极端环境而通常比同级舰更强壮。MOD 覆盖全部舰种，并包含空间站各阶段与空间站本体，但不包含巨构与防御平台。FAQ 中作者表示目前没有支持 NSC/Downscaled ships 的计划，但欢迎他人做补丁。适合想要给图洛克风格帝国换全套外观的玩家。",
    "reviews_zh": "作者在描述中介绍了图洛克种族设定：极端环境生物、高度排外、研究新课题能力较弱，为控制新星系而维持可观舰队，且舰船因环境需求通常更强壮。作者说明 MOD 提供覆盖全部舰种的完整舰船组，并包含全部空间站阶段与空间站本体，但不含巨构与防御平台。FAQ 中作者表示目前没有支持其他舰船 MOD 的计划，但欢迎他人制作补丁。作者致谢了《里格尔之主》开发方与发行方，并说明模型来自该游戏。",
@@ -113,10 +113,10 @@
   {
    "steam_id": "2506141839",
    "title_zh": "MOD 韩文合集",
-   "summary_zh": "面向覆盖原版文案的 MOD 提供韩文本地化合集与附加包。",
+   "summary_zh": "为会覆盖原版文案的大型 MOD 提供韩文本地化，请下载合集内 Addon 获取对应翻译。",
    "description_zh": "作者用韩文说明：若使用会覆盖原版文案的 MOD（如 NSC2、Real Space、guillie、Gigastructure、Planetary Diversity 等），请下载本合集页面提供的 Addon 来获取对应韩文本地化。\n\n本 MOD 标签为 Technologies，描述非常简短，未列出完整 MOD 覆盖范围、版本或加载顺序。",
    "gameplay_zh": "本地化合集，目标是为会覆盖原版字符串的大型 MOD 提供韩文翻译。作者点名 NSC2、Real Space、Guilli、Gigastructure、Planetary Diversity 等作为示例，并要求通过本合集的 Addon 获取对应本地化。它不新增玩法内容，主要是语言与文案层支持。具体覆盖清单需查看工坊附件或合集内其他条目。",
-   "reviews_zh": "作者在描述中说明，会覆盖原版文案的 MOD（举例 NSC2、Real Space、guillie、Gigastructure、Planetary Diversity 等）的韩文本地化，请使用本合集页面提供的 Addon。作者未列出完整支持清单、版本要求或加载顺序，描述以指引下载 Addon 为主。",
+   "reviews_zh": "作者在描述中说明，会覆盖原版文案的 MOD（举例 NSC2、Real Space、guillie、Gigastructure、Planetary Diversity 等）的韩文本地化，请使用本合集页面提供的 Addon。作者未列出完整支持清单、版本要求或加载顺序，描述以指引下载 Addon 为主。作者也没有解释翻译覆盖程度或更新频率。",
    "features_zh": [
     "为大型 MOD 提供韩文本地化",
     "覆盖原版文案类 MOD",
@@ -128,7 +128,7 @@
   {
    "steam_id": "2112961959",
    "title_zh": "MVG 战争疲劳度——更新与微调版",
-   "summary_zh": "对 MVG 逻辑战争疲劳度的更新与小幅微调，并列出改动变量。",
+   "summary_zh": "对 MVG 的逻辑战争疲劳度 MOD 进行更新与小幅微调，并在讨论区公开全部改动变量。",
    "description_zh": "本 MOD 是 MisadventuresVG 的 Logical War Exhaustion 的更新与小幅微调版。\n\n作者说明：主要工作仍归功于原作者；本次更新只需改一个变量。作者会在讨论区列出本 MOD 改动的全部变量，方便查看具体改动。\n\n原 MOD：工坊页面提供链接。\n\n相关补丁：Amazing Space Battles。",
    "gameplay_zh": "战争疲劳度向调整。作者表示这是对 MVG Logical War Exhaustion 的更新与微调版，更新过程改动很小；其余微调会以讨论区变量列表形式公开。MOD 本身不新增事件或舰船内容，重点在于调整战争疲劳度相关参数。另提供与 Amazing Space Battles 的补丁链接。适合希望战争疲劳度逻辑更合理、并愿意自行核对变量的玩家。",
    "reviews_zh": "作者在描述中说明，本 MOD 是 MisadventuresVG 的 Logical War Exhaustion 的更新与小幅微调版，绝大多数功劳归原作者。作者表示为完成更新只需改动一个变量，其余微调会在讨论区贴出全部变量，便于玩家查看本 MOD 实际改动了什么。作者还提供了原 MOD 与 Amazing Space Battles 补丁的链接。",
@@ -159,7 +159,7 @@
   {
    "steam_id": "2519634244",
    "title_zh": "丰饶房间",
-   "summary_zh": "为帝国创建阶段加入约 800 种房间背景，适合喜欢慢慢捏人的玩家。",
+   "summary_zh": "为帝国创建阶段加入约 800 种房间背景，适合喜欢在捏人阶段慢慢挑选房间的玩家。",
    "description_zh": "作者说明本 MOD 并不适合所有人，因为点完全部房间需要一些时间。\n\n定位：给喜欢在帝国创建阶段花很长时间的玩家准备的房间 MOD。\n\n若觉得房间太多，作者建议改用 Diverse Rooms。\n\n内容：\n· 增加约 800 个房间\n· 包含许多不同类别\n· 包含 Diverse Rooms 中的大多数房间\n\n美术致谢归各原作者，作者提供了艺术家列表链接。",
    "gameplay_zh": "帝国创建阶段的房间背景扩展。作者明确本 MOD 不适合所有人，因为可选房间很多，点完需要时间；更适合喜欢慢慢捏人的玩家。内容约 800 个房间，分属多个类别，并包含 Diverse Rooms 的大多数房间。若觉得数量过多，作者建议改用更克制的 Diverse Rooms。本 MOD 只影响帝国创建观感，不改变开局后的玩法数值。",
    "reviews_zh": "作者在描述中说明，本 MOD 并不适合所有人，因为点完全部房间需要一些时间。作者把本 MOD 定位为给喜欢在帝国创建阶段花很长时间的玩家使用的房间 MOD，并建议如果觉得房间太多就改用 Diverse Rooms。作者列出内容约为 800 个房间、包含许多不同类别，并包含 Diverse Rooms 的大多数房间；美术致谢归各原作者。",
@@ -175,7 +175,7 @@
   {
    "steam_id": "2470107747",
    "title_zh": "博格舰船组（兼容 NSC）",
-   "summary_zh": "重新上传并维护的博格舰船组，含肖像、旗帜与顾问，并做了部分改动。",
+   "summary_zh": "重新上传并维护的星际迷航博格舰船组，包含肖像、旗帜与顾问，并做了部分舰船内容改动。",
    "description_zh": "本 MOD 是对原博格舰船组的重新上传，并对舰船组做了部分改动。\n\n内容：\n1. 舰船组\n2. 肖像\n3. 旗帜\n4. 顾问\n\n作者致谢：\n· 感谢原作者授权重新上传与维护本 MOD\n· 感谢 STNH 团队允许使用其 MOD 中更新后的部分舰船模型\n· 感谢 Stellar Parallax 团队允许使用其 STA3（Sins of a Solar Empire Rebellion 移植）模型\n\n作者还列出了其他星际迷航相关 MOD：联邦武器包、克林贡武器包、博格阵营包。\n\n标题标明兼容 NSC。",
    "gameplay_zh": "舰船组与阵营外观包。除舰船组外还包含肖像、旗帜与顾问。本 MOD 属于对原版博格舰船组的重新上传与维护版，并做了部分改动；作者注明已获原作者授权。模型资源部分来自 STNH 更新模型与 Stellar Parallax 的 STA3 移植模型。适合想要在群星中使用星际迷航博格外观，并希望与 NSC 组合的玩家。其他星际迷航内容可参考作者列出的武器包与阵营包。",
    "reviews_zh": "作者在描述中说明，本 MOD 是对原博格舰船组的重新上传，并对舰船组做了部分改动。作者列出内容包括舰船组、肖像、旗帜与顾问。作者感谢原作者授权重新上传与维护，并致谢 STNH 团队与 Stellar Parallax 团队允许使用更新模型与 STA3 移植模型。作者还列出了联邦武器包、克林贡武器包、博格阵营包等相关 MOD。",
@@ -191,7 +191,7 @@
   {
    "steam_id": "1631988918",
    "title_zh": "行星多样性 AI 地球化补丁",
-   "summary_zh": "让 AI 能按宜居性在行星多样性新增星球类型间进行地球化转换。",
+   "summary_zh": "让 AI 能按帝国内人口宜居性，在行星多样性新增星球类型之间进行双向地球化转换。",
    "description_zh": "本 MOD 更新 AI，使其能够对 Planetary Diversity 的新增星球类型进行双向地球化。作者称 AI 会尽量根据帝国内人口的宜居性来选择目标星球类型。\n\n本补丁建立在 Glavius AI 引入的框架之上，但可独立运行；若检测到 Glavius AI，会进行整合。\n\n兼容：Planetary Diversity 全部官方附属（尤其是 Exotic Worlds），以及 Guilli's Planet Modifiers；这些并非必需。同时兼容 Glavius AI 与 Starnet AI。\n\n不兼容 Planetary Diversity 的 New Worlds 模块；New Worlds 用户应改用对应版本的本补丁。\n\n加载顺序（官方启动器，下方优先）：\n<Glavius/Starnet（可选）>\nPlanetary Diversity\n<Guilli's（可选）>\n!!Planetary Diversity AI Terraforming Patch\n\n第三方启动器若上方优先，则把顺序反过来。",
    "gameplay_zh": "AI 行为补丁，解决 AI 不会利用 Planetary Diversity 新星球类型进行地球化的问题。作者说明 AI 会根据帝国内人口宜居性选择目标类型，且该逻辑基于 Glavius AI 框架，但可以独立运行。兼容 PD 官方附属、Guilli's Planet Modifiers、Glavius AI 与 Starnet AI；不兼容 PD New Worlds 模块（该情况请用 New Worlds 版本补丁）。加载顺序需注意官方启动器与第三方启动器的优先级方向相反。适合与 Planetary Diversity 同开、希望 AI 也玩得转新星球类型的组合。",
    "reviews_zh": "作者在描述中说明，本 MOD 更新 AI，使其能够对 Planetary Diversity 新增星球类型进行地球化，并会尽量根据帝国内人口宜居性选择目标。作者指出本补丁建立在 Glavius AI 框架上，但可独立运行，并可与 Glavius/Starnet 整合。作者列出兼容与不兼容范围，并给出官方启动器与第三方启动器两套相反的加载顺序建议。",
@@ -207,10 +207,10 @@
   {
    "steam_id": "1329823290",
    "title_zh": "ずん子语音",
-   "summary_zh": "为游戏内系统语音加入东北ずん子（VOICEROID EX+）声音包。",
+   "summary_zh": "为游戏内系统语音加入东北ずん子（VOICEROID EX+）声音包，支持 2.2.*。",
    "description_zh": "作者说明支持版本为 2.2.*。\n\n本 MOD 会把东北ずん子（VOICEROID EX+）加入游戏内系统语音。\n\n作者致谢：制作时参考了已发布 VOICEROID 语音的前辈 MOD，并在此表示感谢。\n\n作者还说明，本语音已加入 COLA 的 JP Notification Voices Menu。",
    "gameplay_zh": "语音替换/扩展，面向游戏内系统提示音，加入东北ずん子（VOICEROID EX+）配音。作者注明支持 2.2.*，并说明已把语音加入 COLA 的 JP Notification Voices Menu。本 MOD 不改变玩法机制，只影响听觉表现；若需要日文通知语音菜单组合，可与该菜单 MOD 搭配。",
-   "reviews_zh": "作者在描述中说明，本 MOD 会把东北ずん子（VOICEROID EX+）加入游戏内系统语音，并注明支持 2.2.*。作者感谢了此前发布 VOICEROID 语音的前辈 MOD 作者，说明制作时有所参考。作者还指出本语音已加入 COLA 的 JP Notification Voices Menu。",
+   "reviews_zh": "作者在描述中说明，本 MOD 会把东北ずん子（VOICEROID EX+）加入游戏内系统语音，并注明支持 2.2.*。作者感谢了此前发布 VOICEROID 语音的前辈 MOD 作者，说明制作时有所参考。作者还指出本语音已加入 COLA 的 JP Notification Voices Menu，整体说明集中于语音来源与使用范围。",
    "features_zh": [
     "东北ずん子系统语音",
     "基于 VOICEROID EX+",
@@ -222,7 +222,7 @@
   {
    "steam_id": "2030664144",
    "title_zh": "（旧版）上限突破 V2.6+",
-   "summary_zh": "允许研究五级以上科技等内容的旧版上限扩展 MOD。",
+   "summary_zh": "允许研究五级以上科技等内容的旧版上限扩展 MOD，作者指出当前版本已另有 V2.7+。",
    "description_zh": "作者说明本 MOD 目标是突破常规游戏限制，让玩家能够研究五级以上科技等更多内容。\n\n作者注明目前只有英文。\n\n作者说明本 MOD 替换原版 1 个文本文件：02_scripted_variables_component_cost。作者称这只改部件成本，对其他内容影响不大，属于对混乱原版数值的重标。\n\n作者感谢 Discord 社区，并欢迎翻译者加入。已有法语、俄语本地化。\n\n缩略图由 Oskar Woinski 制作，作者注明仅致谢使用。\n\n作者指出当前版本已另有 Upper Limits V2.7+，本条为 Legacy。",
    "gameplay_zh": "上限扩展向 MOD，重点是让玩家可以研究五级以上的科技，并伴随相关内容扩展。作者说明会替换原版部件成本脚本变量文件，只改成本数值，属于重标而非大改。本条为 V2.6+ 旧版，作者在页面中指向更新的 V2.7+。本地化方面作者注明目前仅有英文，并已有法语、俄语翻译贡献。适合想延长科技与经济上限、并接受旧版标签的玩家。",
    "reviews_zh": "作者在描述中说明，本 MOD 旨在突破常规游戏限制，让玩家可以研究五级以上科技等更多内容。作者注明目前只有英文，并说明本 MOD 替换原版 02_scripted_variables_component_cost 文件，只调整部件成本。作者还感谢了 Discord 社区与本地化译者，并在页面末尾指向当前版本 Upper Limits V2.7+，标明本条属于旧版。",
@@ -238,10 +238,10 @@
   {
    "steam_id": "1311373082",
    "title_zh": "自然选择（2.0/2.1）",
-   "summary_zh": "一组围绕自然选择概念设计的物种特质，面向 2.0/2.1 版本。",
+   "summary_zh": "一组围绕自然选择概念设计的物种特质扩展包，面向群星 2.0/2.1 版本时使用。",
    "description_zh": "本 MOD 提供一小批以“自然选择”概念为核心的特质。\n\n兼容性：作者说明会编辑原版文件 04_species_traits.txt，以便为新特质定义与现有原版特质相对的对立关系。\n\n本地化：已包含俄语（由 GOD OF HYPERDEATH 提供）。\n\n作者还提供了打赏与 Patreon 链接，并推荐了 Majestic Trials。\n\n描述中没有列出具体特质名称与数值，需进入游戏或查看本地化文件了解。",
    "gameplay_zh": "物种特质扩展。作者以“自然选择”为主题加入一小批特质，并通过编辑原版 04_species_traits.txt 为这些特质定义与原版特质的对立关系。兼容性上作者明确会动原版特质文件，因此与其他大规模特质 MOD 同用时需自行评估。本地化方面已含俄语。页面未列出具体特质数值，实际效果需进游戏确认。适合给帝国创建阶段增加自然选择主题选项的玩家。",
-   "reviews_zh": "作者在描述中说明，本 MOD 提供一小批以自然选择概念为核心的特质。作者明确本 MOD 会编辑原版 04_species_traits.txt，以便定义与现有原版特质合适的对立关系。作者还说明已包含俄语本地化，并在页面提供打赏与 Patreon 信息。作者未列出具体特质名称与数值。",
+   "reviews_zh": "作者在描述中说明，本 MOD 提供一小批以自然选择概念为核心的特质。作者明确本 MOD 会编辑原版 04_species_traits.txt，以便定义与现有原版特质合适的对立关系。作者还说明已包含俄语本地化，并在页面提供打赏与 Patreon 信息。作者未列出具体特质名称与数值，使用前需要自行进游戏确认效果。",
    "features_zh": [
     "自然选择主题特质包",
     "定义与原版特质对立关系",
@@ -254,7 +254,7 @@
   {
    "steam_id": "1763153930",
    "title_zh": "全明星加载画面合集",
-   "summary_zh": "收录 120 张来自官方预告片的 4K 加载画面，成就友好。",
+   "summary_zh": "收录约 120 张来自官方预告片与频道视频的 4K 自定义加载画面，对成就友好。",
    "description_zh": "作者呈现一套约 120 张自定义加载画面合集。\n\n素材来源：从 2015 年 Gamescom 公布片到最新的 Astral Planes 与 Galactic Paragons 预告片，均来自 Paradox 与 Stellaris YouTube 频道及对应艺术家。作者表示若官方再发布视频，会继续更新。\n\n画质说明：文件取自影片 HD 版本并转为 4K，作者称这是能找到的较好质量。多数画面因电影比例上下会有黑边，但观感仍好；作者注意到巨企与遗珍时期已有完整 16:9。\n\n成就友好。\n\n超宽屏：作者与 @LeonTheProfessional 另做了 21:9 版本，页面已注明该版本可能偏旧、缺新图，但可用且成就友好。\n\n技术说明：文件统一命名为 load_1.dds、load_2.dds；若其他 MOD 使用相同命名可能冲突。主要是为覆盖不想要的原版加载画面，除此之外与其他 MOD 基本兼容。",
    "gameplay_zh": "纯视觉向加载画面合集，收录约 120 张，来源为 Paradox/Stellaris 官方频道视频，从 2015 Gamescom 到 Astral Planes、Galactic Paragons 预告。作者说明画面由 HD 转 4K，多数保留电影黑边；成就友好。另有 21:9 超宽屏合作版本，但作者注明可能缺新图。文件命名为 load_*.dds，若与其他同名加载画面 MOD 同用可能冲突；本 MOD 不改变任何玩法内容，只替换加载界面观感。",
    "reviews_zh": "作者在描述中呈现了 120 张自定义加载画面合集，说明素材来自 Paradox 与 Stellaris YouTube 频道及相关艺术家，并表示官方再发视频后会继续更新。作者强调文件取自 HD 版并转为 4K，多数画面因电影比例带有上下黑边，但观感仍好；作者也注意到后来时期已有完整 16:9。作者说明成就友好，并与他人合作制作了 21:9 超宽屏版本，同时提醒统一命名可能与其他 MOD 冲突。",
