@@ -24,7 +24,8 @@ COLS = ("game_id", "steam_id", "title", "title_en", "author", "author_name",
         "time_updated", "tags", "url", "preview_url", "description",
         "description_clean", "required_dlcs", "optional_dlcs",
         "localization_id", "score", "like_ratio", "community_score",
-        "status", "pinyin_idx", "translated", "fetched_at")
+        "status", "pinyin_idx", "translated", "fetched_at",
+        "desc_hash_baseline", "translation_confirmed_at", "translation_stale")
 
 _GAMES = ("stellaris", "ck3", "hoi4")
 
@@ -60,7 +61,8 @@ def main():
                 "url=?, preview_url=?, description=?, description_clean=?, "
                 "required_dlcs=?, optional_dlcs=?, localization_id=?, score=?, "
                 "like_ratio=?, community_score=?, status=?, pinyin_idx=?, "
-                "translated=?, fetched_at=? WHERE id=?",
+                "translated=?, fetched_at=?, desc_hash_baseline=?, "
+                "translation_confirmed_at=?, translation_stale=? WHERE id=?",
                 (*vals, ex[0]))
             n_upd += 1
         else:
@@ -70,8 +72,9 @@ def main():
                 "time_created, time_updated, tags, url, preview_url, "
                 "description, description_clean, required_dlcs, optional_dlcs, "
                 "localization_id, score, like_ratio, community_score, status, "
-                "pinyin_idx, translated, fetched_at) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "pinyin_idx, translated, fetched_at, desc_hash_baseline, "
+                "translation_confirmed_at, translation_stale) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 vals)
             n_ins += 1
     conn.commit()
