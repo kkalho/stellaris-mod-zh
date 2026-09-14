@@ -26,7 +26,7 @@ def run_command(script):
         "--Content", b64,
         "--InstanceIds", '["%s"]' % INSTANCE,
         "--CommandType", "SHELL",
-        "--Timeout", "300",
+        "--Timeout", "600",
     ]
     sys.argv = args
     return main()
