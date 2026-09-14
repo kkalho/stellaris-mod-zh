@@ -14,6 +14,7 @@ API（带游戏上下文）:
     GET /api/<game>/categories  → 标签分类
     GET /api/<game>/versions    → 版本筛选选项（从数据生成，附代号/计数）
     GET /api/<game>/picks       → 新手精选推荐（beginner_picks.json + 库内联表）
+    GET /api/<game>/lists?id=   → 流派策展清单（curated_lists.json；缺省返回全部，含冲突预检）
     GET /api/<game>/gems        → 遗珠榜（收藏率显著高于大盘的低订阅 MOD，纯计算）
     GET /api/<game>/conflict-check?ids= → 清单冲突/缺失依赖检测（P7）
     GET /api/<game>/local       → 本地 MOD 列表
@@ -493,6 +494,52 @@ def get_picks(game_id, db=None):
             "source_url": p.get("source_url", ""),
         })
     return {"note": data.get("note", ""), "picks": out}
+
+
+def get_curated_lists(game_id, list_id=None, db=None):
+    """流派策展清单：读 data/<game>/curated_lists.json，联表库内 MOD，
+    并对每份清单跑一次 conflict_check（缺库条目跳过）。"""
+    if db is None:
+        db = get_db(game_id)
+    cfg = get_cfg(game_id)
+    data = cfg.load_json("curated_lists.json", {}) or {}
+    raw_lists = data.get("lists", [])
+    if list_id:
+        raw_lists = [x for x in raw_lists if x.get("id") == list_id]
+    out = []
+    for lst in raw_lists:
+        items, ids = [], []
+        for p in lst.get("items", []):
+            sid = str(p.get("steam_id", "")).strip()
+            m = db.get_mod_by_steam_id(sid) if sid else None
+            if not m:
+                continue
+            t = db.get_translations(m["id"])
+            ids.append(sid)
+            items.append({
+                "steam_id": m.get("steam_id"),
+                "title": t.get("title") or m.get("title_en") or m.get("title"),
+                "summary": t.get("summary", ""),
+                "subs": m.get("subscriptions") or 0,
+                "version": m.get("version") or "",
+                "preview": m.get("preview_url") or "",
+                "role": p.get("role", ""),
+                "reason": p.get("reason", ""),
+                "source": p.get("source", ""),
+                "optional": bool(p.get("optional")),
+            })
+        out.append({
+            "id": lst.get("id"),
+            "title": lst.get("title", ""),
+            "icon": lst.get("icon", ""),
+            "tagline": lst.get("tagline", ""),
+            "audience": lst.get("audience", ""),
+            "guide": lst.get("guide", ""),
+            "items": items,
+            "ids": ids,
+            "check": conflict_check(game_id, ids, db=db) if ids else None,
+        })
+    return {"note": data.get("note", ""), "updated_at": data.get("updated_at", ""), "lists": out}
 
 
 def activity_of(ts):
@@ -1110,6 +1157,9 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json(get_versions(game_id, db))
                 elif api_name == "picks":
                     self._send_json(get_picks(game_id, db))
+                elif api_name == "lists":
+                    lid = q.get("id", [""])[0] or None
+                    self._send_json(get_curated_lists(game_id, lid, db))
                 elif api_name == "gems":
                     self._send_json(get_gems(game_id, db))
                 elif api_name == "conflict-check":

@@ -1,0 +1,191 @@
+{
+  "game": "stellaris",
+  "updated_at": "2026-09-14",
+  "note": "流派清单构成说明：条目均来自库内已收录 MOD；reason 基于库内摘要/描述与社区常见装机实践整理，非付费评测。兼容性以「装后进游戏验证」为准；点「冲突检测」可对本清单跑库内 compat 数据。改此文件后刷新网页即生效。",
+  "lists": [
+    {
+      "id": "first_game",
+      "title": "第一局推荐",
+      "icon": "🚀",
+      "tagline": "少而稳：界面 + 内容扩展，尽量不改核心机制",
+      "audience": "第一次开坑 / 想先体验原版节奏的玩家",
+      "guide": "建议顺序：先二选一装汉化（或用游戏自带简中），再装 UI 与事件。星球多样性会明显改变星球观感，想更接近原版可先不装。",
+      "items": [
+        {
+          "steam_id": "2131014154",
+          "role": "汉化",
+          "reason": "中文社区长期维护的全面汉化。若已使用游戏内置官方简体中文，可跳过本条，避免文本冲突。",
+          "source": "库内数据 + 中文社区共识",
+          "optional": false
+        },
+        {
+          "steam_id": "1623423360",
+          "role": "界面",
+          "reason": "订阅量第一的 UI 优化，1080p/2K 下信息密度与可读性提升明显，几乎所有 UI 子模组都挂在它下面。",
+          "source": "库内数据：界面类最高订阅",
+          "optional": false
+        },
+        {
+          "steam_id": "1628912584",
+          "role": "界面",
+          "reason": "UOD 子模组：侧边栏更紧凑，中后期星球/舰队多时更好扫。",
+          "source": "库内数据：UOD 系列",
+          "optional": true
+        },
+        {
+          "steam_id": "727000451",
+          "role": "内容",
+          "reason": "事件类订阅量最高，给每一局加新故事，不改核心经济/战争数值。",
+          "source": "库内数据：事件类最高订阅",
+          "optional": false
+        },
+        {
+          "steam_id": "2466607238",
+          "role": "前置",
+          "reason": "Kasako 系列核心框架：下方「更好性能与实用工具」的前置。",
+          "source": "库内 compat.requires",
+          "optional": false
+        },
+        {
+          "steam_id": "2475302050",
+          "role": "体验",
+          "reason": "后期卡顿缓解 + 人口迁移等实用功能；第一局也能装，机制改动相对克制。需先装 Kasako 核心框架。",
+          "source": "库内数据：性能/实用类高订阅",
+          "optional": true
+        },
+        {
+          "steam_id": "819148835",
+          "role": "内容",
+          "reason": "星球多样性大幅丰富星球观感；内容量大，想先熟悉原版星球机制可暂缓。",
+          "source": "库内数据：星球类最高订阅",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "title": "性能优化",
+      "icon": "⚡",
+      "tagline": "后期卡顿、加载与 UI 响应",
+      "audience": "大图、长局、中低配或已感到后期掉帧的玩家",
+      "guide": "性能向组合以「可配置、少改玩法」为主。UI 性能子模组需要先装 UI Overhaul Dynamic。装多个性能 MOD 后建议开一局后期存档对比帧数。",
+      "items": [
+        {
+          "steam_id": "2466607238",
+          "role": "前置",
+          "reason": "Kasako 核心框架：更好性能与实用工具的前置。",
+          "source": "库内 compat.requires",
+          "optional": false
+        },
+        {
+          "steam_id": "2475302050",
+          "role": "核心",
+          "reason": "明确面向后期流畅度的综合性能/实用 MOD，摘要称可显著缓解后期负担，并附人口控制等工具。",
+          "source": "库内数据：描述明确性能目标",
+          "optional": false
+        },
+        {
+          "steam_id": "2184737698",
+          "role": "核心",
+          "reason": "限制 AI 过度建造以降低后期计算压力，选项可配，几乎不改玩家操作。",
+          "source": "库内数据：AI 性能优化",
+          "optional": false
+        },
+        {
+          "steam_id": "1623423360",
+          "role": "前置",
+          "reason": "UI Overhaul Dynamic：下方星球视图性能子模组的前置，本身也优化信息展示。",
+          "source": "库内数据：UI 子模组前置",
+          "optional": false
+        },
+        {
+          "steam_id": "3491116708",
+          "role": "UI",
+          "reason": "UOD 子模组：优化星球视图性能，适合星球多、常开行星界面的后期局。",
+          "source": "库内数据：UOD 性能子模组",
+          "optional": true
+        },
+        {
+          "steam_id": "2409276081",
+          "role": "修复",
+          "reason": "通用游戏规则补丁：修复组装/轰炸/跳跃等机制问题，减少「假死/失效」类卡点。",
+          "source": "库内数据：通用机制修复",
+          "optional": true
+        },
+        {
+          "steam_id": "1688887083",
+          "role": "修复",
+          "reason": "通用修正补丁：找回被埋没的 modifier 显示/逻辑问题，降低「数值莫名不对」的排障成本。",
+          "source": "库内数据：通用修正修复",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "multiplayer",
+      "title": "多人联机",
+      "icon": "🤝",
+      "tagline": "全员同清单：偏 UI / 旗帜 / 铁人友好，少改同步逻辑",
+      "audience": "开黑、铁人成就向、希望降低不同步概率的房间",
+      "guide": "联机铁律：所有人订阅同一套 MOD 且加载顺序一致。本清单优先选描述中写明多人/铁人兼容、或纯视觉/UI 类条目。大型玩法扩展（巨构、NSC、全面转换）请整队统一后再上，不要混搭。",
+      "items": [
+        {
+          "steam_id": "1623423360",
+          "role": "界面",
+          "reason": "全员统一 UI，信息一致；纯界面向，不引入新的模拟逻辑。",
+          "source": "库内数据：UI 最高订阅",
+          "optional": false
+        },
+        {
+          "steam_id": "682090850",
+          "role": "视觉",
+          "reason": "扩展帝国颜色，描述含 AI 也会使用新颜色；视觉层扩展，适合联机统一。",
+          "source": "库内数据：颜色扩展",
+          "optional": false
+        },
+        {
+          "steam_id": "1900830460",
+          "role": "视觉",
+          "reason": "旗帜背景素材，库内摘要写明兼容多人、铁人与成就。",
+          "source": "库内数据：明确多人/铁人兼容",
+          "optional": false
+        },
+        {
+          "steam_id": "2946000546",
+          "role": "信息",
+          "reason": "异常/考古/裂隙效果直接显示在名称上，摘要写明支持铁人联机，方便全员读图。",
+          "source": "库内数据：明确铁人联机",
+          "optional": false
+        },
+        {
+          "steam_id": "3245570160",
+          "role": "信息",
+          "reason": "科技图标等级数字，纯 UI；联机时方便对照科技进度。",
+          "source": "库内数据：纯 UI 科技标注",
+          "optional": true
+        },
+        {
+          "steam_id": "1880071041",
+          "role": "视觉",
+          "reason": "Amazing Space Battles 铁人版：不改校验和、允许成就，适合想加战斗观感又想保铁人的队。",
+          "source": "库内数据：铁人兼容版",
+          "optional": true
+        },
+        {
+          "steam_id": "2466607238",
+          "role": "前置",
+          "reason": "若装下方性能工具，需先全员统一订阅 Kasako 核心框架。",
+          "source": "库内 compat.requires",
+          "optional": true
+        },
+        {
+          "steam_id": "2475302050",
+          "role": "体验",
+          "reason": "后期性能工具；联机后期全员同装可减轻主机压力。依赖 Kasako 核心框架，务必整队统一。",
+          "source": "库内数据：性能类高订阅",
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

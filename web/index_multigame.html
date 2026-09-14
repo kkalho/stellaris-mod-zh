@@ -1314,7 +1314,7 @@ body[data-view="game"] footer {
 
 <main class="game-shell">
   <div class="scene-cards" id="sceneCards">
-    <div class="scene-card" onclick="openPicksPanel()"><div class="sc-icon">🚀</div><div class="sc-t">新手入门</div><div class="sc-d">精选推荐 · 汉化与必装</div></div>
+    <div class="scene-card" onclick="openPicksPanel()"><div class="sc-icon">🚀</div><div class="sc-t">流派清单</div><div class="sc-d">第一局 / 性能 / 多人 · 带冲突预检</div></div>
     <div class="scene-card" onclick="sceneGo('graphics')"><div class="sc-icon">🎨</div><div class="sc-t">画面美化</div><div class="sc-d">星空、舰船与界面升级</div></div>
     <div class="scene-card" onclick="sceneGo('events')"><div class="sc-icon">📖</div><div class="sc-t">剧情事件</div><div class="sc-d">新事件与新故事</div></div>
     <div class="scene-card" onclick="sceneGo('gameplay')"><div class="sc-icon">🧩</div><div class="sc-t">玩法扩展</div><div class="sc-d">机制与内容深度扩展</div></div>
@@ -1344,7 +1344,7 @@ body[data-view="game"] footer {
       <button class="dlc-btn" style="margin-left:auto" onclick="openDlcPanel()">🧩 DLC</button>
       <button class="dlc-btn" onclick="openCcPanel()">⚔ 冲突</button>
       <button class="dlc-btn" onclick="openGemsPanel()">💎 遗珠</button>
-      <button class="dlc-btn narrow-only" onclick="openPicksPanel()">🌟 精选</button>
+      <button class="dlc-btn narrow-only" onclick="openPicksPanel()">📋 清单</button>
       <button class="dlc-btn narrow-only" onclick="openLocPanel()">🌐 汉化</button>
       <button class="dlc-btn narrow-only" onclick="openLocalPanel()">📁 本地</button>
       <button class="dlc-btn narrow-only" onclick="openTrendPanel()">📈 趋势</button>
@@ -1755,46 +1755,136 @@ async function openGemsPanel() {
 }
 
 let picksCache = null;
+let listsCache = null;
+let listsActiveId = null;
+let listsNote = '';
+
+function renderConflictBrief(r) {
+  if (!r) return '';
+  const cN = (r.conflicts || []).length;
+  const mN = (r.missing_requires || []).length;
+  if (!cN && !mN) {
+    return `<div class="dlc-ok" style="margin-top:8px">✅ 本清单未发现已知冲突与缺失依赖（覆盖 ${r.checked}/${r.checked}，compat 记录 ${r.known_compat}）</div>
+      <div style="color:#5f6d85;font-size:11.5px;margin-top:6px">${esc(r.coverage_note || '')}</div>`;
+  }
+  let html = '';
+  if (cN) {
+    html += `<div style="color:#f09595;font-size:13px;font-weight:500;margin:10px 0 6px">⚔ ${cN} 组已知冲突</div>`;
+    (r.conflicts || []).forEach(c => {
+      html += `<div class="dlc-warn"><div class="dw-title">⚔ ${esc(c.a.title)} × ${esc(c.b.title)}</div><div class="dw-missing">${esc(c.note)}</div></div>`;
+    });
+  }
+  if (mN) {
+    html += `<div style="color:#f5c775;font-size:13px;font-weight:500;margin:10px 0 6px">🔒 ${mN} 条缺失依赖</div>`;
+    (r.missing_requires || []).forEach(x => {
+      html += `<div class="dlc-warn" style="border-color:rgba(245,199,117,.35)"><div class="dw-title">🔒 ${esc(x.mod.title)} 需要：${esc(x.require)}</div></div>`;
+    });
+  }
+  html += `<div style="color:#5f6d85;font-size:11.5px;margin-top:8px">${esc(r.coverage_note || '')}</div>`;
+  return html;
+}
+
+function renderCuratedList(lst) {
+  const rows = (lst.items || []).map((k, i) => `
+    <div class="mod-card" onclick="showDetail('${String(k.steam_id).replace(/[^0-9]/g, '')}')">
+      ${k.preview ? `<div class="thumb"><img src="${esc(k.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>` : '<div class="thumb"><span class="noimg">无预览图</span></div>'}
+      <div class="body" style="min-width:0">
+        <div class="top">
+          <div class="name">${i + 1}. ${esc(k.title)}${versionBadge(k.version)}${k.optional ? '<span style="margin-left:6px;font-size:11px;color:#f5c775;border:1px solid rgba(245,199,117,.4);border-radius:3px;padding:1px 5px">可选</span>' : ''}</div>
+          <div class="subs">🛰 ${fmt(k.subs)} 订阅</div>
+        </div>
+        ${k.summary ? `<div class="summary">${esc(k.summary)}</div>` : ''}
+        ${k.role ? `<div class="id" style="color:#9fc0ff">【${esc(k.role)}】${esc(k.reason || '')}</div>` : (k.reason ? `<div class="id" style="color:#9fc0ff">💡 ${esc(k.reason)}</div>` : '')}
+        ${k.source ? `<div class="id">来源：${esc(k.source)}</div>` : ''}
+      </div>
+    </div>`).join('');
+  const ids = (lst.ids || []).join(',');
+  return `
+    <div style="color:#8a93a8;font-size:12.5px;margin-bottom:6px">${esc(lst.tagline || '')}</div>
+    ${lst.audience ? `<div style="color:#6b7a94;font-size:12px;margin-bottom:6px">适合：${esc(lst.audience)}</div>` : ''}
+    ${lst.guide ? `<div style="color:#9fc0ff;font-size:12.5px;margin-bottom:10px;line-height:1.5">${esc(lst.guide)}</div>` : ''}
+    ${rows || '<div style="color:#8a93a8;font-size:13px">本清单暂无库内条目</div>'}
+    <div style="margin-top:12px">${renderConflictBrief(lst.check)}</div>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <button class="dlc-btn" onclick="copyCuratedIds('${esc(ids)}')">📋 复制清单</button>
+      <button class="dlc-btn" onclick="sendToCc('${esc(ids)}')">⚔ 送入冲突面板</button>
+      <button class="back-btn" style="margin-bottom:0" onclick="$('picksPanel').style.display='none'">关闭</button>
+    </div>`;
+}
+
+function copyCuratedIds(idsText) {
+  const ids = (idsText || '').match(/\d{6,12}/g) || [];
+  if (!ids.length) { toast('清单为空'); return; }
+  const lines = ids.map(id => `https://steamcommunity.com/sharedfiles/filedetails/?id=${id}`);
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(() => toast(`✓ 已复制 ${ids.length} 个 Steam 链接`))
+    .catch(() => toast('复制失败，请手动复制'));
+}
+
+function sendToCc(idsText) {
+  $('picksPanel').style.display = 'none';
+  openCcPanel();
+  const ta = $('ccInput');
+  if (ta) ta.value = (idsText || '').split(',').filter(Boolean).join('\n');
+}
+
+function switchCuratedList(id) {
+  listsActiveId = id;
+  const panel = $('picksPanel');
+  if (panel.style.display === 'block') panel.style.display = 'none';
+  openPicksPanel();
+}
+
 async function openPicksPanel() {
   const panel = $('picksPanel');
   if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
   ['dlcPanel', 'locPanel', 'localPanel', 'trendPanel', 'ccPanel', 'gemsPanel', 'metaPanel'].forEach(id => $(id).style.display = 'none');
   panel.style.display = 'block';
-  panel.innerHTML = '<div class="loading">正在加载新手推荐...</div>';
+  panel.innerHTML = '<div class="loading">正在加载流派清单...</div>';
   try {
-    if (!picksCache) {
-      const d = await api('/api/' + GAME + '/picks');
-      picksCache = d;
+    if (!listsCache) {
+      const d = await api('/api/' + GAME + '/lists');
+      listsCache = d.lists || [];
+      listsNote = d.note || '';
     }
-    const p = picksCache;
-    if (!(p.picks || []).length) {
-      panel.innerHTML = `<h3>🌟 新手推荐</h3><div style="color:#8a93a8;font-size:13px">当前游戏暂无精选数据（data/${esc(GAME)}/beginner_picks.json）。</div>
+    if (!listsCache.length) {
+      // 回退：旧版新手精选
+      if (!picksCache) picksCache = await api('/api/' + GAME + '/picks');
+      const p = picksCache;
+      if (!(p.picks || []).length) {
+        panel.innerHTML = `<h3>📋 流派清单</h3><div style="color:#8a93a8;font-size:13px">当前游戏暂无清单数据（data/${esc(GAME)}/curated_lists.json）。</div>
+          <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('picksPanel').style.display='none'">关闭</button>`;
+        return;
+      }
+      const rows = p.picks.map((k, i) => `
+        <div class="mod-card" onclick="showDetail('${String(k.steam_id).replace(/[^0-9]/g, '')}')">
+          ${k.preview ? `<div class="thumb"><img src="${esc(k.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>` : '<div class="thumb"><span class="noimg">无预览图</span></div>'}
+          <div class="body" style="min-width:0">
+            <div class="top"><div class="name">${i + 1}. ${esc(k.title)}${versionBadge(k.version)}</div><div class="subs">🛰 ${fmt(k.subs)} 订阅</div></div>
+            ${k.summary ? `<div class="summary">${esc(k.summary)}</div>` : ''}
+            <div class="id" style="color:#9fc0ff">💡 ${esc(k.reason)}</div>
+          </div>
+        </div>`).join('');
+      panel.innerHTML = `<h3>🌟 新手入门推荐</h3><div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">${esc(p.note || '')}</div>${rows}
         <button class="back-btn" style="margin-top:10px;margin-bottom:0" onclick="$('picksPanel').style.display='none'">关闭</button>`;
       return;
     }
-    const rows = p.picks.map((k, i) => `
-      <div class="mod-card" onclick="showDetail('${String(k.steam_id).replace(/[^0-9]/g, '')}')">
-        ${k.preview ? `<div class="thumb"><img src="${esc(k.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>` : '<div class="thumb"><span class="noimg">无预览图</span></div>'}
-        <div class="body" style="min-width:0">
-          <div class="top">
-            <div class="name">${i + 1}. ${esc(k.title)}${versionBadge(k.version)}</div>
-            <div class="subs">🛰 ${fmt(k.subs)} 订阅</div>
-          </div>
-          ${k.summary ? `<div class="summary">${esc(k.summary)}</div>` : ''}
-          <div class="id" style="color:#9fc0ff">💡 ${esc(k.reason)}</div>
-          ${k.source ? `<div class="id">来源：${esc(k.source)}${k.source_url ? ` · <a style="color:#6fa8ff" href="${esc(k.source_url)}" target="_blank" rel="noopener">核实链接 ↗</a>` : ''}</div>` : ''}
-        </div>
-      </div>`).join('');
+    if (!listsActiveId || !listsCache.some(x => x.id === listsActiveId)) {
+      listsActiveId = listsCache[0].id;
+    }
+    const active = listsCache.find(x => x.id === listsActiveId) || listsCache[0];
+    const tabs = listsCache.map(x => `
+      <button type="button" class="dlc-btn" style="${x.id === active.id ? 'border-color:rgba(var(--ac-rgb),.85);color:#dce8f5' : 'opacity:.75'}"
+        onclick="switchCuratedList('${esc(x.id)}')">
+        ${esc(x.icon || '📋')} ${esc(x.title)}
+      </button>`).join('');
     panel.innerHTML = `
-      <h3>🌟 新手入门推荐</h3>
-      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:8px">${esc(p.note || '精选清单：先汉化，再按分类挑高订阅的适配 MOD')}</div>
-      ${rows}
-      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
-        <button class="dlc-btn" onclick="$('picksPanel').style.display='none';sceneGo('beginner')">查看全部适配当前版本 MOD →</button>
-        <button class="back-btn" style="margin-bottom:0" onclick="$('picksPanel').style.display='none'">关闭</button>
-      </div>`;
+      <h3>📋 流派清单</h3>
+      <div style="color:#8a93a8;font-size:12.5px;margin-bottom:10px">${esc(listsNote || '人工核过的组合思路 + 库内冲突预检；装后仍请进游戏验证。')}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">${tabs}</div>
+      ${renderCuratedList(active)}`;
   } catch (e) {
-    panel.innerHTML = `<div class="status-warn">加载新手推荐失败：${esc(e.message)}</div>`;
+    panel.innerHTML = `<div class="status-warn">加载流派清单失败：${esc(e.message)}</div>`;
   }
 }
 

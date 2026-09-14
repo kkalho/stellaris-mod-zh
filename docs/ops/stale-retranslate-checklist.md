@@ -3,13 +3,15 @@
 > 目标：作者更新后中文不掉队；新进榜/变薄字段能补上。  
 > 频率：建议每周一次（约 10–20 分钟操作 + 子智能体批译时间）。  
 > 工作目录：`C:\Users\wangf\Desktop\群星工具\stellaris-mod-zh`  
-> 依赖：云端每日 04:00 重抓、04:30 `detect_stale --mark-stale` 已在跑。
+> 依赖：云端每日 04:00 重抓、04:30 `detect_stale --mark-stale` 已在跑。  
+> **推荐入口**：`python scripts/weekly_maintenance.py`（一键体检 + 腐化 + 扩充缺口摘要；详细流程仍见下文 C–G）。
 
 ## A. 开工前（1 分钟）
 
 ```powershell
 cd C:\Users\wangf\Desktop\群星工具\stellaris-mod-zh
-python scripts\verify_db.py          # 应 ✅ 健康
+python scripts\weekly_maintenance.py     # 汇总体检/腐化/新入榜/薄字段
+# 或分步：python scripts\verify_db.py
 ```
 
 ## B. 发现缺口（2 分钟）

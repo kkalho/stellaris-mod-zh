@@ -293,7 +293,9 @@
 
 ## 4. 已实现功能（前端网页版）
 
-- ✅ **场景卡入口**（首页四卡：🚀新手入门=精选推荐面板 / 🎨画面美化 / 📖剧情事件 / 🧩玩法扩展）
+- ✅ **场景卡入口**（首页四卡：🚀流派清单=第一局/性能/多人 / 🎨画面美化 / 📖剧情事件 / 🧩玩法扩展）
+- ✅ **流派策展清单**（2026-09-14）：`data/stellaris/curated_lists.json` + `/api/<game>/lists`（联表 + 每清单 conflict_check 预检）；前端 tabs、可选标记、复制 Steam 链接、送入冲突面板。旧 `beginner_picks.json` 仍作回退
+- ✅ **每周增量入口**：`scripts/weekly_maintenance.py`（verify + detect_stale + expand report 摘要）；详细流程见 `docs/ops/stale-retranslate-checklist.md`
 - ✅ **新手精选推荐面板**（`/api/<game>/picks` + `data/stellaris/beginner_picks.json`：贴吧汉化为社区共识附核实链接，其余按分类订阅量自动选出，非人工评测）
 - ✅ **一键复制清单**（工具栏「📋 复制清单」：把当前筛选结果连同 Steam 链接整组复制，装机清单即得）
 - ✅ **中英文 + 拼音搜索**（pinyin_idx 索引；如 `jugou`→巨构、`nvpu`→美味女仆）
