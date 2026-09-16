@@ -33,6 +33,9 @@ def merge(n: int) -> Path:
         if not path.exists():
             raise SystemExit(f"missing {path}")
         d = json.loads(path.read_text(encoding="utf-8"))
+        for t in d.get("translations", []):
+            if "description_zh_current" in t or "gameplay_zh" not in t:
+                raise SystemExit(f"{path.name} steam_id={t.get('steam_id')} 不是输出格式（缺 *_zh 或含 *_zh_current）")
         parts.extend(d["translations"])
         print(path.name, len(d["translations"]))
     ids = [t["steam_id"] for t in parts]
