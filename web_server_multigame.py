@@ -15,6 +15,7 @@ API（带游戏上下文）:
     GET /api/<game>/versions    → 版本筛选选项（从数据生成，附代号/计数）
     GET /api/<game>/picks       → 新手精选推荐（beginner_picks.json + 库内联表）
     GET /api/<game>/lists?id=   → 流派策展清单（curated_lists.json；缺省返回全部，含冲突预检）
+    GET /api/<game>/list-brief?ids= → 清单分享总览（P8：条目+总订阅+冲突预检）
     GET /api/<game>/gems        → 遗珠榜（收藏率显著高于大盘的低订阅 MOD，纯计算）
     GET /api/<game>/conflict-check?ids= → 清单冲突/缺失依赖检测（P7）
     GET /api/<game>/local       → 本地 MOD 列表
@@ -540,6 +541,43 @@ def get_curated_lists(game_id, list_id=None, db=None):
             "check": conflict_check(game_id, ids, db=db) if ids else None,
         })
     return {"note": data.get("note", ""), "updated_at": data.get("updated_at", ""), "lists": out}
+
+
+def get_list_brief(game_id, ids, db=None):
+    """P8 清单分享总览：给定 steam_id 列表，返回联表条目 + 总订阅 + 冲突预检。"""
+    if db is None:
+        db = get_db(game_id)
+    ids = list(dict.fromkeys(str(i).strip() for i in ids if str(i).strip().isdigit()))[:80]
+    items = []
+    found = []
+    missing = []
+    total_subs = 0
+    for sid in ids:
+        m = db.get_mod_by_steam_id(sid)
+        if not m:
+            missing.append(sid)
+            continue
+        t = db.get_translations(m["id"])
+        subs = m.get("subscriptions") or 0
+        total_subs += int(subs)
+        found.append(sid)
+        items.append({
+            "steam_id": m.get("steam_id"),
+            "title": t.get("title") or m.get("title_en") or m.get("title"),
+            "summary": t.get("summary", ""),
+            "subs": subs,
+            "version": m.get("version") or "",
+            "preview": m.get("preview_url") or "",
+            "status": m.get("status") or "",
+        })
+    return {
+        "items": items,
+        "count": len(items),
+        "total_subs": total_subs,
+        "missing": missing,
+        "ids": found,
+        "check": conflict_check(game_id, found, db=db) if found else None,
+    }
 
 
 def activity_of(ts):
@@ -1160,6 +1198,9 @@ class Handler(BaseHTTPRequestHandler):
                 elif api_name == "lists":
                     lid = q.get("id", [""])[0] or None
                     self._send_json(get_curated_lists(game_id, lid, db))
+                elif api_name == "list-brief":
+                    ids = q.get("ids", [""])[0].split(",")
+                    self._send_json(get_list_brief(game_id, ids, db))
                 elif api_name == "gems":
                     self._send_json(get_gems(game_id, db))
                 elif api_name == "conflict-check":

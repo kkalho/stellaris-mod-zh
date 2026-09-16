@@ -1569,8 +1569,26 @@ function buildURL(over) {
   if (lim && lim !== '0') p.set('n', lim);
   if (curPage > 1) p.set('page', curPage);
   if (over && over.id) p.set('id', over.id);
+  if (over && over.list) p.set('list', over.list);
   const s = p.toString();
   return s ? '?' + s : location.pathname;
+}
+
+function shareListURL(ids) {
+  const clean = (ids || []).map(x => String(x).replace(/[^0-9]/g, '')).filter(Boolean);
+  if (!clean.length) return '';
+  const p = new URLSearchParams();
+  p.set('game', GAME || 'stellaris');
+  p.set('list', clean.join(','));
+  return location.origin + location.pathname + '?' + p.toString();
+}
+
+function copyShareList(ids) {
+  const url = shareListURL(ids);
+  if (!url) { toast('清单为空'); return; }
+  navigator.clipboard.writeText(url)
+    .then(() => toast('✓ 已复制分享链接'))
+    .catch(() => toast('复制失败，请手动复制地址栏'));
 }
 
 function applyFromURL(opts) {
@@ -1579,6 +1597,8 @@ function applyFromURL(opts) {
   const keys = [...p.keys()].filter(k => k !== 'game');   // lone ?game= 不算筛选
   if (!keys.length) return false;
   const id = (p.get('id') || '').replace(/[^0-9]/g, '');
+  const listRaw = p.get('list') || '';
+  const listIds = listRaw.match(/\d{6,12}/g) || [];
   $('kw').value = p.get('q') || '';
   activeTag = p.get('tag') || null;
   document.querySelectorAll('.tag-chip').forEach(el =>
@@ -1588,6 +1608,7 @@ function applyFromURL(opts) {
   $('limitsel').value = p.get('n') || '0';
   pendingPage = parseInt(p.get('page'), 10) || 1;
   $('toolbar').style.display = 'block';
+  if (listIds.length) { openShareListView(listIds); return true; }
   if (id) { showDetail(id, false); return true; }
   applyFilters().then(() => {
     if (pendingPage > 1 && pendingPage !== curPage) { curPage = pendingPage; renderPaged(); }
@@ -1807,6 +1828,7 @@ function renderCuratedList(lst) {
     <div style="margin-top:12px">${renderConflictBrief(lst.check)}</div>
     <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
       <button class="dlc-btn" onclick="copyCuratedIds('${esc(ids)}')">📋 复制清单</button>
+      <button class="dlc-btn" onclick="copyShareList('${esc(ids)}')">🔗 分享链接</button>
       <button class="dlc-btn" onclick="sendToCc('${esc(ids)}')">⚔ 送入冲突面板</button>
       <button class="back-btn" style="margin-bottom:0" onclick="$('picksPanel').style.display='none'">关闭</button>
     </div>`;
@@ -1819,6 +1841,49 @@ function copyCuratedIds(idsText) {
   navigator.clipboard.writeText(lines.join('\n'))
     .then(() => toast(`✓ 已复制 ${ids.length} 个 Steam 链接`))
     .catch(() => toast('复制失败，请手动复制'));
+}
+
+async function openShareListView(ids) {
+  const clean = (ids || []).map(x => String(x).replace(/[^0-9]/g, '')).filter(Boolean);
+  if (!clean.length) return;
+  $('toolbar').style.display = 'block';
+  $('content').innerHTML = '<div class="loading">正在加载分享清单...</div>';
+  history.replaceState({ view: 'share-list' }, '', buildURL({ list: clean.join(',') }));
+  let r;
+  try { r = await api('/api/' + GAME + '/list-brief?ids=' + encodeURIComponent(clean.join(','))); }
+  catch (e) { contentError('加载分享清单失败：' + e.message); return; }
+  const items = r.items || [];
+  const check = r.check || null;
+  const rows = items.map((k, i) => `
+    <div class="mod-card" onclick="showDetail('${String(k.steam_id).replace(/[^0-9]/g, '')}')">
+      ${k.preview ? `<div class="thumb"><img src="${esc(k.preview)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<span class=&quot;noimg&quot;>无预览图</span>'"></div>` : '<div class="thumb"><span class="noimg">无预览图</span></div>'}
+      <div class="body" style="min-width:0">
+        <div class="top">
+          <div class="name">${i + 1}. ${esc(k.title)}${versionBadge(k.version)}</div>
+          <div class="subs">🛰 ${fmt(k.subs)} 订阅</div>
+        </div>
+        ${k.summary ? `<div class="summary">${esc(k.summary)}</div>` : ''}
+      </div>
+    </div>`).join('');
+  const missingNote = (r.missing || []).length
+    ? `<div class="status-warn" style="margin-top:10px">${(r.missing || []).length} 个 ID 不在库中：${esc((r.missing || []).slice(0, 8).join(', '))}${(r.missing || []).length > 8 ? '…' : ''}</div>` : '';
+  $('content').innerHTML = `
+    <div style="margin-bottom:12px">
+      <div style="font-size:18px;font-weight:600;color:#dce8f5">📋 分享清单</div>
+      <div style="color:#8a93a8;font-size:13px;margin-top:4px">
+        共 <b style="color:#dce8f5">${r.count}</b> 个 MOD · 总订阅 <b style="color:#9fc0ff">${fmt(r.total_subs)}</b>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+        <button class="dlc-btn" onclick="copyShareList('${esc(r.ids.join(','))}')">🔗 复制分享链接</button>
+        <button class="dlc-btn" onclick="sendToCc('${esc(r.ids.join(','))}')">⚔ 冲突检测</button>
+        <button class="dlc-btn" onclick="backToList()">← 返回列表</button>
+      </div>
+      ${missingNote}
+    </div>
+    ${renderConflictBrief(check)}
+    <div style="margin-top:14px">${rows || '<div class="status-warn">清单为空或全部不在库中</div>'}</div>`;
+  allResults = items.map(m => ({ id: m.steam_id, title: m.title }));
+  window.scrollTo({ top: 220, behavior: 'smooth' });
 }
 
 function sendToCc(idsText) {
@@ -1934,6 +1999,10 @@ async function runCcCheck(idsText) {
     html += `<div class="dlc-ok">✅ 未发现已知冲突与缺失依赖</div>`;
   }
   html += `<div style="color:#5f6d85;font-size:11.5px;margin-top:10px">${esc(r.coverage_note)}</div>`;
+  html += `<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+    <button class="dlc-btn" onclick="copyShareList('${esc(ids.join(','))}')">🔗 分享此清单</button>
+    <button class="dlc-btn" onclick="openShareListView('${esc(ids.join(','))}')">📋 打开清单总览</button>
+  </div>`;
   box.innerHTML = html;
 }
 
