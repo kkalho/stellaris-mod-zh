@@ -4,6 +4,7 @@
 
 | 用途 | 命令 | 说明 |
 |---|---|---|
+| ⭐ Steam 全库差分 | `python scripts/scan_steam_diff.py [--write] [--mark-stale] [--export-pack]` | 一次打 Steam API 比全库：DB 描述落后 / 中文基线过期 / 仅元数据 / 已消失；`--export-pack` 出 `translations/stale_wave/stale_task_scan_*.json` 重译包（与 export_stale_tasks 同构） |
 | ⭐ 数据体检 | `python scripts/verify_db.py` | 一条命令验健康度；退出码 1 = 有归零类问题 |
 | ⭐ 收敛重建 | `python scripts/rebuild_all.py` | 万能修复（字段归零/漏导入/改坏库），全幂等；`--dry-run` 只看步骤 |
 | ⭐ wave 流水线 | `python scripts/run_wave.py export\|merge\|import\|sync\|archive` | 深度精做五阶段一键化（内置对账，防跳步）；子智能体派工仍是会话行为 |

@@ -51,7 +51,7 @@
 | 5 | CK3 专属界面 | 金色纹章主题深化 + CK3 特有维度（人物线/家族/事件年代），超越通用列表 |
 | 6 | HOI4 收录启动 | 复用 CK3 脚本链改 app_id 394360，先 Top 300 + 六字段 |
 | 7 | ~~第一局推荐（人工评测）~~ **✅ 流派清单已上线（2026-09-14）** | 第一局/性能/多人三套策展清单 + 冲突预检；后续可再补社区来源核实与更多流派 |
-| 7.1 | 每周增量节奏固化 | ✅ `scripts/weekly_maintenance.py` 一键体检/腐化/新入榜/薄字段；执行仍按 `docs/ops/stale-retranslate-checklist.md` |
+| 7.1 | 每周增量节奏固化 | ✅ `scripts/weekly_maintenance.py` 一键体检/腐化/新入榜/薄字段；可选 `--scan-steam` 全库差分（`scan_steam_diff.py`：DB 落后 / 基线过期 / 导出重译包）；执行仍按 `docs/ops/stale-retranslate-checklist.md` |
 | 8 | 组合推荐器 | 基于 compat 矩阵 + 订阅相关性做「装了 A 的人也在装 B」，数据都在库里 |
 
 ## 长期 / 待定

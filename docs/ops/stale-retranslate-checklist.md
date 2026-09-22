@@ -17,8 +17,11 @@ python scripts\weekly_maintenance.py     # 汇总体检/腐化/新入榜/薄字�
 ## B. 发现缺口（2 分钟）
 
 ```powershell
-# 1) 作者更新导致的旧译
+# 1) 作者更新导致的旧译（本地 hash；云端每日 04:00 重抓后更准）
 python scripts\detect_stale_translations.py --json --mark-stale
+
+# 1b) 可选：直打 Steam 全库差分（比等云端重抓更快；也能发现「库描述未刷但 Steam 已变」）
+# python scripts\scan_steam_diff.py --write --mark-stale --export-pack
 
 # 2) 新进榜 / 未译 / 复薄
 python scripts\export_expand_tasks.py --report

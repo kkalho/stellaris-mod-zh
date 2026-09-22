@@ -29,6 +29,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="每周增量维护：体检 + 腐化 + 扩充缺口报告")
     ap.add_argument("--json", action="store_true", help="输出 JSON 摘要（供自动化）")
     ap.add_argument("--mark-stale", action="store_true", help="检测时写入 translation_stale")
+    ap.add_argument("--scan-steam", action="store_true",
+                    help="额外跑 scan_steam_diff 全库比对（需访问 Steam API）")
     args = ap.parse_args()
 
     summary = {
@@ -105,6 +107,34 @@ def main() -> int:
                 f"薄字段 {n_th} 个（阈值 desc<150/gameplay<100）→ 可用 --only thin 分批加固"
             )
 
+    # 4) 可选：Steam 全库差分（比本地 stale 更快发现「Steam 已变」）
+    if args.scan_steam:
+        scan_argv = ["scan_steam_diff.py", "--json"]
+        if args.mark_stale:
+            scan_argv.append("--mark-stale")
+        sc = run_py(*scan_argv)
+        scan_info: dict = {}
+        if sc.stdout.strip():
+            try:
+                scan_info = json.loads(sc.stdout)
+            except json.JSONDecodeError:
+                scan_info = {"raw": sc.stdout[-500:]}
+        summary["steps"]["steam_diff"] = {
+            "ok": sc.returncode in (0, 1),
+            "returncode": sc.returncode,
+            "content_changed": scan_info.get("content_changed"),
+            "baseline_stale": scan_info.get("baseline_stale"),
+            "need_retranslate": scan_info.get("need_retranslate"),
+            "missing_on_steam": scan_info.get("missing_on_steam"),
+            "data": scan_info if args.json else None,
+        }
+        need = int(scan_info.get("need_retranslate") or 0)
+        if need:
+            summary["actions"].append(
+                f"Steam 差分需重译 {need} 条 → scan_steam_diff --write --export-pack "
+                f"后按 stale_wave 任务包重译，再 confirm_stale_translations"
+            )
+
     if not summary["actions"]:
         summary["actions"].append("本周无缺口，可跳过翻译批；保持云端每日重抓即可")
 
@@ -118,6 +148,11 @@ def main() -> int:
         print("扩充报告:")
         for line in report_txt.splitlines()[:24]:
             print(f"  {line}")
+        if "steam_diff" in summary["steps"]:
+            sd = summary["steps"]["steam_diff"]
+            print(f"Steam差分: content={sd.get('content_changed')} "
+                  f"baseline_stale={sd.get('baseline_stale')} "
+                  f"需重译={sd.get('need_retranslate')}")
         print("建议动作:")
         for a in summary["actions"]:
             print(f"  - {a}")
